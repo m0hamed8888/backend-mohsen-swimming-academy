@@ -22,6 +22,35 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+/* ── MongoDB Connection Caching (مهم لـ Vercel Serverless) ──── */
+let isConnected = false;
+
+async function connectDB() {
+  if (isConnected) return;
+  try {
+    await mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 10000,
+    });
+    isConnected = true;
+    console.log('✅ MongoDB connected');
+  } catch (err) {
+    console.error('❌ MongoDB connection failed:', err.message);
+    isConnected = false;
+    throw err;
+  }
+}
+
+/* ── Middleware: connect DB before every request ─────────────── */
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database connection failed' });
+  }
+});
+
 /* ── Health check ────────────────────────────────────────────── */
 app.get('/health', (req, res) => {
   res.json({
@@ -50,12 +79,6 @@ app.use((err, req, res, _next) => {
     success: false,
     message: process.env.NODE_ENV === 'development' ? err.message : 'خطأ في الخادم',
   });
-});
-
-/* ── Connect to MongoDB ──────────────────────────────────────── */
-// Vercel = serverless، مفيش app.listen هنا
-mongoose.connect(process.env.MONGO_URI).catch((err) => {
-  console.error('❌ MongoDB connection failed:', err.message);
 });
 
 module.exports = app;
