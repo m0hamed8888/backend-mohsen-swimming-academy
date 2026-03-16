@@ -144,7 +144,7 @@
 <div class="toast" id="toast"><span id="toastMsg"></span></div>
 
 <script>
-const API = API_BASE;
+const API = 'https://backend-mohsen-swimming-academy.vercel.app/api';
 const RL  = {
   s:{},
   check(k,max,ms){const now=Date.now();if(!this.s[k]||now>this.s[k].r)this.s[k]={c:0,r:now+ms};this.s[k].c++;if(this.s[k].c>max)return{blocked:true,wait:Math.ceil((this.s[k].r-now)/1000)};return{blocked:false}},
