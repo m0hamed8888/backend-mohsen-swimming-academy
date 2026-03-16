@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>AquaFlow | تسجيل الدخول</title>
+  <link rel="stylesheet" href="./assets/css/style.css"/>
+  <script src="./assets/js/config.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <style>
+.auth-page{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:80px 20px 40px;position:relative;z-index:1}
+.auth-card{width:100%;max-width:430px;padding:34px 26px;border-radius:var(--r-xl);background:var(--surf);backdrop-filter:blur(32px);border:1px solid var(--bdr);box-shadow:var(--shadow);position:relative;overflow:hidden}
+.auth-card::before{content:'';position:absolute;top:0;inset-inline:0;height:2px;background:var(--grad-ocean)}
+.auth-logo{text-align:center;margin-bottom:26px}
+.logo-ic{width:60px;height:60px;border-radius:16px;background:var(--grad-ocean);display:flex;align-items:center;justify-content:center;margin:0 auto 11px;box-shadow:0 0 26px rgba(0,100,255,.45)}
+.logo-ic svg{width:27px;height:27px;color:#fff}
+.auth-logo h1{font-family:var(--f-disp);font-size:1.45rem;font-weight:800;background:var(--grad-acc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.auth-logo p{font-size:.8rem;color:var(--ts);margin-top:3px}
+.auth-tabs{display:flex;gap:4px;margin-bottom:24px;background:rgba(255,255,255,.03);padding:4px;border-radius:var(--r-full);border:1px solid var(--bdr)}
+.auth-tab{flex:1;padding:8px;border-radius:var(--r-full);font-size:.8rem;font-weight:700;color:var(--tm);transition:all var(--fast) var(--ease);display:flex;align-items:center;justify-content:center;gap:5px}
+.auth-tab svg{width:13px;height:13px}
+.auth-tab.active{background:var(--grad-ocean);color:#fff;box-shadow:0 4px 14px rgba(0,100,255,.4)}
+.auth-tab:not(.active):hover{color:var(--ts);background:var(--surf2)}
+.auth-panel{display:none}.auth-panel.active{display:block}
+.login-type{display:flex;gap:6px;margin-bottom:16px}
+.lt-btn{flex:1;padding:8px 8px;border-radius:var(--r-md);font-size:.75rem;font-weight:700;border:1.5px solid var(--bdr);color:var(--tm);background:rgba(255,255,255,.03);transition:all var(--fast);display:flex;align-items:center;justify-content:center;gap:5px}
+.lt-btn svg{width:13px;height:13px}
+.lt-btn.active{border-color:var(--cyan);background:rgba(0,200,255,.1);color:var(--tp)}
+.lt-btn:hover:not(.active){color:var(--ts);border-color:rgba(255,255,255,.15)}
+.auth-err{display:none;align-items:center;gap:7px;padding:9px 13px;border-radius:var(--r-sm);background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.2);font-size:.76rem;color:var(--err);margin-bottom:11px}
+.auth-err.show{display:flex}
+.auth-err svg{width:13px;height:13px;flex-shrink:0}
+.rate-warn{display:none;align-items:center;gap:7px;padding:9px 13px;border-radius:var(--r-sm);background:rgba(255,181,71,.08);border:1px solid rgba(255,181,71,.22);font-size:.76rem;color:var(--warn);margin-bottom:11px}
+.rate-warn.show{display:flex}
+.rate-warn svg{width:13px;height:13px;flex-shrink:0}
+.btn-full{width:100%;height:50px;border-radius:var(--r-md);background:var(--grad-ocean);color:#fff;font-size:.93rem;font-weight:800;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 8px 26px rgba(0,100,255,.4);margin-top:5px;transition:transform var(--fast) var(--spring),box-shadow var(--fast)}
+.btn-full:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(0,100,255,.6)}
+.btn-full:active{transform:scale(.97)}
+.btn-full.loading{opacity:.65;pointer-events:none}
+.ps-row{display:flex;gap:4px;margin:7px 0 3px}
+.ps-bar{flex:1;height:4px;border-radius:4px;background:rgba(255,255,255,.1);transition:background var(--mid)}
+.ps-lbl{font-size:.68rem}
+.back-link{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:16px;font-size:.78rem;color:var(--ts);transition:color var(--fast)}
+.back-link:hover{color:var(--cyan)}
+.back-link svg{width:13px;height:13px}
+.note-box{padding:9px 13px;border-radius:var(--r-sm);background:rgba(0,200,255,.05);border:1px solid rgba(0,200,255,.15);font-size:.75rem;color:var(--ts);margin-bottom:13px;display:flex;align-items:flex-start;gap:6px;line-height:1.5}
+.note-box svg{width:13px;height:13px;color:var(--cyan);flex-shrink:0;margin-top:2px}
+  </style>
+</head>
+<body>
+<div class="bg-orb orb-1"></div>
+<div class="bg-orb orb-2"></div>
+<nav class="top-nav">
+  <a href="index.html" class="nav-brand ripple-btn"><i data-lucide="waves"></i><span>AquaFlow</span></a>
+  <div class="nav-actions">
+    <a href="index.html" class="nav-link ripple-btn"><i data-lucide="arrow-right" style="width:13px;height:13px;vertical-align:middle;margin-left:3px"></i>الرئيسية</a>
+  </div>
+</nav>
+
+<div class="auth-page">
+  <div class="auth-card" id="authCard">
+    <div class="auth-logo">
+      <div class="logo-ic"><i data-lucide="waves"></i></div>
+      <h1>AquaFlow</h1>
+      <p id="authSub">مرحباً بك في أكاديمية السباحة</p>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">
+        <i data-lucide="log-in"></i> تسجيل الدخول
+      </button>
+      <button class="auth-tab" id="tabRegister" onclick="switchTab('register')">
+        <i data-lucide="user-plus"></i> حساب جديد
+      </button>
+    </div>
+
+    <!-- ══ LOGIN ══ -->
+    <div class="auth-panel active" id="panelLogin">
+      <div class="login-type">
+        <button class="lt-btn active" id="ltSw" onclick="setType('swimmer')">
+          <i data-lucide="person-standing"></i> سباح
+        </button>
+        <button class="lt-btn" id="ltTr" onclick="setType('trainer')">
+          <i data-lucide="shield-check"></i> كابتن / مدرب
+        </button>
+      </div>
+      <div class="auth-err" id="lErr"><i data-lucide="alert-circle"></i><span id="lErrMsg"></span></div>
+      <div class="rate-warn" id="lRW"><i data-lucide="clock"></i><span>انتظر <strong id="lCD">—</strong> ث</span></div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="field">
+          <label id="lIdentLbl">اسم المستخدم</label>
+          <input type="text" class="fc" id="lIdent" placeholder="username" autocomplete="username"/>
+        </div>
+        <div class="field">
+          <label>كلمة المرور</label>
+          <div style="position:relative">
+            <input type="password" class="fc" id="lPass" placeholder="••••••" style="padding-left:44px"/>
+            <button onclick="tp('lPass',this)" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--tm)">
+              <i data-lucide="eye" style="width:15px;height:15px"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <button class="btn-full" id="lBtn"><i data-lucide="log-in"></i><span id="lBtnTxt">دخول</span></button>
+      <a href="index.html" class="back-link"><i data-lucide="arrow-right"></i> العودة للرئيسية</a>
+    </div>
+
+    <!-- ══ REGISTER ══ -->
+    <div class="auth-panel" id="panelRegister">
+      <div class="note-box">
+        <i data-lucide="info"></i>
+        <span>إنشاء الحساب مخصص للسباحين. المدربون يتواصلون مع الإدارة لإنشاء حساباتهم.</span>
+      </div>
+      <div class="auth-err" id="rErr"><i data-lucide="alert-circle"></i><span id="rErrMsg"></span></div>
+      <div class="rate-warn" id="rRW"><i data-lucide="clock"></i><span>انتظر <strong id="rCD">—</strong> ث</span></div>
+      <div class="form-grid form-grid-2" style="gap:12px">
+        <div class="field"><label>الاسم (اختياري)</label>
+          <input type="text" class="fc" id="rName" placeholder="أحمد محمد"/></div>
+        <div class="field"><label>رقم الهاتف (اختياري)</label>
+          <input type="tel" class="fc" id="rPhone" placeholder="01XXXXXXXXX"/></div>
+        <div class="field" style="grid-column:1/-1"><label>اسم المستخدم *</label>
+          <input type="text" class="fc" id="rUser" placeholder="ahmed_swimmer" autocomplete="username"/></div>
+        <div class="field" style="grid-column:1/-1"><label>كلمة المرور *</label>
+          <div style="position:relative">
+            <input type="password" class="fc" id="rPass" placeholder="6 أحرف على الأقل" style="padding-left:44px"/>
+            <button onclick="tp('rPass',this)" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--tm)">
+              <i data-lucide="eye" style="width:15px;height:15px"></i>
+            </button>
+          </div>
+          <div id="psW" style="display:none;margin-top:5px">
+            <div class="ps-row"><div class="ps-bar" id="b1"></div><div class="ps-bar" id="b2"></div><div class="ps-bar" id="b3"></div><div class="ps-bar" id="b4"></div></div>
+            <div class="ps-lbl" id="psL" style="color:var(--tm)"></div>
+          </div>
+        </div>
+        <div class="field" style="grid-column:1/-1"><label>تأكيد كلمة المرور *</label>
+          <input type="password" class="fc" id="rPass2" placeholder="أعد كتابة الباسورد"/></div>
+      </div>
+      <button class="btn-full" id="rBtn"><i data-lucide="user-plus"></i><span id="rBtnTxt">إنشاء الحساب</span></button>
+      <a href="index.html" class="back-link"><i data-lucide="arrow-right"></i> العودة للرئيسية</a>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
+
+<script>
+const API = API_BASE;
+const RL  = {
+  s:{},
+  check(k,max,ms){const now=Date.now();if(!this.s[k]||now>this.s[k].r)this.s[k]={c:0,r:now+ms};this.s[k].c++;if(this.s[k].c>max)return{blocked:true,wait:Math.ceil((this.s[k].r-now)/1000)};return{blocked:false}},
+  reset(k){delete this.s[k]}
+};
+let lType='swimmer';
+
+document.addEventListener('DOMContentLoaded',()=>{
+  lucide.createIcons();
+  if(localStorage.getItem('sw_token')){window.location.href='profile.html';return;}
+  if(localStorage.getItem('aq_token')){window.location.href='./aquaelite-backend/trainer.html';return;}
+  const p=new URLSearchParams(location.search);
+  if(p.get('tab')==='register') switchTab('register');
+  document.getElementById('lBtn').onclick=doLogin;
+  document.getElementById('rBtn').onclick=doRegister;
+  document.getElementById('lPass').addEventListener('keydown',e=>e.key==='Enter'&&doLogin());
+  document.getElementById('rPass').addEventListener('input',checkStr);
+  document.getElementById('rPass2').addEventListener('keydown',e=>e.key==='Enter'&&doRegister());
+});
+
+function switchTab(t){
+  ['login','register'].forEach(x=>{
+    document.getElementById('tab'+x.charAt(0).toUpperCase()+x.slice(1)).classList.toggle('active',x===t);
+    document.getElementById('panel'+x.charAt(0).toUpperCase()+x.slice(1)).classList.toggle('active',x===t);
+  });
+  document.getElementById('authSub').textContent=t==='register'?'أنشئ حسابك كسباح':'مرحباً بك في أكاديمية السباحة';
+  lucide.createIcons();
+}
+
+function setType(type){
+  lType=type;
+  document.getElementById('ltSw').classList.toggle('active',type==='swimmer');
+  document.getElementById('ltTr').classList.toggle('active',type==='trainer');
+  lucide.createIcons();
+}
+
+async function doLogin(){
+  const ident=document.getElementById('lIdent').value.trim();
+  const pass=document.getElementById('lPass').value;
+  const rl=RL.check('login_'+lType,5,2*60*1000);
+  if(rl.blocked){countdown('lRW','lCD',rl.wait);return;}
+  document.getElementById('lErr').classList.remove('show');
+  setBusy('lBtn','lBtnTxt',true,'جاري الدخول...');
+  try{
+    let res;
+    if(lType==='swimmer'){
+      res=await post(`${API}/swimmer-auth/login`,{username:ident,password:pass});
+      localStorage.setItem('sw_token',res.token);
+      localStorage.setItem('sw_user',JSON.stringify(res.user));
+      toast('✅ أهلاً '+(res.user.displayName||res.user.username),'ok');
+      setTimeout(()=>window.location.href='profile.html',800);
+    }else{
+      res=await post(`${API}/auth/login`,{username:ident,password:pass});
+      localStorage.setItem('aq_token',res.token);
+      localStorage.setItem('aq_trainer',JSON.stringify(res.trainer));
+      toast('✅ أهلاً '+(res.trainer?.name||''),'ok');
+      setTimeout(()=>{
+        if(res.trainer?.role==='boss') window.location.href='./aquaelite-backend/boss.html';
+        else window.location.href='./aquaelite-backend/trainer.html';
+      },800);
+    }
+    RL.reset('login_'+lType);
+  }catch(e){
+    document.getElementById('lErrMsg').textContent=e.message;
+    document.getElementById('lErr').classList.add('show');
+    shake();
+  }finally{setBusy('lBtn','lBtnTxt',false,'دخول');}
+}
+
+async function doRegister(){
+  const name=document.getElementById('rName').value.trim();
+  const phone=document.getElementById('rPhone').value.trim();
+  const user=document.getElementById('rUser').value.trim();
+  const pass=document.getElementById('rPass').value;
+  const pass2=document.getElementById('rPass2').value;
+  const rl=RL.check('register',3,10*60*1000);
+  if(rl.blocked){countdown('rRW','rCD',rl.wait);return;}
+  if(!user||!pass){showE('rErrMsg','rErr','اسم المستخدم وكلمة المرور مطلوبان');return;}
+  if(pass!==pass2){showE('rErrMsg','rErr','كلمتا المرور غير متطابقتين');return;}
+  if(pass.length<6){showE('rErrMsg','rErr','كلمة المرور 6 أحرف على الأقل');return;}
+  document.getElementById('rErr').classList.remove('show');
+  setBusy('rBtn','rBtnTxt',true,'جاري الإنشاء...');
+  try{
+    const res=await post(`${API}/swimmer-auth/register`,{username:user,password:pass,displayName:name,phone});
+    localStorage.setItem('sw_token',res.token);
+    localStorage.setItem('sw_user',JSON.stringify(res.user));
+    RL.reset('register');
+    toast('✅ تم إنشاء حسابك!','ok');
+    setTimeout(()=>window.location.href='register-swimmer.html',900);
+  }catch(e){showE('rErrMsg','rErr',e.message);shake();}
+  finally{setBusy('rBtn','rBtnTxt',false,'إنشاء الحساب');}
+}
+
+function checkStr(){
+  const p=document.getElementById('rPass').value,w=document.getElementById('psW');
+  if(!p){w.style.display='none';return;}w.style.display='block';
+  let s=0;if(p.length>=6)s++;if(p.length>=10)s++;if(/[A-Z]|[a-z]/.test(p))s++;if(/[0-9]|[^A-Za-z0-9]/.test(p))s++;
+  const C=['#ff4d6d','#ffb547','#00c8ff','#00e5a0'],L=['ضعيفة','مقبولة','جيدة','قوية'];
+  for(let i=1;i<=4;i++)document.getElementById('b'+i).style.background=i<=s?C[s-1]:'rgba(255,255,255,.1)';
+  const l=document.getElementById('psL');l.textContent='القوة: '+(L[s-1]||'');l.style.color=C[s-1]||'var(--tm)';
+}
+function countdown(wId,cId,secs){
+  const w=document.getElementById(wId),c=document.getElementById(cId);
+  w.classList.add('show');let r=secs;c.textContent=r;
+  const t=setInterval(()=>{r--;c.textContent=r;if(r<=0){clearInterval(t);w.classList.remove('show');}},1000);
+}
+function tp(id,btn){
+  const i=document.getElementById(id);i.type=i.type==='password'?'text':'password';
+  btn.innerHTML=i.type==='text'?'<i data-lucide="eye-off" style="width:15px;height:15px"></i>':'<i data-lucide="eye" style="width:15px;height:15px"></i>';
+  lucide.createIcons();
+}
+function setBusy(b,t,on,txt){document.getElementById(b).classList.toggle('loading',on);document.getElementById(t).textContent=txt;lucide.createIcons();}
+function showE(mId,eId,msg){document.getElementById(mId).textContent=msg;document.getElementById(eId).classList.add('show');}
+function shake(){const c=document.getElementById('authCard');c.style.transition='transform .08s';c.style.transform='translateX(-7px)';setTimeout(()=>{c.style.transform='translateX(7px)';},90);setTimeout(()=>{c.style.transform='translateX(0)';c.style.transition='transform .3s var(--spring)';},180);}
+async function post(url,body){const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const d=await r.json().catch(()=>({message:`HTTP ${r.status}`}));if(!r.ok)throw new Error(d.message||`HTTP ${r.status}`);return d;}
+let toastT;
+function toast(msg,type='inf'){const el=document.getElementById('toast');el.className=`toast ${type} show`;document.getElementById('toastMsg').textContent=msg;clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),3000);}
+</script>
+</body>
+</html>

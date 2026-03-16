@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>AquaFlow | إضافة سباح</title>
+  <link rel="stylesheet" href="./assets/css/style.css"/>
+  <script src="./assets/js/config.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <style>
+.page-wrap{min-height:100dvh;padding:78px 16px 60px;max-width:620px;margin:0 auto;position:relative;z-index:1}
+.page-hd{margin-bottom:24px}
+.page-hd h1{font-family:var(--f-disp);font-size:1.5rem;font-weight:800;display:flex;align-items:center;gap:9px}
+.page-hd h1 svg{width:20px;height:20px;color:var(--cyan)}
+.page-hd p{font-size:.83rem;color:var(--ts);margin-top:5px}
+.form-card{background:var(--surf);backdrop-filter:blur(28px);border:1px solid var(--bdr);border-radius:var(--r-xl);padding:26px 20px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.form-card::before{content:'';position:absolute;top:0;inset-inline:0;height:2px;background:var(--grad-ocean)}
+.sec-sep{font-family:var(--f-disp);font-size:.78rem;font-weight:800;color:var(--ts);margin:20px 0 13px;display:flex;align-items:center;gap:8px}
+.sec-sep::after{content:'';flex:1;height:1px;background:var(--bdr)}
+.sec-sep svg{width:13px;height:13px;color:var(--cyan)}
+.trainer-selector{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+@media(min-width:400px){.trainer-selector{grid-template-columns:repeat(3,1fr)}}
+.tr-opt{display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 8px;border-radius:var(--r-md);border:1.5px solid var(--bdr);cursor:pointer;transition:all var(--fast);background:rgba(255,255,255,.03);position:relative}
+.tr-opt input{display:none}
+.tr-av{width:36px;height:36px;border-radius:50%;background:var(--grad-ocean);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;color:#fff}
+.tr-name{font-size:.72rem;font-weight:700;color:var(--ts);text-align:center;line-height:1.3}
+.tr-opt:has(input:checked){border-color:var(--cyan);background:rgba(0,200,255,.08)}
+.tr-opt:has(input:checked) .tr-name{color:#fff}
+.tr-opt:has(input:checked)::after{content:'✓';position:absolute;top:4px;left:6px;font-size:.65rem;font-weight:900;color:var(--cyan)}
+.tr-opt:hover:not(:has(input:checked)){border-color:rgba(0,200,255,.25);background:rgba(0,200,255,.04)}
+.tr-loading{display:flex;align-items:center;gap:8px;padding:12px;color:var(--tm);font-size:.8rem}
+.tr-loading svg{width:16px;height:16px;animation:spin .7s linear infinite}
+.tr-err{padding:10px 12px;border-radius:var(--r-sm);background:rgba(255,77,109,.07);border:1px solid rgba(255,77,109,.18);font-size:.76rem;color:var(--err)}
+
+/* ── STAR RATING (checkbox stars) ── */
+.star-rating{display:flex;align-items:center;gap:4px;direction:ltr;margin-top:6px}
+.star-rating input{display:none}
+.star-rating label{font-size:1.6rem;cursor:pointer;color:rgba(255,255,255,.2);transition:color var(--fast);line-height:1}
+.star-rating input:checked ~ label{color:rgba(255,255,255,.2)}
+.star-rating label:hover,
+.star-rating label:hover ~ label{color:rgba(255,255,255,.2)}
+/* نجوم محددة */
+.star-rating input:checked + label,
+.star-rating input:checked + label ~ label{color:rgba(255,255,255,.2)}
+/* الطريقة الصح: نعكس الترتيب ونستخدم sibling */
+.stars-wrap{display:flex;flex-direction:row-reverse;gap:3px;margin-top:6px}
+.stars-wrap input{display:none}
+.stars-wrap label{font-size:1.8rem;cursor:pointer;color:rgba(255,255,255,.15);transition:color var(--fast);line-height:1;user-select:none}
+.stars-wrap label:hover,
+.stars-wrap input:checked ~ label{color:#ffd700}
+.stars-wrap label:hover ~ label{color:#ffd700}
+.stars-hint{font-size:.72rem;color:var(--tm);margin-top:5px}
+
+.swim-yes-wrap{display:none;margin-top:12px;padding:14px;background:rgba(0,200,255,.04);border:1px solid rgba(0,200,255,.14);border-radius:var(--r-md)}
+.swim-yes-wrap.show{display:block}
+
+.sess-pills{display:flex;gap:8px}
+.sess-pill{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 6px;border-radius:var(--r-md);background:rgba(255,255,255,.04);border:1.5px solid var(--bdr);cursor:pointer;transition:all var(--fast)}
+.sess-pill input{display:none}
+.sp-num{font-family:var(--f-disp);font-size:1.3rem;font-weight:800;color:var(--ts)}
+.sp-lbl{font-size:.64rem;font-weight:700;color:var(--tm)}
+.sess-pill:has(input:checked){border-color:var(--cyan);background:rgba(0,200,255,.1)}
+.sess-pill:has(input:checked) .sp-num{color:#fff}
+.sess-pill:has(input:checked) .sp-lbl{color:var(--cyan)}
+.days-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:5px}
+.day-cb{display:flex;align-items:center;justify-content:center;padding:8px 4px;border-radius:var(--r-sm);background:rgba(255,255,255,.04);border:1.5px solid var(--bdr);cursor:pointer;font-size:.77rem;font-weight:700;color:var(--ts);transition:all var(--fast)}
+.day-cb input{display:none}
+.day-cb:has(input:checked){border-color:var(--cyan);background:rgba(0,200,255,.1);color:#fff}
+.day-cb.locked{opacity:.22;pointer-events:none}
+.days-ctr{font-size:.7rem;font-weight:800;padding:3px 10px;border-radius:var(--r-full);background:rgba(0,200,255,.1);border:1px solid rgba(0,200,255,.25);color:var(--cyan)}
+.days-ctr.done{background:rgba(0,229,160,.1);border-color:rgba(0,229,160,.3);color:var(--ok)}
+.btn-submit{width:100%;height:52px;border-radius:var(--r-md);background:var(--grad-ocean);color:#fff;font-size:.95rem;font-weight:800;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 8px 26px rgba(0,100,255,.4);margin-top:8px;transition:transform var(--fast) var(--spring),box-shadow var(--fast)}
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(0,100,255,.6)}
+.btn-submit:active{transform:scale(.97)}
+.btn-submit.loading{opacity:.65;pointer-events:none}
+.user-badge{display:flex;align-items:center;gap:10px;padding:11px 15px;background:rgba(0,200,255,.05);border:1px solid rgba(0,200,255,.15);border-radius:var(--r-md);margin-bottom:20px}
+.ub-av{width:34px;height:34px;border-radius:50%;background:var(--grad-ocean);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.88rem;color:#fff;flex-shrink:0}
+.ub-name{font-weight:800;font-size:.86rem}
+.ub-role{font-size:.68rem;color:var(--cyan);margin-top:1px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.shake-it{animation:shake .3s ease}
+  </style>
+</head>
+<body>
+<div class="bg-orb orb-1"></div>
+<div class="bg-orb orb-2"></div>
+<nav class="top-nav">
+  <a href="index.html" class="nav-brand ripple-btn"><i data-lucide="waves"></i><span>AquaFlow</span></a>
+  <div class="nav-actions">
+    <a href="profile.html" class="nav-link ripple-btn"><i data-lucide="user" style="width:13px;height:13px;vertical-align:middle;margin-left:3px"></i>ملفي</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="page-hd">
+    <h1><i data-lucide="user-plus"></i> إضافة بيانات سباح</h1>
+    <p>أضف بياناتك لتظهر في لوحة الكابتن المسؤول عنك</p>
+  </div>
+
+  <div class="user-badge" id="userBadge" style="display:none">
+    <div class="ub-av" id="ubAv">س</div>
+    <div><div class="ub-name" id="ubName">—</div><div class="ub-role">حساب سباح · AquaFlow</div></div>
+  </div>
+
+  <div class="form-card">
+    <div id="rlWarn" style="display:none;align-items:center;gap:7px;padding:9px 13px;border-radius:var(--r-sm);background:rgba(255,181,71,.08);border:1px solid rgba(255,181,71,.22);font-size:.76rem;color:var(--warn);margin-bottom:12px">
+      <i data-lucide="clock"></i><span>انتظر <strong id="rlCD">—</strong> ثانية</span>
+    </div>
+
+    <form id="swimForm" novalidate>
+
+      <!-- ① اختيار الكابتن -->
+      <div class="sec-sep"><i data-lucide="shield-check"></i> اختر الكابتن المسؤول *</div>
+      <div id="trainerArea">
+        <div class="tr-loading"><i data-lucide="loader"></i> جاري تحميل الكابتنات...</div>
+      </div>
+
+      <!-- ② البيانات الشخصية -->
+      <div class="sec-sep"><i data-lucide="user"></i> البيانات الشخصية</div>
+      <div class="form-grid form-grid-2" style="gap:13px">
+        <div class="field"><label>الاسم بالكامل *</label>
+          <input type="text" class="fc" id="f_name" placeholder="أحمد محمد علي" required/></div>
+        <div class="field"><label>تاريخ الميلاد *</label>
+          <input type="date" class="fc" id="f_dob" required/></div>
+        <div class="field"><label>رقم الهاتف</label>
+          <input type="tel" class="fc" id="f_phone" placeholder="01XXXXXXXXX"/></div>
+        <div class="field"><label>هل مارست السباحة من قبل؟</label>
+          <select class="fc" id="f_swam" onchange="onSwamChange(this.value)">
+            <option value="no">لا</option>
+            <option value="yes">نعم</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ③ نجوم الخبرة (تظهر لو اختار نعم) -->
+      <div class="swim-yes-wrap" id="swimYesWrap">
+        <div style="font-size:.78rem;font-weight:700;color:var(--ts);margin-bottom:8px">
+          كم تقدّر مستواك في السباحة؟
+        </div>
+        <div class="stars-wrap" id="starsWrap">
+          <input type="radio" name="stars" value="5" id="s5"/><label for="s5" title="ممتاز">★</label>
+          <input type="radio" name="stars" value="4" id="s4"/><label for="s4" title="جيد جداً">★</label>
+          <input type="radio" name="stars" value="3" id="s3"/><label for="s3" title="جيد">★</label>
+          <input type="radio" name="stars" value="2" id="s2"/><label for="s2" title="مبتدئ متوسط">★</label>
+          <input type="radio" name="stars" value="1" id="s1"/><label for="s1" title="مبتدئ">★</label>
+        </div>
+        <div class="stars-hint" id="starsHint">اختر من 1 (مبتدئ) إلى 5 (ممتاز)</div>
+      </div>
+
+      <!-- ④ تفاصيل الاشتراك -->
+      <div class="sec-sep"><i data-lucide="target"></i> تفاصيل الاشتراك</div>
+      <div class="form-grid form-grid-2" style="gap:13px">
+        <div class="field"><label>الهدف *</label>
+          <select class="fc" id="f_goal" required>
+            <option value="">اختر الهدف</option>
+            <option value="fitness">اللياقة البدنية</option>
+            <option value="competition">المنافسات</option>
+            <option value="safety">الأمان في الماء</option>
+            <option value="fun">الترفيه والمتعة</option>
+          </select></div>
+        <div class="field"><label>ساعة التدريب المفضلة</label>
+          <select class="fc" id="f_time">
+            <option value="">اختر</option>
+            <option>06:00 ص</option><option>07:00 ص</option><option>08:00 ص</option>
+            <option>09:00 ص</option><option>10:00 ص</option>
+            <option>04:00 م</option><option>05:00 م</option><option>06:00 م</option><option>07:00 م</option>
+          </select></div>
+      </div>
+
+      <!-- ⑤ عدد الحصص -->
+      <div class="sec-sep"><i data-lucide="layers"></i> عدد الحصص *</div>
+      <div class="sess-pills">
+        <label class="sess-pill"><input type="radio" name="sess" value="8"/>
+          <span class="sp-num">8</span><span class="sp-lbl">حصص</span></label>
+        <label class="sess-pill"><input type="radio" name="sess" value="12"/>
+          <span class="sp-num">12</span><span class="sp-lbl">حصة</span></label>
+        <label class="sess-pill"><input type="radio" name="sess" value="24"/>
+          <span class="sp-num">24</span><span class="sp-lbl">حصة</span></label>
+      </div>
+
+      <div class="field" id="daysWrap" style="margin-top:14px;display:none">
+        <label style="display:flex;align-items:center;justify-content:space-between">
+          <span>أيام التدريب</span><span class="days-ctr" id="daysCtr"></span>
+        </label>
+        <div class="days-grid">
+          <label class="day-cb"><input type="checkbox" name="days" value="0"/><span>أحد</span></label>
+          <label class="day-cb"><input type="checkbox" name="days" value="1"/><span>اثنين</span></label>
+          <label class="day-cb"><input type="checkbox" name="days" value="2"/><span>ثلاثاء</span></label>
+          <label class="day-cb"><input type="checkbox" name="days" value="3"/><span>أربعاء</span></label>
+          <label class="day-cb"><input type="checkbox" name="days" value="4"/><span>خميس</span></label>
+          <label class="day-cb"><input type="checkbox" name="days" value="5"/><span>جمعة</span></label>
+          <label class="day-cb"><input type="checkbox" name="days" value="6"/><span>سبت</span></label>
+        </div>
+      </div>
+
+      <div class="field" id="restWrap" style="margin-top:14px;display:none">
+        <label>يوم الراحة الأسبوعي *</label>
+        <select class="fc" id="f_rest">
+          <option value="">اختر يوم الراحة</option>
+          <option value="0">الأحد</option><option value="1">الاثنين</option>
+          <option value="2">الثلاثاء</option><option value="3">الأربعاء</option>
+          <option value="4">الخميس</option><option value="5">الجمعة</option>
+          <option value="6">السبت</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn-submit" id="subBtn">
+        <i data-lucide="save"></i><span id="subTxt">حفظ البيانات</span>
+      </button>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
+
+<script>
+const API     = 'http://localhost:5000/api';
+const SESSMAX = {'8':2,'12':3};
+const RL={s:{},check(k,max,ms){const now=Date.now();if(!this.s[k]||now>this.s[k].r)this.s[k]={c:0,r:now+ms};this.s[k].c++;if(this.s[k].c>max)return{blocked:true,wait:Math.ceil((this.s[k].r-now)/1000)};return{blocked:false}}};
+const STAR_LABELS=['','مبتدئ','مبتدئ متوسط','جيد','جيد جداً','ممتاز'];
+
+let token=null, user=null;
+
+document.addEventListener('DOMContentLoaded',()=>{
+  lucide.createIcons();
+  token=localStorage.getItem('sw_token');
+  if(!token){window.location.href='auth.html';return;}
+  try{user=JSON.parse(localStorage.getItem('sw_user'));}catch(e){}
+  if(user){
+    document.getElementById('userBadge').style.display='flex';
+    document.getElementById('ubAv').textContent=(user.displayName||user.username||'س').charAt(0).toUpperCase();
+    document.getElementById('ubName').textContent=user.displayName||user.username;
+  }
+  loadTrainers();
+  // stars hint
+  document.querySelectorAll('input[name="stars"]').forEach(r=>r.addEventListener('change',()=>{
+    document.getElementById('starsHint').textContent=STAR_LABELS[r.value]||'';
+  }));
+  document.querySelectorAll('input[name="sess"]').forEach(r=>r.addEventListener('change',onSess));
+  document.querySelectorAll('input[name="days"]').forEach(c=>c.addEventListener('change',onDays));
+  document.getElementById('swimForm').addEventListener('submit',doSubmit);
+});
+
+function onSwamChange(val){
+  document.getElementById('swimYesWrap').classList.toggle('show', val==='yes');
+  if(val!=='yes') document.querySelectorAll('input[name="stars"]').forEach(r=>r.checked=false);
+}
+
+async function loadTrainers(){
+  const area=document.getElementById('trainerArea');
+  try{
+    const d=await fetch(`${API}/auth/public-trainers`).then(r=>r.json());
+    if(!d.data?.length){area.innerHTML='<div class="tr-err">لا يوجد كابتنات متاحون حالياً</div>';lucide.createIcons();return;}
+    area.innerHTML=`<div class="trainer-selector">${d.data.map(t=>`
+      <label class="tr-opt">
+        <input type="radio" name="trainer" value="${t._id}" data-name="${t.name}"/>
+        <div class="tr-av">${t.name.charAt(0)}</div>
+        <span class="tr-name">${t.name}</span>
+      </label>`).join('')}</div>`;
+    lucide.createIcons();
+  }catch(e){area.innerHTML='<div class="tr-err">تعذّر تحميل الكابتنات</div>';lucide.createIcons();}
+}
+
+function onSess(){
+  const v=document.querySelector('input[name="sess"]:checked')?.value;
+  document.querySelectorAll('input[name="days"]').forEach(c=>{c.checked=false;c.closest('.day-cb').classList.remove('locked');});
+  document.getElementById('daysWrap').style.display=(v==='8'||v==='12')?'block':'none';
+  document.getElementById('restWrap').style.display=v==='24'?'block':'none';
+  if(v&&SESSMAX[v]) updDays(v,0);
+}
+function updDays(v,cnt){
+  const max=SESSMAX[v]||0,rem=max-cnt,ctr=document.getElementById('daysCtr');
+  if(cnt===0){ctr.textContent=v==='8'?'اختر يومين':'اختر ٣ أيام';ctr.className='days-ctr';}
+  else if(cnt<max){ctr.textContent=`متبقي ${rem}`;ctr.className='days-ctr';}
+  else{ctr.textContent='✓ اكتملت';ctr.className='days-ctr done';}
+  document.querySelectorAll('input[name="days"]').forEach(c=>c.closest('.day-cb').classList.toggle('locked',!c.checked&&cnt>=max));
+}
+function onDays(e){
+  const v=document.querySelector('input[name="sess"]:checked')?.value;
+  const cnt=document.querySelectorAll('input[name="days"]:checked').length;
+  const max=SESSMAX[v]||0;
+  if(e.target.checked&&cnt>max){e.target.checked=false;const ctr=document.getElementById('daysCtr');ctr.classList.add('shake-it');setTimeout(()=>ctr.classList.remove('shake-it'),350);return;}
+  if(v&&max) updDays(v,document.querySelectorAll('input[name="days"]:checked').length);
+}
+
+async function doSubmit(e){
+  e.preventDefault();
+  const rl=RL.check('add_sw',10,30*60*1000);
+  if(rl.blocked){showRL(rl.wait);return;}
+  const trainerInput=document.querySelector('input[name="trainer"]:checked');
+  const name=document.getElementById('f_name').value.trim();
+  const dob=document.getElementById('f_dob').value;
+  const phone=document.getElementById('f_phone').value.trim();
+  const swam=document.getElementById('f_swam').value;
+  const starsInput=document.querySelector('input[name="stars"]:checked');
+  const goal=document.getElementById('f_goal').value;
+  const time=document.getElementById('f_time').value;
+  const sessVal=document.querySelector('input[name="sess"]:checked')?.value;
+  const restDay=document.getElementById('f_rest').value;
+  if(!trainerInput){toast('من فضلك اختر الكابتن المسؤول','er');return;}
+  if(!name||!dob||!goal||!sessVal){toast('اكمل الحقول المطلوبة (*)','er');return;}
+  if(swam==='yes'&&!starsInput){toast('من فضلك حدد مستواك في السباحة (النجوم)','er');return;}
+  let trainingDays=[];
+  if(sessVal==='24'){
+    if(!restDay){toast('اختر يوم الراحة','er');return;}
+    trainingDays=[0,1,2,3,4,5,6].filter(d=>d!==Number(restDay));
+  }else{
+    const req=SESSMAX[sessVal]||0;
+    const chk=[...document.querySelectorAll('input[name="days"]:checked')].map(c=>Number(c.value));
+    if(chk.length!==req){toast(`يجب اختيار ${req===2?'يومين':'٣ أيام'} بالضبط`,'er');return;}
+    trainingDays=chk;
+  }
+  const btn=document.getElementById('subBtn');
+  btn.classList.add('loading');document.getElementById('subTxt').textContent='جاري الحفظ...';
+  try{
+    const res=await fetch(`${API}/swimmer-auth/add-swimmer`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},
+      body:JSON.stringify({
+        fullName:name,dob,phone,
+        swamBefore:swam,
+        egyptStars:swam==='yes'?'yes':null,
+        starsCount:swam==='yes'&&starsInput?Number(starsInput.value):null,
+        goal,sessionsCount:Number(sessVal),trainingDays,
+        restDay:sessVal==='24'?Number(restDay):null,
+        trainingTime:time||null,
+        trainerId:trainerInput.value,
+        trainerName:trainerInput.dataset.name,
+      }),
+    }).then(r=>r.json());
+    if(!res.success) throw new Error(res.message||'خطأ');
+    toast(`✅ تم الحفظ — رقم الاشتراك: ${res.data.subscriptionId}`,'ok');
+    document.getElementById('swimForm').reset();
+    document.getElementById('daysWrap').style.display='none';
+    document.getElementById('restWrap').style.display='none';
+    document.getElementById('swimYesWrap').classList.remove('show');
+    document.querySelectorAll('input[name="days"]').forEach(c=>{c.checked=false;c.closest('.day-cb').classList.remove('locked');});
+    loadTrainers();
+    setTimeout(()=>window.location.href='profile.html',1800);
+  }catch(err){toast(err.message||'خطأ في الحفظ','er');}
+  finally{btn.classList.remove('loading');document.getElementById('subTxt').textContent='حفظ البيانات';lucide.createIcons();}
+}
+
+function showRL(secs){
+  const w=document.getElementById('rlWarn'),c=document.getElementById('rlCD');
+  w.style.display='flex';lucide.createIcons();let r=secs;c.textContent=r;
+  const t=setInterval(()=>{r--;c.textContent=r;if(r<=0){clearInterval(t);w.style.display='none';}},1000);
+}
+let toastT;
+function toast(msg,type='inf'){const el=document.getElementById('toast');el.className=`toast ${type} show`;document.getElementById('toastMsg').textContent=msg;clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),3500);}
+</script>
+</body>
+</html>
