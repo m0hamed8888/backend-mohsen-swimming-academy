@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AquaElite — Boss Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <script src="./assets/js/config.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <style>
+:root{
+  --bg:#04060f; --surf:rgba(255,255,255,.04); --surf2:rgba(255,255,255,.07);
+  --bdr:rgba(255,255,255,.09);
+  --grad-boss:linear-gradient(135deg,#ffd700 0%,#ff8c00 60%,#ff4500 100%);
+  --grad-acc:linear-gradient(135deg,#ffd700,#ff9000);
+  --gold:#ffd700; --ok:#00e5a0; --warn:#ffb547; --err:#ff4d6d; --cyan:#00c8ff;
+  --tp:rgba(255,255,255,.95); --ts:rgba(255,255,255,.55); --tm:rgba(255,255,255,.28);
+  --f-disp:'Syne',sans-serif; --f-body:'Cairo',sans-serif;
+  --r-sm:8px; --r-md:14px; --r-xl:28px; --r-full:9999px;
+  --shadow:0 24px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.06);
+  --ease:cubic-bezier(.23,1,.32,1); --spring:cubic-bezier(.34,1.56,.64,1);
+  --fast:160ms; --mid:300ms;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--f-body);background:var(--bg);color:var(--tp);min-height:100dvh;
+  -webkit-font-smoothing:antialiased;direction:rtl;overflow-x:hidden}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+input,select,textarea{font-family:inherit}
+.orb{position:fixed;border-radius:50%;filter:blur(110px);pointer-events:none;z-index:0;animation:ofl 9s ease-in-out infinite alternate}
+.o1{width:480px;height:480px;background:radial-gradient(circle,rgba(255,150,0,.13),transparent 70%);top:-120px;right:-80px}
+.o2{width:340px;height:340px;background:radial-gradient(circle,rgba(255,60,0,.09),transparent 70%);bottom:40px;left:-60px;animation-delay:-5s}
+@keyframes ofl{from{transform:translateY(0)}to{transform:translateY(28px)}}
+.nav{position:fixed;top:0;inset-inline:0;z-index:100;display:flex;align-items:center;
+  justify-content:space-between;padding:13px 20px;background:rgba(4,6,15,.9);
+  backdrop-filter:blur(22px);border-bottom:1px solid rgba(255,200,0,.1)}
+.nav-brand{display:flex;align-items:center;gap:9px;font-family:var(--f-disp);font-weight:800;font-size:1.05rem}
+.brand-ic{width:30px;height:30px;border-radius:8px;background:var(--grad-boss);
+  display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(255,160,0,.45)}
+.brand-ic svg{width:15px;height:15px;color:#fff}
+.brand-nm{background:var(--grad-acc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.boss-pill{font-size:.62rem;font-weight:800;padding:2px 8px;border-radius:var(--r-full);
+  background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.28);color:var(--gold)}
+.nav-right{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--ts)}
+.boss-av{width:30px;height:30px;border-radius:50%;background:var(--grad-boss);
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.82rem;color:#fff;
+  box-shadow:0 0 10px rgba(255,160,0,.4)}
+#logoutBtn{font-size:.76rem;font-weight:600;color:var(--err);padding:5px 10px;
+  border-radius:var(--r-full);background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.2)}
+.wrap{position:relative;z-index:1;padding:78px 14px 50px;max-width:1080px;margin:0 auto}
+.tabs{display:flex;gap:5px;margin-bottom:22px;background:rgba(255,255,255,.03);
+  padding:5px;border-radius:var(--r-full);border:1px solid var(--bdr)}
+.tb{flex:1;padding:9px 8px;border-radius:var(--r-full);font-size:.78rem;font-weight:700;
+  color:var(--tm);transition:all var(--fast) var(--ease);
+  display:flex;align-items:center;justify-content:center;gap:6px}
+.tb svg{width:14px;height:14px}
+.tb.active{background:var(--grad-boss);color:#fff;box-shadow:0 4px 14px rgba(255,120,0,.4)}
+.tb:not(.active):hover{color:var(--ts);background:var(--surf2)}
+.panel{display:none}.panel.active{display:block}
+.gc{background:var(--surf);backdrop-filter:blur(28px);border:1px solid var(--bdr);
+  border-radius:var(--r-xl);padding:22px 18px;box-shadow:var(--shadow);position:relative;overflow:hidden;margin-bottom:20px}
+.gc::before{content:'';position:absolute;top:0;inset-inline:0;height:2px;
+  background:var(--grad-boss);border-radius:var(--r-xl) var(--r-xl) 0 0}
+.gc-title{font-family:var(--f-disp);font-size:1.1rem;font-weight:800;margin-bottom:18px;
+  display:flex;align-items:center;gap:8px}
+.gc-title svg{width:17px;height:17px;color:var(--gold)}
+.stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:22px}
+@media(min-width:500px){.stats-row{grid-template-columns:repeat(4,1fr)}}
+.stat{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r-md);
+  padding:16px 10px;text-align:center;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;inset-inline:0;height:2px;background:var(--grad-boss)}
+.stat-v{font-family:var(--f-disp);font-size:2rem;font-weight:800;color:var(--gold)}
+.stat-l{font-size:.66rem;font-weight:600;color:var(--tm);margin-top:3px}
+.fg{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:500px){.fg2{grid-template-columns:1fr 1fr}}
+.fld{display:flex;flex-direction:column;gap:5px}
+.fld label{font-size:.76rem;font-weight:700;color:var(--ts)}
+.fc{width:100%;height:46px;padding:0 13px;background:rgba(255,255,255,.05);
+  border:1px solid var(--bdr);border-radius:var(--r-md);color:var(--tp);
+  font-size:.87rem;font-weight:500;outline:none;direction:rtl;
+  transition:border-color var(--mid),box-shadow var(--mid)}
+.fc:focus{border-color:rgba(255,215,0,.4);box-shadow:0 0 0 3px rgba(255,215,0,.07)}
+.fc::placeholder{color:var(--tm)}
+select.fc{cursor:pointer}
+select.fc option{background:#0a0f20}
+.btn-gold{padding:11px 22px;border-radius:var(--r-md);background:var(--grad-boss);
+  color:#fff;font-size:.88rem;font-weight:800;display:inline-flex;align-items:center;gap:8px;
+  box-shadow:0 6px 20px rgba(255,120,0,.35);transition:all var(--fast) var(--spring)}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(255,120,0,.55)}
+.btn-gold:active{transform:scale(.97)}
+.btn-gold.loading{opacity:.6;pointer-events:none}
+.btn-gold.full{width:100%;justify-content:center;margin-top:6px}
+.btn-sec{padding:8px 16px;border-radius:var(--r-full);font-size:.78rem;font-weight:700;
+  color:var(--gold);background:rgba(255,215,0,.07);border:1px solid rgba(255,215,0,.22);
+  transition:all var(--fast);display:inline-flex;align-items:center;gap:6px}
+.btn-sec:hover{background:rgba(255,215,0,.14)}
+.btn-sec svg{width:13px;height:13px}
+.btn-danger{padding:8px 16px;border-radius:var(--r-full);font-size:.78rem;font-weight:700;
+  color:var(--err);background:rgba(255,77,109,.07);border:1px solid rgba(255,77,109,.2);
+  transition:all var(--fast);display:inline-flex;align-items:center;gap:6px}
+.btn-danger:hover{background:rgba(255,77,109,.15)}
+.btn-danger svg{width:13px;height:13px}
+.tg{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:580px){.tg{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:860px){.tg{grid-template-columns:repeat(3,1fr)}}
+.tc{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r-xl);
+  padding:18px 16px;position:relative;overflow:hidden;transition:all var(--fast) var(--ease)}
+.tc::before{content:'';position:absolute;top:0;inset-inline:0;height:2px;background:var(--grad-acc);
+  transform:scaleX(0);transition:transform var(--mid);transform-origin:right}
+.tc:hover::before{transform:scaleX(1)}
+.tc:hover{border-color:rgba(255,215,0,.22);transform:translateY(-3px);box-shadow:0 14px 40px rgba(0,0,0,.4)}
+.tc-head{display:flex;align-items:center;gap:11px;margin-bottom:14px}
+.tc-av{width:42px;height:42px;border-radius:50%;background:var(--grad-boss);
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.05rem;color:#fff;flex-shrink:0}
+.tc-name{font-family:var(--f-disp);font-weight:800;font-size:.92rem}
+.tc-user{font-size:.7rem;color:var(--tm);margin-top:2px}
+.tc-badge{margin-right:auto;font-size:.62rem;font-weight:700;padding:2px 7px;border-radius:var(--r-full)}
+.b-on{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.25);color:var(--ok)}
+.b-off{background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.2);color:var(--err)}
+.tc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px}
+.tcs{text-align:center;padding:8px 4px;border-radius:var(--r-sm);background:rgba(255,255,255,.03);border:1px solid var(--bdr)}
+.tcs-v{font-family:var(--f-disp);font-size:1.05rem;font-weight:800}
+.tcs-l{font-size:.56rem;font-weight:600;color:var(--tm)}
+.cv-gold{color:var(--gold)}.cv-ok{color:var(--ok)}.cv-err{color:var(--err)}
+.tc-btns{display:flex;gap:6px;flex-wrap:wrap}
+.tc-joined{font-size:.64rem;color:var(--tm);margin-top:10px;padding-top:10px;border-top:1px solid var(--bdr)}
+.toolbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.srch-wrap{position:relative;flex:1;min-width:160px}
+.srch-wrap .si{position:absolute;right:11px;top:50%;transform:translateY(-50%);
+  width:14px;height:14px;color:var(--tm);pointer-events:none}
+.srch{width:100%;height:40px;padding:0 12px 0 36px;background:rgba(255,255,255,.05);
+  border:1px solid var(--bdr);border-radius:var(--r-full);color:var(--tp);
+  font-size:.84rem;outline:none;direction:rtl}
+.srch:focus{border-color:rgba(255,215,0,.38)}
+.srch::placeholder{color:var(--tm)}
+.tbl{width:100%;border-collapse:collapse;font-size:.8rem}
+.tbl th{padding:9px 11px;text-align:right;font-weight:700;font-size:.7rem;color:var(--tm);border-bottom:1px solid var(--bdr)}
+.tbl td{padding:11px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--ts)}
+.tbl tr:hover td{background:rgba(255,255,255,.02);color:var(--tp)}
+.sid{font-family:var(--f-disp);font-weight:700;color:var(--gold);font-size:.78rem}
+.nm{font-weight:700;color:var(--tp)}
+.bdg{display:inline-flex;align-items:center;padding:2px 7px;border-radius:var(--r-full);font-size:.66rem;font-weight:700}
+.bdg-on{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.25);color:var(--ok)}
+.bdg-off{background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.2);color:var(--err)}
+.no-data{text-align:center;padding:36px;color:var(--tm);font-size:.85rem}
+.pag{display:flex;justify-content:center;gap:7px;margin-top:14px}
+.pg-btn{width:30px;height:30px;border-radius:var(--r-sm);display:flex;align-items:center;
+  justify-content:center;font-size:.78rem;font-weight:700;color:var(--tm);
+  background:var(--surf);border:1px solid var(--bdr);transition:all var(--fast)}
+.pg-btn:hover{color:var(--gold);border-color:rgba(255,215,0,.3)}
+.pg-btn.active{background:var(--grad-acc);color:#fff;border-color:transparent}
+.act-btns{display:flex;gap:4px}
+.act-btn{padding:4px 8px;border-radius:var(--r-sm);font-size:.7rem;font-weight:700;
+  display:inline-flex;align-items:center;gap:3px;transition:all var(--fast)}
+.act-btn svg{width:11px;height:11px}
+.ab-view{color:var(--cyan);background:rgba(0,200,255,.07);border:1px solid rgba(0,200,255,.2)}
+.ab-view:hover{background:rgba(0,200,255,.15)}
+.mo{position:fixed;inset:0;z-index:150;background:rgba(0,0,0,.8);backdrop-filter:blur(14px);
+  display:flex;align-items:center;justify-content:center;padding:16px;
+  opacity:0;pointer-events:none;transition:opacity var(--mid)}
+.mo.show{opacity:1;pointer-events:all}
+.mo-card{width:100%;max-width:540px;background:#080e1c;border:1px solid var(--bdr);
+  border-radius:var(--r-xl);padding:26px 22px;max-height:90dvh;overflow-y:auto;
+  position:relative;transform:translateY(16px);transition:transform var(--mid) var(--ease)}
+.mo.show .mo-card{transform:translateY(0)}
+.mo-card::before{content:'';position:absolute;top:0;inset-inline:0;height:2px;
+  background:var(--grad-boss);border-radius:var(--r-xl) var(--r-xl) 0 0}
+.mo-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.mo-title{font-family:var(--f-disp);font-size:1rem;font-weight:800;display:flex;align-items:center;gap:8px}
+.mo-title svg{width:15px;height:15px;color:var(--gold)}
+.mo-close{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.06);
+  display:flex;align-items:center;justify-content:center;color:var(--ts);transition:all var(--fast)}
+.mo-close:hover{background:rgba(255,77,109,.15);color:var(--err)}
+.mo-close svg{width:13px;height:13px}
+.detail-row{display:flex;gap:8px;margin-bottom:8px;font-size:.82rem}
+.dr-label{color:var(--tm);font-weight:700;min-width:110px;flex-shrink:0}
+.dr-val{color:var(--tp);font-weight:600}
+.att-cal{margin-top:16px}
+.att-cal-title{font-size:.78rem;font-weight:800;color:var(--ts);margin-bottom:10px;
+  display:flex;align-items:center;gap:6px}
+.att-cal-title svg{width:13px;height:13px;color:var(--gold)}
+.att-month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.att-month-nav-btn{width:30px;height:30px;border-radius:var(--r-sm);
+  background:var(--surf2);border:1px solid var(--bdr);color:var(--ts);
+  font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all var(--fast)}
+.att-month-nav-btn:hover:not(:disabled){color:var(--gold);border-color:rgba(255,215,0,.3)}
+.att-month-nav-btn:disabled{opacity:.2;pointer-events:none}
+.att-month-lbl{font-family:var(--f-disp);font-weight:800;font-size:.88rem}
+.att-stats{display:flex;gap:6px;margin-bottom:10px}
+.att-stat{flex:1;text-align:center;padding:6px 4px;border-radius:var(--r-sm);font-size:.72rem;font-weight:700}
+.as-p{background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);color:var(--ok)}
+.as-a{background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.18);color:var(--err)}
+.as-r{background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.18);color:var(--gold)}
+.att-day-hd{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:2px}
+.att-day-h{text-align:center;font-size:.52rem;font-weight:700;color:var(--tm)}
+.att-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.att-cell{min-height:36px;border-radius:5px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;border:1px solid transparent;font-size:.7rem}
+.att-cell.empty{background:transparent;border-color:transparent}
+.att-cell.rest{background:rgba(255,255,255,.015);opacity:.25}
+.att-cell.upcoming{background:rgba(255,215,0,.04);border-color:rgba(255,215,0,.1)}
+.att-cell.today-c{background:rgba(255,215,0,.1);border-color:var(--gold)}
+.att-cell.present{background:rgba(0,229,160,.09);border-color:rgba(0,229,160,.3)}
+.att-cell.absent{background:rgba(255,77,109,.1);border-color:rgba(255,77,109,.3)}
+.att-cell.makeup{background:rgba(255,159,67,.1);border-color:rgba(255,159,67,.35)}
+.ac-num{font-family:var(--f-disp);font-weight:800;font-size:.72rem;line-height:1.1}
+.att-cell.today-c .ac-num{color:#fff}
+.att-cell.present .ac-num{color:var(--ok)}
+.att-cell.absent .ac-num{color:var(--err)}
+.att-cell.makeup .ac-num{color:#ff9f43}
+.att-cell.upcoming .ac-num{color:var(--tp)}
+.ac-ic{font-size:.55rem;font-weight:900;line-height:1;margin-top:1px}
+.confirm-overlay{position:fixed;inset:0;z-index:160;background:rgba(0,0,0,.82);
+  backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;
+  padding:20px;opacity:0;pointer-events:none;transition:opacity var(--mid)}
+.confirm-overlay.show{opacity:1;pointer-events:all}
+.confirm-card{width:100%;max-width:400px;background:#0c1220;border:1px solid var(--bdr);
+  border-radius:var(--r-xl);padding:26px 22px;
+  transform:scale(.9);transition:transform var(--mid) var(--spring)}
+.confirm-overlay.show .confirm-card{transform:scale(1)}
+.confirm-card::before{content:'';position:absolute;display:none}
+.cc-title{font-family:var(--f-disp);font-size:1rem;font-weight:800;margin-bottom:16px;
+  display:flex;align-items:center;gap:8px}
+.cc-title svg{width:15px;height:15px;color:var(--gold)}
+.cc-btns{display:flex;gap:8px;margin-top:16px}
+.btn-cancel{flex:1;padding:11px;border-radius:var(--r-md);font-weight:800;font-size:.85rem;
+  background:rgba(255,255,255,.05);border:1px solid var(--bdr);color:var(--ts);transition:all var(--fast)}
+.btn-cancel:hover{background:rgba(255,255,255,.09)}
+.del-overlay{position:fixed;inset:0;z-index:170;background:rgba(0,0,0,.84);
+  backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:center;
+  padding:20px;opacity:0;pointer-events:none;transition:opacity var(--mid)}
+.del-overlay.show{opacity:1;pointer-events:all}
+.del-card{width:100%;max-width:360px;background:#12060e;border:1px solid rgba(255,77,109,.3);
+  border-radius:var(--r-xl);padding:28px 22px;text-align:center;
+  transform:scale(.9);transition:transform var(--mid) var(--spring)}
+.del-overlay.show .del-card{transform:scale(1)}
+.del-ic{width:50px;height:50px;border-radius:50%;background:rgba(255,77,109,.1);
+  border:1px solid rgba(255,77,109,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.del-ic svg{width:20px;height:20px;color:var(--err)}
+.del-title{font-family:var(--f-disp);font-size:1rem;font-weight:800;margin-bottom:7px}
+.del-msg{font-size:.8rem;color:var(--ts);margin-bottom:18px;line-height:1.6}
+.del-name{font-weight:800;color:var(--err)}
+.del-btns{display:flex;gap:8px}
+.btn-do-del{flex:1;padding:11px;border-radius:var(--r-md);font-weight:800;font-size:.85rem;
+  background:var(--err);color:#fff;border:none;transition:all var(--fast)}
+.btn-do-del:hover{background:#ff2248;box-shadow:0 0 20px rgba(255,77,109,.4)}
+#loginScreen{position:fixed;inset:0;z-index:200;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;padding:20px}
+.login-card{width:100%;max-width:370px;background:var(--surf);
+  backdrop-filter:blur(40px);border:1px solid rgba(255,215,0,.14);border-radius:var(--r-xl);
+  padding:34px 26px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.login-card::before{content:'';position:absolute;top:0;inset-inline:0;height:2px;background:var(--grad-boss)}
+.ll{text-align:center;margin-bottom:22px}
+.ll-ic{width:58px;height:58px;border-radius:16px;background:var(--grad-boss);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 11px;
+  box-shadow:0 0 22px rgba(255,160,0,.4)}
+.ll-ic svg{width:26px;height:26px;color:#fff}
+.ll h1{font-family:var(--f-disp);font-size:1.45rem;font-weight:800;
+  background:var(--grad-acc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ll p{font-size:.8rem;color:var(--ts);margin-top:3px}
+.lf{display:flex;flex-direction:column;gap:5px;margin-bottom:13px}
+.lf label{font-size:.76rem;font-weight:700;color:var(--ts)}
+.lerr{display:none;align-items:center;gap:6px;padding:9px 13px;border-radius:var(--r-sm);
+  background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.2);font-size:.76rem;color:var(--err);margin-bottom:6px}
+.lerr.show{display:flex}
+.lerr svg{width:13px;height:13px;flex-shrink:0}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(14px);
+  z-index:300;display:flex;align-items:center;gap:9px;padding:10px 20px;
+  border-radius:var(--r-full);font-size:.83rem;font-weight:700;backdrop-filter:blur(20px);
+  opacity:0;pointer-events:none;transition:opacity var(--mid),transform var(--mid)}
+.toast.ok{background:rgba(0,229,160,.12);border:1px solid rgba(0,229,160,.3);color:var(--ok)}
+.toast.er{background:rgba(255,77,109,.12);border:1px solid rgba(255,77,109,.3);color:var(--err)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.report-filters{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:flex-end}
+.sess-filter-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.sfp{padding:7px 14px;border-radius:var(--r-full);font-size:.76rem;font-weight:800;
+  border:1.5px solid var(--bdr);color:var(--tm);background:var(--surf);cursor:pointer;transition:all var(--fast)}
+.sfp.active-all{border-color:var(--gold);background:rgba(255,215,0,.1);color:var(--gold)}
+.sfp.active-8{border-color:var(--cyan);background:rgba(0,200,255,.1);color:var(--cyan)}
+.sfp.active-12{border-color:var(--ok);background:rgba(0,229,160,.1);color:var(--ok)}
+.sfp.active-24{border-color:var(--warn);background:rgba(255,181,71,.1);color:var(--warn)}
+.sfp:hover{color:var(--tp)}
+.report-summary{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:20px}
+@media(min-width:480px){.report-summary{grid-template-columns:repeat(4,1fr)}}
+.rs{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r-md);padding:13px 10px;text-align:center}
+.rs-v{font-family:var(--f-disp);font-size:1.5rem;font-weight:800}
+.rs-l{font-size:.62rem;font-weight:600;color:var(--tm);margin-top:2px}
+.rs-all .rs-v{color:var(--gold)} .rs-8 .rs-v{color:var(--cyan)}
+.rs-12 .rs-v{color:var(--ok)}   .rs-24 .rs-v{color:var(--warn)}
+.rs-active .rs-v{color:var(--ok)} .rs-inactive .rs-v{color:var(--err)}
+.report-month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.rmnb{width:34px;height:34px;border-radius:var(--r-sm);background:var(--surf2);border:1px solid var(--bdr);
+  color:var(--ts);font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all var(--fast)}
+.rmnb:hover:not(:disabled){color:var(--gold);border-color:rgba(255,215,0,.3)}
+.rmnb:disabled{opacity:.2;pointer-events:none}
+.rml{font-family:var(--f-disp);font-weight:800;font-size:.95rem}
+.expiry-badge{font-size:.62rem;font-weight:700;padding:2px 6px;border-radius:var(--r-full)}
+.exp-ok{background:rgba(0,229,160,.1);color:var(--ok);border:1px solid rgba(0,229,160,.2)}
+.exp-warn{background:rgba(255,181,71,.1);color:var(--warn);border:1px solid rgba(255,181,71,.25)}
+.exp-over{background:rgba(255,77,109,.1);color:var(--err);border:1px solid rgba(255,77,109,.22)}
+.sess-tag{font-size:.64rem;font-weight:800;padding:2px 8px;border-radius:var(--r-full)}
+.s8{background:rgba(0,200,255,.1);color:var(--cyan);border:1px solid rgba(0,200,255,.2)}
+.s12{background:rgba(0,229,160,.1);color:var(--ok);border:1px solid rgba(0,229,160,.2)}
+.s24{background:rgba(255,181,71,.1);color:var(--warn);border:1px solid rgba(255,181,71,.22)}
+.btn-warn{padding:7px 14px;border-radius:var(--r-full);font-size:.76rem;font-weight:700;
+  color:var(--warn);background:rgba(255,181,71,.07);border:1px solid rgba(255,181,71,.22);
+  transition:all var(--fast);display:inline-flex;align-items:center;gap:5px}
+.btn-warn:hover{background:rgba(255,181,71,.14)}
+.btn-warn svg{width:12px;height:12px}
+.fc-sm{height:40px;padding:0 10px;font-size:.78rem;border-radius:var(--r-full);width:auto}
+.ab-edit{color:var(--warn);background:rgba(255,181,71,.07);border:1px solid rgba(255,181,71,.22)}
+.ab-edit:hover{background:rgba(255,181,71,.15)}
+.ab-del{color:var(--err);background:rgba(255,77,109,.07);border:1px solid rgba(255,77,109,.2)}
+.ab-del:hover{background:rgba(255,77,109,.15)}
+  </style>
+</head>
+<body>
+<div class="orb o1"></div><div class="orb o2"></div>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="ll">
+      <div class="ll-ic"><i data-lucide="crown"></i></div>
+      <h1>Boss Panel</h1>
+      <p>لوحة تحكم المدير العام</p>
+    </div>
+    <div class="lerr" id="loginErr"><i data-lucide="alert-circle"></i><span id="loginErrMsg">خطأ</span></div>
+    <div class="lf"><label>اسم المستخدم</label>
+      <input type="text" id="loginUser" class="fc" placeholder="boss"/></div>
+    <div class="lf"><label>كلمة المرور</label>
+      <input type="password" id="loginPass" class="fc" placeholder="••••••"/></div>
+    <button class="btn-gold full" id="loginBtn">
+      <i data-lucide="crown"></i><span id="loginBtnTxt">دخول</span>
+    </button>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="nav" id="mainNav" style="display:none">
+  <div class="nav-brand">
+    <span class="brand-ic"><i data-lucide="crown"></i></span>
+    <span class="brand-nm">AquaElite</span>
+    <span class="boss-pill">BOSS</span>
+  </div>
+  <div class="nav-right">
+    <div class="boss-av" id="bossAv">B</div>
+    <span id="bossNm">Boss</span>
+    <button id="logoutBtn"><i data-lucide="log-out"></i> خروج</button>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="wrap" id="mainApp" style="display:none">
+
+  <div class="stats-row">
+    <div class="stat"><div class="stat-v" id="gTotal">—</div><div class="stat-l">إجمالي المشتركين</div></div>
+    <div class="stat"><div class="stat-v" id="gActive">—</div><div class="stat-l">نشطون</div></div>
+    <div class="stat"><div class="stat-v" id="gInactive">—</div><div class="stat-l">منتهية</div></div>
+    <div class="stat"><div class="stat-v" id="gTrainers">—</div><div class="stat-l">الكابتنات</div></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tb active" data-tab="trainers"><i data-lucide="users"></i> الكابتنات</button>
+    <button class="tb" data-tab="swimmers"><i data-lucide="person-standing"></i> كل المشتركين</button>
+    <button class="tb" data-tab="report"><i data-lucide="bar-chart-2"></i> التقرير</button>
+    <button class="tb" data-tab="users"><i data-lucide="users-round"></i> المستخدمون</button>
+    <button class="tb" data-tab="add-trainer"><i data-lucide="user-plus"></i> كابتن جديد</button>
+  </div>
+
+  <!-- ══ TRAINERS ══ -->
+  <div class="panel active" id="panel-trainers">
+    <div class="tg" id="trainersGrid">
+      <div style="color:var(--tm);font-size:.84rem;padding:20px">جاري التحميل...</div>
+    </div>
+  </div>
+
+  <!-- ══ ALL SWIMMERS ══ -->
+  <div class="panel" id="panel-swimmers">
+    <div class="gc">
+      <div class="gc-title"><i data-lucide="person-standing"></i> كل المشتركين</div>
+      <div class="toolbar">
+        <div class="srch-wrap">
+          <i data-lucide="search" class="si"></i>
+          <input type="text" class="srch" id="allSearch" placeholder="ابحث بالاسم أو رقم الاشتراك..."/>
+        </div>
+        <select class="fc fc-sm" id="sessFilter">
+          <option value="">كل الحصص</option>
+          <option value="8">8 حصص</option>
+          <option value="12">12 حصة</option>
+          <option value="24">24 حصة</option>
+        </select>
+        <select class="fc fc-sm" id="statusFilter">
+          <option value="">كل الحالات</option>
+          <option value="active">نشط</option>
+          <option value="inactive">منتهي</option>
+        </select>
+        <select class="fc fc-sm" id="trainerFilter">
+          <option value="">كل الكابتنات</option>
+        </select>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead><tr>
+            <th>رقم الاشتراك</th><th>الاسم</th><th>العمر</th><th>الكابتن</th>
+            <th>الحصص</th><th>الحضور</th><th>انتهاء</th><th>الحالة</th><th></th>
+          </tr></thead>
+          <tbody id="allSwimmersBody"></tbody>
+        </table>
+      </div>
+      <div class="pag" id="allPag"></div>
+    </div>
+  </div>
+
+  <!-- ══ USERS ══ -->
+  <div class="panel" id="panel-users">
+    <div class="gc">
+      <div class="gc-title"><i data-lucide="users-round"></i> كل المستخدمين (سباحون + كابتنات)</div>
+
+      <!-- Sub-tabs -->
+      <div class="tabs" style="margin-bottom:16px;max-width:320px">
+        <button class="tb active" id="usersTabSw" onclick="switchUsersTab('swimmers')" style="font-size:.74rem;padding:7px 10px">
+          <i data-lucide="person-standing"></i> سباحون
+        </button>
+        <button class="tb" id="usersTabTr" onclick="switchUsersTab('trainers')" style="font-size:.74rem;padding:7px 10px">
+          <i data-lucide="shield-check"></i> كابتنات
+        </button>
+      </div>
+
+      <!-- Swimmer users -->
+      <div id="swimmerUsersWrap">
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr>
+              <th>اسم المستخدم</th><th>الاسم</th><th>الهاتف</th>
+              <th>المشتركون</th><th>الحالة</th><th>تاريخ التسجيل</th><th></th>
+            </tr></thead>
+            <tbody id="swimUserBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ✅ FIX: Trainer users wrap (كان مش موجود) -->
+      <div id="trainerUsersWrap" style="display:none">
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr>
+              <th>اسم المستخدم</th><th>الاسم</th><th>الدور</th>
+              <th>المشتركون</th><th>الحالة</th><th>تاريخ الانضمام</th><th></th>
+            </tr></thead>
+            <tbody id="trainerUserBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ REPORT ══ -->
+  <div class="panel" id="panel-report">
+    <div class="gc">
+      <div class="gc-title"><i data-lucide="bar-chart-2"></i> التقرير الشهري</div>
+      <div class="report-month-nav">
+        <button class="rmnb" id="rPrevMon">›</button>
+        <span class="rml" id="rMonLbl">—</span>
+        <button class="rmnb" id="rNextMon">‹</button>
+      </div>
+      <div class="sess-filter-pills">
+        <button class="sfp active-all" data-sess="all">الكل</button>
+        <button class="sfp" data-sess="8">8 حصص</button>
+        <button class="sfp" data-sess="12">12 حصة</button>
+        <button class="sfp" data-sess="24">24 حصة</button>
+      </div>
+      <div class="report-summary">
+        <div class="rs rs-all"><div class="rs-v" id="rAll">—</div><div class="rs-l">إجمالي</div></div>
+        <div class="rs rs-active"><div class="rs-v" id="rActive">—</div><div class="rs-l">نشط</div></div>
+        <div class="rs rs-inactive"><div class="rs-v" id="rInactive">—</div><div class="rs-l">منتهي</div></div>
+        <div class="rs rs-8" style="border-color:rgba(255,181,71,.2)"><div class="rs-v" id="rExpiring" style="color:var(--warn)">—</div><div class="rs-l">ينتهي خلال 30 يوم</div></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+        <div class="rs rs-8" style="flex:1;min-width:80px"><div class="rs-v" id="rC8">—</div><div class="rs-l">8 حصص</div></div>
+        <div class="rs rs-12" style="flex:1;min-width:80px"><div class="rs-v" id="rC12">—</div><div class="rs-l">12 حصة</div></div>
+        <div class="rs rs-24" style="flex:1;min-width:80px"><div class="rs-v" id="rC24">—</div><div class="rs-l">24 حصة</div></div>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead><tr>
+            <th>رقم الاشتراك</th><th>الاسم</th><th>الكابتن</th>
+            <th>الحصص</th><th>الحضور</th><th>انتهاء الاشتراك</th><th>الحالة</th>
+          </tr></thead>
+          <tbody id="reportBody"></tbody>
+        </table>
+      </div>
+      <div class="pag" id="reportPag"></div>
+    </div>
+  </div>
+
+  <!-- ══ ADD TRAINER ══ -->
+  <div class="panel" id="panel-add-trainer">
+    <div class="gc">
+      <div class="gc-title"><i data-lucide="user-plus"></i> إضافة كابتن جديد</div>
+      <div class="fg fg2" style="gap:14px">
+        <div class="fld"><label>الاسم الكامل</label>
+          <input type="text" class="fc" id="new_name" placeholder="محمد أحمد"/></div>
+        <div class="fld"><label>اسم المستخدم</label>
+          <input type="text" class="fc" id="new_user" placeholder="captain_mohamed"/></div>
+        <div class="fld"><label>كلمة المرور</label>
+          <input type="password" class="fc" id="new_pass" placeholder="6 أحرف على الأقل"/></div>
+        <div class="fld"><label>تأكيد كلمة المرور</label>
+          <input type="password" class="fc" id="new_pass2" placeholder="أعد كتابة الباسورد"/></div>
+      </div>
+      <button class="btn-gold full" id="addTrainerBtn" style="max-width:260px;margin-top:18px">
+        <i data-lucide="user-plus"></i><span>إنشاء الحساب</span>
+      </button>
+    </div>
+  </div>
+
+</main>
+
+<!-- ══ SWIMMER DETAIL MODAL ══ -->
+<div class="mo" id="swimmerModal">
+  <div class="mo-card">
+    <div class="mo-hd">
+      <div class="mo-title"><i data-lucide="person-standing"></i> تفاصيل المشترك</div>
+      <button class="mo-close" id="closeSwimmer"><i data-lucide="x"></i></button>
+    </div>
+    <div id="swimmerDetail"></div>
+  </div>
+</div>
+
+<!-- ══ EDIT SWIMMER MODAL ══ -->
+<div class="confirm-overlay" id="editSwimmerModal">
+  <div class="confirm-card">
+    <div class="cc-title"><i data-lucide="pencil"></i> تعديل بيانات المشترك</div>
+    <div class="fg fg2" style="gap:12px">
+      <div class="fld"><label>الاسم</label><input type="text" class="fc" id="es_name"/></div>
+      <div class="fld"><label>الهاتف</label><input type="text" class="fc" id="es_phone"/></div>
+      <div class="fld"><label>وقت التدريب</label>
+        <select class="fc" id="es_time">
+          <option value="">بدون</option>
+          <option>06:00 ص</option><option>07:00 ص</option><option>08:00 ص</option>
+          <option>09:00 ص</option><option>10:00 ص</option><option>04:00 م</option>
+          <option>05:00 م</option><option>06:00 م</option><option>07:00 م</option>
+        </select></div>
+      <div class="fld"><label>الهدف</label>
+        <select class="fc" id="es_goal">
+          <option value="">—</option>
+          <option value="fitness">اللياقة البدنية</option>
+          <option value="competition">المنافسات</option>
+          <option value="safety">الأمان في الماء</option>
+          <option value="fun">الترفيه والمتعة</option>
+        </select></div>
+      <div class="fld"><label>الحالة</label>
+        <select class="fc" id="es_active">
+          <option value="true">نشط ✓</option><option value="false">منتهي ✕</option>
+        </select></div>
+      <div class="fld"><label>انتهاء الاشتراك</label>
+        <input type="date" class="fc" id="es_expiry"/></div>
+      <div class="fld" style="grid-column:1/-1"><label>المدرب المسؤول</label>
+        <input type="text" class="fc" id="es_trainer"/></div>
+    </div>
+    <div class="cc-btns">
+      <button class="btn-cancel" id="closeEditSwimmer">إلغاء</button>
+      <button class="btn-gold" id="saveSwimmerBtn"><i data-lucide="save"></i> حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EDIT TRAINER MODAL ══ -->
+<div class="confirm-overlay" id="editModal">
+  <div class="confirm-card">
+    <div class="cc-title"><i data-lucide="pencil"></i> تعديل بيانات الكابتن</div>
+    <div class="fg fg2" style="gap:12px">
+      <div class="fld"><label>الاسم</label><input type="text" class="fc" id="e_name"/></div>
+      <div class="fld"><label>اسم المستخدم</label><input type="text" class="fc" id="e_user"/></div>
+      <div class="fld" style="grid-column:1/-1"><label>الحالة</label>
+        <select class="fc" id="e_active">
+          <option value="true">نشط ✓</option><option value="false">محظور ✕</option>
+        </select></div>
+    </div>
+    <div class="cc-title" style="margin-top:18px;margin-bottom:12px"><i data-lucide="key"></i> تغيير كلمة المرور (اختياري)</div>
+    <div class="fg fg2" style="gap:12px">
+      <div class="fld"><label>كلمة المرور الجديدة</label>
+        <input type="password" class="fc" id="e_pass" placeholder="اتركه فارغاً إذا لم تغيّره"/></div>
+      <div class="fld"><label>تأكيد كلمة المرور</label>
+        <input type="password" class="fc" id="e_pass2" placeholder="تأكيد"/></div>
+    </div>
+    <div class="cc-btns">
+      <button class="btn-cancel" id="closeEdit">إلغاء</button>
+      <button class="btn-gold" id="saveEditBtn"><i data-lucide="save"></i> حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EDIT SWIMMER USER MODAL ══ -->
+<div class="confirm-overlay" id="editUserModal">
+  <div class="confirm-card" style="max-width:420px">
+    <div class="cc-title"><i data-lucide="pencil"></i> تعديل حساب السباح</div>
+    <div class="fg fg2" style="gap:12px">
+      <div class="fld"><label>اسم المستخدم</label><input type="text" class="fc" id="eu_user"/></div>
+      <div class="fld"><label>الاسم</label><input type="text" class="fc" id="eu_name"/></div>
+      <div class="fld"><label>الهاتف</label><input type="text" class="fc" id="eu_phone"/></div>
+      <div class="fld"><label>الحالة</label>
+        <select class="fc" id="eu_active">
+          <option value="true">نشط ✓</option><option value="false">محظور ✕</option>
+        </select></div>
+      <div class="fld" style="grid-column:1/-1">
+        <label>كلمة مرور جديدة (اتركه فارغاً إذا لم تغيّره)</label>
+        <input type="password" class="fc" id="eu_pass" placeholder="6 أحرف على الأقل"/></div>
+    </div>
+    <div class="cc-btns">
+      <button class="btn-cancel" id="closeEditUser">إلغاء</button>
+      <button class="btn-gold" id="saveUserBtn"><i data-lucide="save"></i> حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DELETE TRAINER CONFIRM ══ -->
+<div class="del-overlay" id="delModal">
+  <div class="del-card">
+    <div class="del-ic"><i data-lucide="trash-2"></i></div>
+    <div class="del-title">تأكيد حذف الكابتن</div>
+    <div class="del-msg">هل تريد حذف الكابتن <span class="del-name" id="delName">—</span>؟<br/>
+      سيتم فصل مشتركيه عن حسابه (لن يُحذفوا).</div>
+    <div class="del-btns">
+      <button class="btn-cancel" id="cancelDel">إلغاء</button>
+      <!-- ✅ FIX: كانت doConfirmDelete وهي مش موجودة -->
+      <button class="btn-do-del" id="doDel">
+        <i data-lucide="trash-2" style="width:13px;height:13px;vertical-align:middle;margin-left:4px"></i>حذف
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DELETE UNIVERSAL CONFIRM (سباح أو يوزر) ══ -->
+<div class="del-overlay" id="confirmModal">
+  <div class="del-card">
+    <div class="del-ic"><i data-lucide="trash-2"></i></div>
+    <div class="del-title" id="confirmTitle">تأكيد الحذف</div>
+    <div class="del-msg">هل تريد حذف <span class="del-name" id="confirmName">—</span>؟<br/>
+      <span id="confirmSubMsg">سيتم حذف جميع سجلات الحضور.</span></div>
+    <div class="del-btns">
+      <button class="btn-cancel" onclick="closeModal('confirmModal')">إلغاء</button>
+      <!-- ✅ FIX: doConfirmUserDelete تتعامل مع كل أنواع الحذف -->
+      <button class="btn-do-del" onclick="doConfirmUserDelete()">
+        <i data-lucide="trash-2" style="width:12px;height:12px;vertical-align:middle;margin-left:3px"></i>حذف
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RATING MODAL (Boss) ══ -->
+<div class="confirm-overlay" id="bossRatingModal">
+  <div class="confirm-card" style="max-width:400px">
+    <div class="cc-title"><i data-lucide="star"></i> تقييم السباح: <span id="bRatingName"></span></div>
+    <div style="margin-bottom:12px;font-size:.8rem;color:var(--ts)">اختر التقييم من 1 إلى 5 نجوم</div>
+    <div style="display:flex;flex-direction:row-reverse;gap:4px;margin-bottom:12px">
+      <input type="radio" name="bstar" value="5" id="bs5" style="display:none"/>
+      <label for="bs5" class="bstar-lbl" style="font-size:2rem;cursor:pointer;color:rgba(255,255,255,.15);transition:color .15s;user-select:none">★</label>
+      <input type="radio" name="bstar" value="4" id="bs4" style="display:none"/>
+      <label for="bs4" class="bstar-lbl" style="font-size:2rem;cursor:pointer;color:rgba(255,255,255,.15);transition:color .15s;user-select:none">★</label>
+      <input type="radio" name="bstar" value="3" id="bs3" style="display:none"/>
+      <label for="bs3" class="bstar-lbl" style="font-size:2rem;cursor:pointer;color:rgba(255,255,255,.15);transition:color .15s;user-select:none">★</label>
+      <input type="radio" name="bstar" value="2" id="bs2" style="display:none"/>
+      <label for="bs2" class="bstar-lbl" style="font-size:2rem;cursor:pointer;color:rgba(255,255,255,.15);transition:color .15s;user-select:none">★</label>
+      <input type="radio" name="bstar" value="1" id="bs1" style="display:none"/>
+      <label for="bs1" class="bstar-lbl" style="font-size:2rem;cursor:pointer;color:rgba(255,255,255,.15);transition:color .15s;user-select:none">★</label>
+    </div>
+    <style>
+      .bstar-lbl:hover,.bstar-lbl:hover~.bstar-lbl{color:#ffd700!important}
+      input[name="bstar"]:checked~.bstar-lbl{color:#ffd700!important}
+    </style>
+    <div class="fld"><label>ملاحظة (اختياري)</label>
+      <input type="text" class="fc" id="bRatingNote" placeholder="مثال: أداء ممتاز..."/></div>
+    <div class="cc-btns" style="margin-top:14px">
+      <button class="btn-cancel" id="closeBossRating">إلغاء</button>
+      <button class="btn-gold" id="saveBossRatingBtn"><i data-lucide="star"></i> حفظ</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i data-lucide="check-circle-2"></i><span id="toastMsg">تم</span></div>
+
+<script>
+/* ════ CONFIG ════ */
+const API    = 'http://localhost:5000/api';
+const GOALS  = {fitness:'اللياقة',competition:'المنافسات',safety:'الأمان',fun:'الترفيه'};
+const MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const DAYS   = ['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'];
+
+let token = localStorage.getItem('boss_token') || null;
+let boss  = null;
+
+let allPage = 1;
+let editId = null, delId = null, delTrainerName = '';
+let detailSwimmer = null, detailYear = new Date().getFullYear(), detailMonth = new Date().getMonth()+1;
+
+/* ════ BOOT ════ */
+document.addEventListener('DOMContentLoaded', () => {
+  lucide.createIcons();
+  token ? initApp() : showLogin();
+  bindUI();
+});
+
+function bindUI() {
+  $('loginBtn').onclick  = doLogin;
+  $('loginPass').addEventListener('keydown', e => e.key==='Enter' && doLogin());
+  $('logoutBtn').onclick = doLogout;
+
+  document.querySelectorAll('.tb').forEach(b => {
+    if (b.dataset.tab) b.addEventListener('click', () => switchTab(b.dataset.tab));
+  });
+
+  let dAll;
+  $('allSearch').addEventListener('input', e => {
+    clearTimeout(dAll); dAll = setTimeout(() => { allPage=1; loadAllSwimmers(); }, 380);
+  });
+  $('trainerFilter').addEventListener('change', () => { allPage=1; loadAllSwimmers(); });
+  ['sessFilter','statusFilter'].forEach(id => {
+    const el = $(id);
+    if (el) el.addEventListener('change', () => { allPage=1; loadAllSwimmers(); });
+  });
+
+  $('addTrainerBtn').onclick = doAddTrainer;
+
+  $('closeSwimmer').onclick = () => closeModal('swimmerModal');
+  $('swimmerModal').addEventListener('click', e => e.target===e.currentTarget && closeModal('swimmerModal'));
+
+  $('closeEdit').onclick   = () => closeModal('editModal');
+  $('saveEditBtn').onclick = doSaveEdit;
+
+  // ✅ FIX: كانت doConfirmDelete — استبدلناها بـ doDeleteTrainer
+  $('cancelDel').onclick = () => closeModal('delModal');
+  $('doDel').onclick     = doDeleteTrainer;
+
+  $('closeEditSwimmer').onclick = () => closeModal('editSwimmerModal');
+  $('saveSwimmerBtn').onclick   = doSaveSwimmer;
+
+  $('closeEditUser').onclick = () => closeModal('editUserModal');
+  $('saveUserBtn').onclick   = doSaveUser;
+
+  $('closeBossRating').onclick    = () => closeModal('bossRatingModal');
+  $('saveBossRatingBtn').onclick  = saveBossRating;
+
+  document.querySelectorAll('.sfp').forEach(b =>
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.sfp').forEach(x => x.className='sfp');
+      const s = b.dataset.sess;
+      b.classList.add(s==='all' ? 'active-all' : 'active-'+s);
+      reportSessFilter = s; reportPage = 1;
+      if (allSwimmersCache.length) renderReport();
+    })
+  );
+  $('rPrevMon').onclick = () => navRptMonth(-1);
+  $('rNextMon').onclick = () => navRptMonth(1);
+
+  document.querySelectorAll('input[name="bstar"]').forEach(r =>
+    r.addEventListener('change', updateBossStars)
+  );
+}
+
+/* ════ LOGIN ════ */
+function showLogin() { show('loginScreen'); hide('mainNav'); hide('mainApp'); }
+
+async function doLogin() {
+  const user = $('loginUser').value.trim(), pass = $('loginPass').value;
+  $('loginErr').classList.remove('show');
+  $('loginBtn').classList.add('loading'); $('loginBtnTxt').textContent='جاري الدخول...';
+  try {
+    const res = await api('/auth/login','POST',{username:user,password:pass},false);
+    if (res.trainer?.role !== 'boss') {
+      $('loginErrMsg').textContent = 'هذه الصفحة للـ Boss فقط';
+      $('loginErr').classList.add('show'); return;
+    }
+    token = res.token; boss = res.trainer;
+    localStorage.setItem('boss_token', token);
+    localStorage.setItem('boss_data',  JSON.stringify(boss));
+    initApp();
+  } catch(e) {
+    $('loginErrMsg').textContent = e.message || 'بيانات الدخول غير صحيحة';
+    $('loginErr').classList.add('show');
+  } finally {
+    $('loginBtn').classList.remove('loading'); $('loginBtnTxt').textContent='دخول';
+    lucide.createIcons();
+  }
+}
+
+function doLogout() {
+  token=null; boss=null;
+  localStorage.removeItem('boss_token'); localStorage.removeItem('boss_data');
+  showLogin();
+}
+
+/* ════ INIT ════ */
+function initApp() {
+  if (!boss) { try { boss = JSON.parse(localStorage.getItem('boss_data')); } catch(e){} }
+  hide('loginScreen'); show('mainNav','flex'); show('mainApp','block');
+  $('bossNm').textContent = boss?.name || 'Boss';
+  $('bossAv').textContent = (boss?.name||'B').charAt(0).toUpperCase();
+  lucide.createIcons();
+  loadAll();
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tb[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab===tab));
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id===`panel-${tab}`));
+  if (tab==='swimmers') { allPage=1; loadAllSwimmers(); }
+  if (tab==='report')   { if (!allSwimmersCache.length) loadReportData(); else renderReport(); }
+  if (tab==='users')    { loadSwimmerUsers(); }
+}
+
+/* ════ LOAD ALL ════ */
+async function loadAll() {
+  await Promise.all([loadTrainers(), loadGlobalStats()]);
+}
+
+/* ════ GLOBAL STATS ════ */
+async function loadGlobalStats() {
+  try {
+    const d = await api('/swimmers?limit=9999');
+    const all    = d.data || [];
+    const active = all.filter(s => s.isActive).length;
+    $('gTotal').textContent    = d.total ?? all.length;
+    $('gActive').textContent   = active;
+    $('gInactive').textContent = (d.total ?? all.length) - active;
+  } catch(e) { console.warn(e); }
+}
+
+/* ════ TRAINERS ════ */
+async function loadTrainers() {
+  try {
+    const d    = await api('/auth/trainers');
+    const grid = $('trainersGrid');
+    $('gTrainers').textContent = d.data.length;
+
+    const sel = $('trainerFilter');
+    sel.innerHTML = '<option value="">كل الكابتنات</option>' +
+      d.data.map(t=>`<option value="${t.id}">${t.name}</option>`).join('');
+
+    if (!d.data.length) {
+      grid.innerHTML = '<div style="color:var(--tm);padding:20px;font-size:.84rem">لا يوجد كابتنات بعد</div>';
+      return;
+    }
+
+    grid.innerHTML = d.data.map(t=>`
+      <div class="tc">
+        <div class="tc-head">
+          <div class="tc-av">${(t.name||'K').charAt(0)}</div>
+          <div>
+            <div class="tc-name">${t.name}</div>
+            <div class="tc-user">@${t.username}</div>
+          </div>
+          <span class="tc-badge ${t.isActive?'b-on':'b-off'}">${t.isActive?'● نشط':'● محظور'}</span>
+        </div>
+        <div class="tc-stats">
+          <div class="tcs"><div class="tcs-v cv-gold">${t.total}</div><div class="tcs-l">إجمالي</div></div>
+          <div class="tcs"><div class="tcs-v cv-ok">${t.active}</div><div class="tcs-l">نشط</div></div>
+          <div class="tcs"><div class="tcs-v cv-err">${t.inactive}</div><div class="tcs-l">منتهي</div></div>
+        </div>
+        <div class="tc-btns">
+          <button class="btn-sec" onclick="openEdit('${t.id}','${esc(t.name)}','${esc(t.username)}',${t.isActive})">
+            <i data-lucide="pencil"></i> تعديل
+          </button>
+          <button class="btn-sec" onclick="viewTrainerSwimmers('${t.id}','${esc(t.name)}')">
+            <i data-lucide="users"></i> المشتركون
+          </button>
+          <button class="btn-danger" onclick="askDeleteTrainer('${t.id}','${esc(t.name)}')">
+            <i data-lucide="trash-2"></i> حذف
+          </button>
+        </div>
+        <div class="tc-joined">انضم: ${fmtDate(t.createdAt)}</div>
+      </div>
+    `).join('');
+    lucide.createIcons();
+  } catch(e) { toast(e.message||'خطأ','er'); }
+}
+
+/* ════ ALL SWIMMERS TABLE ════ */
+async function loadAllSwimmers() {
+  const tbody = $('allSwimmersBody');
+  tbody.innerHTML = `<tr><td colspan="9" class="no-data">جاري التحميل...</td></tr>`;
+  try {
+    const search    = $('allSearch').value;
+    const trainerId = $('trainerFilter').value;
+    const sess      = $('sessFilter')?.value || '';
+    const status    = $('statusFilter')?.value || '';
+    const qObj = { search, page: allPage, limit: 20 };
+    if (trainerId) qObj.trainerId     = trainerId;
+    if (sess)      qObj.sessionsCount = sess;
+    if (status)    qObj.isActive      = status === 'active' ? 'true' : 'false';
+    const qs = new URLSearchParams(qObj);
+    const d  = await api(`/swimmers?${qs}`);
+    if (!d.data?.length) {
+      tbody.innerHTML=`<tr><td colspan="9" class="no-data">لا توجد نتائج</td></tr>`;
+      $('allPag').innerHTML=''; return;
+    }
+    tbody.innerHTML = d.data.map(s=>`<tr>
+      <td class="sid">${s.subscriptionId||'—'}</td>
+      <td class="nm">${s.fullName}</td>
+      <td>${s.age??'—'}</td>
+      <td>${s.trainer?.name || s.trainerName || '—'}</td>
+      <td><span class="sess-tag s${s.sessionsCount}">${s.sessionsCount} حصة</span></td>
+      <td>${s.sessionsAttended??0}/${s.sessionsCount??'—'}</td>
+      <td>${s.subscriptionExpiry ? fmtDate(s.subscriptionExpiry) : '—'}</td>
+      <td><span class="bdg ${s.isActive?'bdg-on':'bdg-off'}">${s.isActive?'● نشط':'● منتهي'}</span></td>
+      <td><div class="act-btns">
+        <button class="act-btn ab-view" onclick="viewSwimmerDetail('${s.subscriptionId}')"><i data-lucide="eye"></i></button>
+        <button class="act-btn ab-edit" onclick="openEditSwimmer('${s.subscriptionId}')"><i data-lucide="pencil"></i></button>
+        <button class="act-btn ab-del"  onclick="askDel('swimmer','${s.subscriptionId}','${esc(s.fullName)}')"><i data-lucide="trash-2"></i></button>
+      </div></td>
+    </tr>`).join('');
+    buildPag(d.pages);
+    lucide.createIcons();
+  } catch(e) {
+    tbody.innerHTML=`<tr><td colspan="9" class="no-data">خطأ: ${e.message}</td></tr>`;
+  }
+}
+
+function buildPag(pages) {
+  const el=$('allPag');
+  if (!pages||pages<=1) { el.innerHTML=''; return; }
+  el.innerHTML = Array.from({length:pages},(_,i)=>
+    `<button class="pg-btn${i+1===allPage?' active':''}" onclick="goPage(${i+1})">${i+1}</button>`
+  ).join('');
+}
+function goPage(p) { allPage=p; loadAllSwimmers(); }
+
+function viewTrainerSwimmers(trainerId, name) {
+  switchTab('swimmers');
+  $('trainerFilter').value = trainerId;
+  allPage=1; loadAllSwimmers();
+}
+
+/* ════ SWIMMER DETAIL ════ */
+async function viewSwimmerDetail(subId) {
+  try {
+    const d = await api(`/swimmers/${subId}`);
+    detailSwimmer = d.data;
+    detailYear    = new Date().getFullYear();
+    detailMonth   = new Date().getMonth()+1;
+    renderSwimmerDetail();
+    openModal('swimmerModal');
+    lucide.createIcons();
+    await loadDetailAttendance();
+  } catch(e) { toast(e.message||'خطأ','er'); }
+}
+
+function renderSwimmerDetail() {
+  const s = detailSwimmer;
+  const GOAL_MAP = {fitness:'اللياقة البدنية',competition:'المنافسات',safety:'الأمان في الماء',fun:'الترفيه'};
+  $('swimmerDetail').innerHTML = `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
+      <div style="width:50px;height:50px;border-radius:50%;background:var(--grad-boss);
+        display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.2rem;color:#fff;flex-shrink:0">
+        ${(s.fullName||'?').charAt(0)}
+      </div>
+      <div>
+        <div style="font-family:var(--f-disp);font-weight:800;font-size:1rem">${s.fullName}</div>
+        <div style="font-size:.74rem;color:var(--gold);margin-top:2px">#${s.subscriptionId}</div>
+      </div>
+    </div>
+    <div class="detail-row"><span class="dr-label">العمر</span><span class="dr-val">${s.age ?? '—'} سنة</span></div>
+    <div class="detail-row"><span class="dr-label">الهاتف</span><span class="dr-val">${s.phone||'—'}</span></div>
+    <div class="detail-row"><span class="dr-label">الهدف</span><span class="dr-val">${GOAL_MAP[s.goal]||s.goal||'—'}</span></div>
+    <div class="detail-row"><span class="dr-label">الكابتن</span><span class="dr-val">${s.trainerName||'—'}</span></div>
+    <div class="detail-row"><span class="dr-label">عدد الحصص</span><span class="dr-val">${s.sessionsAttended??0} / ${s.sessionsCount}</span></div>
+    <div class="detail-row"><span class="dr-label">وقت التدريب</span><span class="dr-val">${s.trainingTime||'—'}</span></div>
+    <div class="detail-row"><span class="dr-label">أيام التدريب</span><span class="dr-val">${(s.trainingDays||[]).map(d=>DAYS[d]).join(' — ')||'—'}</span></div>
+    <div class="detail-row"><span class="dr-label">بداية الاشتراك</span><span class="dr-val">${s.subscriptionStart ? fmtDate(s.subscriptionStart) : '—'}</span></div>
+    <div class="detail-row"><span class="dr-label">انتهاء الاشتراك</span><span class="dr-val">${s.subscriptionExpiry ? fmtDate(s.subscriptionExpiry) : '—'}</span></div>
+    <div class="detail-row"><span class="dr-label">الحالة</span>
+      <span class="bdg ${s.isActive?'bdg-on':'bdg-off'}">${s.isActive?'● نشط':'● منتهي'}</span></div>
+    <div class="att-cal">
+      <div class="att-cal-title"><i data-lucide="calendar-check"></i> سجل الحضور</div>
+      <div class="att-month-nav">
+        <button class="att-month-nav-btn" id="detPrevMon" onclick="navDetailMonth(-1)">›</button>
+        <span class="att-month-lbl" id="detMonLbl">—</span>
+        <button class="att-month-nav-btn" id="detNextMon" onclick="navDetailMonth(1)">‹</button>
+      </div>
+      <div class="att-stats">
+        <div class="att-stat as-p"><span id="detPresent">0</span> حضر</div>
+        <div class="att-stat as-a"><span id="detAbsent">0</span> غاب</div>
+        <div class="att-stat as-r"><span id="detRemain">—</span> متبقي</div>
+      </div>
+      <div class="att-day-hd">
+        ${['أحد','اثنين','ثلا','أربع','خميس','جمعة','سبت'].map(d=>`<div class="att-day-h">${d}</div>`).join('')}
+      </div>
+      <div class="att-grid" id="detAttGrid"></div>
+    </div>
+  `;
+  lucide.createIcons();
+}
+
+async function loadDetailAttendance() {
+  try {
+    const d = await api(`/attendance/${detailSwimmer.subscriptionId}/month?year=${detailYear}&month=${detailMonth}`);
+    renderDetailCalendar(d);
+    lucide.createIcons();
+  } catch(e) { console.warn(e); }
+}
+
+function renderDetailCalendar(d) {
+  const grid    = $('detAttGrid');
+  if (!grid) return;
+  const now     = new Date(); now.setHours(0,0,0,0);
+  const todayStr= lds(new Date());
+  const firstDOW= new Date(detailYear, detailMonth-1, 1).getDay();
+  const lastDate= new Date(detailYear, detailMonth, 0).getDate();
+  const sm      = d.statusMap || {};
+  const pad     = n => String(n).padStart(2,'0');
+  $('detMonLbl').textContent = `${MONTHS[detailMonth-1]} ${detailYear}`;
+  const nowD = new Date();
+  const nxtBtn = $('detNextMon');
+  if (nxtBtn) nxtBtn.disabled = (detailYear===nowD.getFullYear() && detailMonth===nowD.getMonth()+1);
+  let html='', present=0, absent=0;
+  for (let i=0;i<firstDOW;i++) html+='<div class="att-cell empty"></div>';
+  for (let dd=1;dd<=lastDate;dd++) {
+    const date   = new Date(detailYear,detailMonth-1,dd);
+    const di     = date.getDay();
+    const ds     = `${detailYear}-${pad(detailMonth)}-${pad(dd)}`;
+    const isTD   = (detailSwimmer.trainingDays||[]).includes(di);
+    const isPast = date < now;
+    const isToday= ds===todayStr;
+    const rec    = sm[ds];
+    let state='rest', icon='';
+    if (isTD) {
+      if (rec?.isMakeup && rec?.status==='present') { state='makeup'; icon='↩'; present++; }
+      else if (rec?.status==='absent')  { state='absent';  icon='✕'; absent++; }
+      else if (rec?.status==='present') { state='present'; icon='✓'; present++; }
+      else if (isToday) { state='today-c'; icon='●'; }
+      else if (isPast)  { state='present'; icon='✓'; present++; }
+      else              { state='upcoming'; }
+    }
+    html+=`<div class="att-cell ${state}">
+      <span class="ac-num">${dd}</span>
+      ${icon?`<span class="ac-ic">${icon}</span>`:''}
+    </div>`;
+  }
+  grid.innerHTML = html;
+  const totalTD = (() => {
+    let c=0;
+    for(let dd=1;dd<=lastDate;dd++)
+      if((detailSwimmer.trainingDays||[]).includes(new Date(detailYear,detailMonth-1,dd).getDay())) c++;
+    return c;
+  })();
+  $('detPresent').textContent = present;
+  $('detAbsent').textContent  = absent;
+  $('detRemain').textContent  = Math.max(0, totalTD - present - absent);
+}
+
+function navDetailMonth(dir) {
+  detailMonth += dir;
+  if (detailMonth < 1)  { detailMonth=12; detailYear--; }
+  if (detailMonth > 12) { detailMonth=1;  detailYear++; }
+  loadDetailAttendance();
+}
+
+/* ════ ADD TRAINER ════ */
+async function doAddTrainer() {
+  const name  = $('new_name').value.trim();
+  const user  = $('new_user').value.trim();
+  const pass  = $('new_pass').value;
+  const pass2 = $('new_pass2').value;
+  if (!name||!user||!pass) { toast('اكمل جميع الحقول','er'); return; }
+  if (pass !== pass2)      { toast('كلمتا المرور غير متطابقتين','er'); return; }
+  if (pass.length < 6)     { toast('كلمة المرور 6 أحرف على الأقل','er'); return; }
+  const btn = $('addTrainerBtn'); btn.classList.add('loading');
+  try {
+    await api('/auth/register-trainer','POST',{name,username:user,password:pass,role:'trainer'});
+    toast(`✅ تم إنشاء حساب "${name}"`);
+    $('new_name').value=$('new_user').value=$('new_pass').value=$('new_pass2').value='';
+    await loadTrainers();
+    await loadGlobalStats();
+    switchTab('trainers');
+  } catch(e) { toast(e.message||'خطأ','er');
+  } finally  { btn.classList.remove('loading'); }
+}
+
+/* ════ EDIT TRAINER ════ */
+function openEdit(id, name, username, isActive) {
+  editId = id;
+  $('e_name').value   = name;
+  $('e_user').value   = username;
+  $('e_active').value = isActive ? 'true' : 'false';
+  $('e_pass').value   = '';
+  $('e_pass2').value  = '';
+  openModal('editModal');
+  lucide.createIcons();
+}
+
+async function doSaveEdit() {
+  if (!editId) return;
+  const btn = $('saveEditBtn'); btn.classList.add('loading');
+  try {
+    await api(`/auth/trainers/${editId}`,'PUT',{
+      name:     $('e_name').value.trim(),
+      username: $('e_user').value.trim(),
+      isActive: $('e_active').value === 'true',
+    });
+    const newPass = $('e_pass').value;
+    if (newPass) {
+      if (newPass !== $('e_pass2').value) { toast('كلمتا المرور غير متطابقتين','er'); return; }
+      if (newPass.length < 6)            { toast('6 أحرف على الأقل','er'); return; }
+      await api(`/auth/trainers/${editId}/password`,'PUT',{newPassword:newPass});
+    }
+    closeModal('editModal');
+    toast('✅ تم تحديث بيانات الكابتن');
+    await loadTrainers();
+  } catch(e) { toast(e.message||'خطأ','er');
+  } finally  { btn.classList.remove('loading'); }
+}
+
+/* ════ DELETE TRAINER ════ */
+function askDeleteTrainer(id, name) {
+  delId = id; delTrainerName = name;
+  $('delName').textContent = name;
+  openModal('delModal');
+  lucide.createIcons();
+}
+
+async function doDeleteTrainer() {
+  if (!delId) return;
+  try {
+    await api(`/auth/trainers/${delId}`,'DELETE');
+    closeModal('delModal');
+    toast(`✅ تم حذف الكابتن "${delTrainerName}"`);
+    await loadTrainers();
+    await loadGlobalStats();
+  } catch(e) { toast(e.message||'خطأ','er');
+  } finally  { delId=null; delTrainerName=''; }
+}
+
+/* ════ EDIT SWIMMER ════ */
+let editSwimmerId = null;
+
+async function openEditSwimmer(subId) {
+  try {
+    const d = await api('/swimmers/'+subId);
+    const s = d.data; editSwimmerId = subId;
+    $('es_name').value    = s.fullName    || '';
+    $('es_phone').value   = s.phone       || '';
+    $('es_time').value    = s.trainingTime|| '';
+    $('es_goal').value    = s.goal        || '';
+    $('es_active').value  = s.isActive ? 'true' : 'false';
+    $('es_trainer').value = s.trainerName || '';
+    $('es_expiry').value  = s.subscriptionExpiry ? new Date(s.subscriptionExpiry).toISOString().split('T')[0] : '';
+    openModal('editSwimmerModal');
+    lucide.createIcons();
+  } catch(e) { toast(e.message||'خطأ','er'); }
+}
+
+async function doSaveSwimmer() {
+  if (!editSwimmerId) return;
+  const btn = $('saveSwimmerBtn'); btn.classList.add('loading');
+  try {
+    await api('/swimmers/'+editSwimmerId,'PUT',{
+      fullName:           $('es_name').value.trim(),
+      phone:              $('es_phone').value.trim(),
+      trainingTime:       $('es_time').value || '',
+      goal:               $('es_goal').value || '',
+      isActive:           $('es_active').value === 'true',
+      subscriptionExpiry: $('es_expiry').value || '',
+      trainerName:        $('es_trainer').value.trim(),
+    });
+    closeModal('editSwimmerModal'); editSwimmerId = null;
+    toast('✅ تم تحديث بيانات المشترك');
+    allPage=1; loadAllSwimmers(); loadGlobalStats();
+  } catch(e) { toast(e.message||'خطأ','er');
+  } finally  { btn.classList.remove('loading'); }
+}
+
+/* ════ UNIVERSAL DELETE (swimmer / swimuser / trainer) ════ */
+// ✅ FIX: askDel كانت غير معرّفة خالص — دلوقتي موجودة
+let delUserType = null, delUserId = null, delUserName = '';
+
+function askDel(type, id, name) {
+  delUserType = type; delUserId = id; delUserName = name;
+  // ضبط عنوان ورسالة الـ modal حسب النوع
+  const titles = { swimmer:'تأكيد حذف المشترك', swimuser:'تأكيد حذف المستخدم', trainer:'تأكيد حذف الكابتن' };
+  const subs   = { swimmer:'سيتم حذف جميع سجلات الحضور.', swimuser:'سيتم حذف الحساب نهائياً.', trainer:'سيتم فصل مشتركيه عن الحساب.' };
+  $('confirmTitle').textContent  = titles[type] || 'تأكيد الحذف';
+  $('confirmName').textContent   = name;
+  $('confirmSubMsg').textContent = subs[type]   || '';
+  openModal('confirmModal');
+  lucide.createIcons();
+}
+
+async function doConfirmUserDelete() {
+  if (!delUserId) return;
+  try {
+    if (delUserType === 'swimmer') {
+      await api('/swimmers/' + delUserId, 'DELETE');
+      toast('✅ تم حذف المشترك "' + delUserName + '"');
+      allPage=1; loadAllSwimmers(); loadGlobalStats();
+    } else if (delUserType === 'swimuser') {
+      await api('/swimmer-auth/users/' + delUserId, 'DELETE');
+      toast('✅ تم حذف المستخدم "' + delUserName + '"');
+      loadSwimmerUsers();
+    } else if (delUserType === 'trainer') {
+      await api('/auth/trainers/' + delUserId, 'DELETE');
+      toast('✅ تم حذف الكابتن "' + delUserName + '"');
+      loadTrainerUsers(); loadTrainers(); loadGlobalStats();
+    }
+    closeModal('confirmModal');
+  } catch(e) { toast(e.message || 'خطأ في الحذف', 'er');
+  } finally  { delUserId=null; delUserName=''; delUserType=null; }
+}
+
+/* ════ USERS TAB ════ */
+let currentUsersTab = 'swimmers';
+let editUserId = null;
+
+// ✅ FIX: switchUsersTab كانت بتخفي swimmerUsersWrap بس مفيش trainerUsersWrap
+function switchUsersTab(tab) {
+  currentUsersTab = tab;
+  $('usersTabSw').classList.toggle('active', tab==='swimmers');
+  $('usersTabTr').classList.toggle('active', tab==='trainers');
+  $('swimmerUsersWrap').style.display  = tab==='swimmers' ? 'block' : 'none';
+  $('trainerUsersWrap').style.display  = tab==='trainers' ? 'block' : 'none';
+  if (tab === 'swimmers') loadSwimmerUsers();
+  if (tab === 'trainers') loadTrainerUsers();
+}
+
+async function loadSwimmerUsers() {
+  const tbody = $('swimUserBody');
+  tbody.innerHTML = '<tr><td colspan="7" class="no-data">جاري التحميل...</td></tr>';
+  try {
+    const d = await api('/swimmer-auth/all-users');
+    if (!d.data?.length) {
+      tbody.innerHTML = '<tr><td colspan="7" class="no-data">لا يوجد مستخدمون</td></tr>'; return;
+    }
+    tbody.innerHTML = d.data.map(u => `<tr>
+      <td style="font-family:var(--f-disp);color:var(--gold);font-size:.78rem">@${u.username}</td>
+      <td style="font-weight:700;color:var(--tp)">${u.displayName||'—'}</td>
+      <td style="color:var(--ts)">${u.phone||'—'}</td>
+      <td style="color:var(--ts)">${u.swimmers?.length||0}</td>
+      <td><span class="bdg ${u.isActive?'bdg-on':'bdg-off'}">${u.isActive?'● نشط':'● محظور'}</span></td>
+      <td style="color:var(--ts);font-size:.72rem">${fmtDate(u.createdAt)}</td>
+      <td><div class="act-btns">
+        <button class="act-btn ab-edit"
+          onclick="openEditUser('${u._id}','${esc(u.username)}','${esc(u.displayName||'')}','${esc(u.phone||'')}',${u.isActive})">
+          <i data-lucide="pencil"></i>
+        </button>
+        <!-- ✅ FIX: كانت بتكول askDel وهي مش موجودة -->
+        <button class="act-btn ab-del"
+          onclick="askDel('swimuser','${u._id}','${esc(u.username)}')">
+          <i data-lucide="trash-2"></i>
+        </button>
+      </div></td>
+    </tr>`).join('');
+    lucide.createIcons();
+  } catch(e) { toast(e.message||'خطأ','er'); }
+}
+
+// ✅ FIX: دالة جديدة لتحميل الكابتنات في تاب المستخدمين
+async function loadTrainerUsers() {
+  const tbody = $('trainerUserBody');
+  tbody.innerHTML = '<tr><td colspan="7" class="no-data">جاري التحميل...</td></tr>';
+  try {
+    const d = await api('/auth/trainers');
+    if (!d.data?.length) {
+      tbody.innerHTML = '<tr><td colspan="7" class="no-data">لا يوجد كابتنات</td></tr>'; return;
+    }
+    tbody.innerHTML = d.data.map(t => `<tr>
+      <td style="font-family:var(--f-disp);color:var(--gold);font-size:.78rem">@${t.username}</td>
+      <td style="font-weight:700;color:var(--tp)">${t.name}</td>
+      <td>
+        <span class="boss-pill" style="font-size:.62rem">
+          ${t.role === 'boss' ? 'BOSS' : 'كابتن'}
+        </span>
+      </td>
+      <td style="color:var(--ts)">${t.total ?? 0}</td>
+      <td><span class="bdg ${t.isActive?'bdg-on':'bdg-off'}">${t.isActive?'● نشط':'● محظور'}</span></td>
+      <td style="color:var(--ts);font-size:.72rem">${fmtDate(t.createdAt)}</td>
+      <td><div class="act-btns">
+        <button class="act-btn ab-edit"
+          onclick="openEdit('${t.id}','${esc(t.name)}','${esc(t.username)}',${t.isActive})">
+          <i data-lucide="pencil"></i>
+        </button>
+        ${t.role !== 'boss' ? `
+        <button class="act-btn ab-del"
+          onclick="askDel('trainer','${t.id}','${esc(t.name)}')">
+          <i data-lucide="trash-2"></i>
+        </button>` : ''}
+      </div></td>
+    </tr>`).join('');
+    lucide.createIcons();
+  } catch(e) { toast(e.message||'خطأ','er'); }
+}
+
+/* ════ EDIT USER (SwimmerUser) ════ */
+function openEditUser(id, username, name, phone, isActive) {
+  editUserId = id;
+  $('eu_user').value   = username;
+  $('eu_name').value   = name;
+  $('eu_phone').value  = phone;
+  $('eu_active').value = isActive ? 'true' : 'false';
+  $('eu_pass').value   = '';
+  openModal('editUserModal');
+  lucide.createIcons();
+}
+
+async function doSaveUser() {
+  if (!editUserId) return;
+  const btn = $('saveUserBtn'); btn.classList.add('loading');
+  try {
+    const pass = $('eu_pass').value;
+    const body = {
+      username:    $('eu_user').value.trim(),
+      displayName: $('eu_name').value.trim(),
+      phone:       $('eu_phone').value.trim(),
+      isActive:    $('eu_active').value === 'true',
+    };
+    if (pass) {
+      if (pass.length < 6) { toast('كلمة المرور 6 أحرف على الأقل','er'); return; }
+      body.password = pass;
+    }
+    await api('/swimmer-auth/users/' + editUserId, 'PUT', body);
+    closeModal('editUserModal');
+    toast('✅ تم تحديث بيانات المستخدم');
+    loadSwimmerUsers();
+  } catch(e) { toast(e.message||'خطأ','er');
+  } finally  { btn.classList.remove('loading'); editUserId=null; }
+}
+
+/* ════ BOSS RATING ════ */
+let bossRatingSubId = null;
+
+function openBossRating(subId, name, currentRating, currentNote) {
+  bossRatingSubId = subId;
+  $('bRatingName').textContent = name;
+  $('bRatingNote').value = currentNote || '';
+  document.querySelectorAll('input[name="bstar"]').forEach(r => r.checked = false);
+  if (currentRating > 0) {
+    const el = document.getElementById('bs' + currentRating);
+    if (el) el.checked = true;
+  }
+  updateBossStars();
+  openModal('bossRatingModal');
+  lucide.createIcons();
+}
+
+function updateBossStars() {
+  const checked = document.querySelector('input[name="bstar"]:checked');
+  const val = checked ? Number(checked.value) : 0;
+  document.querySelectorAll('.bstar-lbl').forEach((lbl, idx) => {
+    lbl.style.color = (5 - idx) <= val ? '#ffd700' : 'rgba(255,255,255,.15)';
+  });
+}
+
+async function saveBossRating() {
+  if (!bossRatingSubId) return;
+  const starInput = document.querySelector('input[name="bstar"]:checked');
+  if (!starInput) { toast('اختر عدد النجوم أولاً','er'); return; }
+  const btn = $('saveBossRatingBtn'); btn.classList.add('loading');
+  try {
+    await api('/swimmer-auth/swimmers/' + bossRatingSubId + '/rating', 'PUT', {
+      rating:     Number(starInput.value),
+      ratingNote: $('bRatingNote').value.trim(),
+    });
+    closeModal('bossRatingModal');
+    toast('✅ تم حفظ التقييم');
+    allPage=1; loadAllSwimmers();
+  } catch(e) { toast(e.message||'خطأ','er');
+  } finally  { btn.classList.remove('loading'); bossRatingSubId=null; }
+}
+
+/* ════ REPORT ════ */
+let reportSessFilter='all', reportYear=new Date().getFullYear(), reportMonth=new Date().getMonth()+1;
+let reportPage=1, allSwimmersCache=[];
+
+async function loadReportData() {
+  try {
+    const d = await api('/swimmers?limit=9999');
+    allSwimmersCache = d.data || [];
+    renderReport();
+  } catch(e) { toast(e.message||'خطأ','er'); }
+}
+
+function renderReport() {
+  const now=new Date(), soon=new Date(); soon.setDate(soon.getDate()+30);
+  const nowD=new Date();
+  $('rMonLbl').textContent  = MONTHS[reportMonth-1]+' '+reportYear;
+  $('rNextMon').disabled    = (reportYear===nowD.getFullYear() && reportMonth===nowD.getMonth()+1);
+
+  let data = [...allSwimmersCache];
+  if (reportSessFilter !== 'all') data = data.filter(s => String(s.sessionsCount) === reportSessFilter);
+
+  const total    = data.length;
+  const active   = data.filter(s => s.isActive).length;
+  const expiring = data.filter(s => {
+    if (!s.subscriptionExpiry) return false;
+    const e = new Date(s.subscriptionExpiry);
+    return e >= now && e <= soon;
+  }).length;
+
+  $('rAll').textContent      = total;
+  $('rActive').textContent   = active;
+  $('rInactive').textContent = total - active;
+  $('rExpiring').textContent = expiring;
+
+  const full = allSwimmersCache;
+  $('rC8').textContent  = full.filter(s => s.sessionsCount === 8).length;
+  $('rC12').textContent = full.filter(s => s.sessionsCount === 12).length;
+  $('rC24').textContent = full.filter(s => s.sessionsCount === 24).length;
+
+  const ITEMS=20, start=(reportPage-1)*ITEMS, slice=data.slice(start, start+ITEMS);
+  const tbody=$('reportBody');
+  if (!slice.length) {
+    tbody.innerHTML='<tr><td colspan="7" class="no-data">لا توجد بيانات</td></tr>';
+    $('reportPag').innerHTML=''; return;
+  }
+  tbody.innerHTML = slice.map(s=>`<tr>
+    <td class="sid">${s.subscriptionId||'—'}</td>
+    <td class="nm">${s.fullName}</td>
+    <td>${s.trainer?.name||s.trainerName||'—'}</td>
+    <td><span class="sess-tag s${s.sessionsCount}">${s.sessionsCount} حصة</span></td>
+    <td>${s.sessionsAttended??0}/${s.sessionsCount}</td>
+    <td>${s.subscriptionExpiry ? expiryBadge(s.subscriptionExpiry) : '—'}</td>
+    <td><span class="bdg ${s.isActive?'bdg-on':'bdg-off'}">${s.isActive?'● نشط':'● منتهي'}</span></td>
+  </tr>`).join('');
+
+  const pages = Math.ceil(data.length/ITEMS);
+  const pelEl = $('reportPag');
+  if (!pages||pages<=1) { pelEl.innerHTML=''; return; }
+  pelEl.innerHTML = Array.from({length:pages},(_,i) =>
+    `<button class="pg-btn${i+1===reportPage?' active':''}" onclick="reportPage=${i+1};renderReport()">${i+1}</button>`
+  ).join('');
+}
+
+function navRptMonth(dir) {
+  reportMonth += dir;
+  if (reportMonth < 1)  { reportMonth=12; reportYear--; }
+  if (reportMonth > 12) { reportMonth=1;  reportYear++; }
+  reportPage=1; renderReport();
+}
+
+function expiryBadge(dateStr) {
+  const exp=new Date(dateStr), now=new Date(), diff=(exp-now)/(1000*60*60*24);
+  if (diff < 0)  return `<span class="expiry-badge exp-over">${fmtDate(dateStr)} منتهي</span>`;
+  if (diff < 30) return `<span class="expiry-badge exp-warn">${fmtDate(dateStr)} قريباً</span>`;
+  return `<span class="expiry-badge exp-ok">${fmtDate(dateStr)}</span>`;
+}
+
+/* ════ API ════ */
+async function api(path, method='GET', body=null, useToken=true) {
+  const headers = {'Content-Type':'application/json'};
+  if (useToken && token) headers['Authorization'] = `Bearer ${token}`;
+  const opts = {method, headers};
+  if (body) opts.body = JSON.stringify(body);
+  const res  = await fetch(`${API}${path}`, opts);
+  const data = await res.json().catch(() => ({message:`HTTP ${res.status}`}));
+  if (!res.ok) { if (res.status===401) doLogout(); throw new Error(data.message||`HTTP ${res.status}`); }
+  return data;
+}
+
+/* ════ HELPERS ════ */
+function lds(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function fmtDate(d) {
+  const dt = new Date(d);
+  return `${dt.getDate()} ${MONTHS[dt.getMonth()]} ${dt.getFullYear()}`;
+}
+function $(id)              { return document.getElementById(id); }
+function show(id, d='block'){ $(id).style.display = d; }
+function hide(id)           { $(id).style.display = 'none'; }
+function openModal(id)      { $(id).classList.add('show'); }
+function closeModal(id)     { $(id).classList.remove('show'); if(id==='editModal') editId=null; }
+function esc(s)             { return String(s||'').replace(/'/g,"\\'"); }
+
+let toastT;
+function toast(msg, type='ok') {
+  const el=$('toast'); el.className=`toast ${type} show`;
+  $('toastMsg').textContent=msg;
+  clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('show'),3200);
+}
+</script>
+</body>
+</html>
