@@ -787,20 +787,20 @@ function renderMonth(stats) {
 
     if(isTD){
       if(rec?.isMakeup && rec?.status==='present'){
-        // تعويضي
+        // يوم التعويضي نفسه
+        state='makeup'; makeup++; icon='↩';
+      } else if(rec?.status==='absent' && rec?.hasMakeup){
+        // غياب عنده تعويضي → برتقالي
         state='makeup'; makeup++; icon='↩';
       } else if(rec?.status==='absent'){
-        // غياب مسجل
+        // غياب بدون تعويضي → أحمر
         state='absent'; absent++; icon='✕';
       } else if(rec?.status==='present'){
-        // حضور مسجل
+        // حضور عادي → أخضر
         state='present'; present++; icon='✓';
       } else if(isToday){
-        // اليوم الحالي بدون سجل
         state='today-cell'; icon='●';
       } else {
-        // باقي الأيام (ماضية أو مستقبلية) بدون سجل = upcoming فقط
-        // لا نعدّ الماضية كـ present تلقائياً — السجل الفعلي هو المرجع
         state='upcoming';
       }
     }
@@ -912,28 +912,28 @@ async function confirmMakeup(){
 
     hideMakeupUI();
 
-    // ✅ حدّث خلية الغياب في الـ map يدوياً فوراً عشان اللون يتغير
+    // ✅ حدّث خلية الغياب فوراً — hasMakeup عشان اللون يتحوّل برتقالي
     if(monStatusMap[absenceDate]){
-      monStatusMap[absenceDate].isMakeup = true;
+      monStatusMap[absenceDate].hasMakeup  = true;
       monStatusMap[absenceDate].makeupDate = mDate;
     } else {
       monStatusMap[absenceDate] = {
         status:'absent',
-        isMakeup:true,
+        hasMakeup:true,
         makeupDate:mDate,
         id: monSelDate.recordId || null
       };
     }
 
-    // أضف التعويضي في الـ map للتاريخ الجديد
+    // أضف سجل التعويضي في الـ map
     monStatusMap[mDate] = {
       status:'present',
       isMakeup:true,
       makeupForDate:absenceDate,
-      id: res.id || res.data?.id || null
+      id: res.data?._id || res.data?.id || null
     };
 
-    // ارسم الشهر من جديد بدون طلب من السيرفر عشان اللون يظهر فوراً
+    // ارسم الشهر فوراً
     viewYear=absenceYear;
     viewMonth=absenceMonth;
     renderMonth(null);
