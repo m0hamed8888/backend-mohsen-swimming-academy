@@ -6,7 +6,7 @@
   <title>AquaFlow | ملفي الشخصي</title>
   <link rel="stylesheet" href="./assets/css/style.css"/>
   <script src="./assets/js/config.js"></script>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <style>
 .page-wrap{min-height:100dvh;padding:78px 16px 100px;max-width:780px;margin:0 auto;position:relative;z-index:1}
 .prof-card{background:var(--surf);backdrop-filter:blur(28px);border:1px solid var(--bdr);border-radius:var(--r-xl);padding:26px 20px;margin-bottom:18px;position:relative;overflow:hidden}
@@ -17,7 +17,9 @@
 .prof-user{font-size:.74rem;color:var(--ts);margin-top:3px}
 .prof-since{font-size:.68rem;color:var(--tm);margin-top:3px;display:flex;align-items:center;gap:4px}
 .prof-since svg{width:11px;height:11px;color:var(--cyan)}
-.logout-btn{margin-right:auto;padding:7px 14px;border-radius:var(--r-full);font-size:.74rem;font-weight:700;color:var(--err);background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.2);transition:all var(--fast);display:flex;align-items:center;gap:5px}
+.city-tag{font-size:.64rem;font-weight:700;padding:2px 7px;border-radius:var(--r-full);background:rgba(123,47,255,.1);border:1px solid rgba(123,47,255,.25);color:#a78bfa;margin-top:4px;display:inline-flex;align-items:center;gap:3px}
+.city-tag svg{width:10px;height:10px}
+.logout-btn{margin-right:auto;padding:7px 14px;border-radius:var(--r-full);font-size:.74rem;font-weight:700;color:var(--err);background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.2);transition:all var(--fast);display:flex;align-items:center;gap:5px;flex-shrink:0}
 .logout-btn:hover{background:rgba(255,77,109,.16)}
 .logout-btn svg{width:12px;height:12px}
 .qstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -27,8 +29,6 @@
 .qs-l{font-size:.62rem;font-weight:600;color:var(--tm);margin-top:2px}
 .join-info{display:flex;align-items:center;gap:8px;margin-top:14px;padding:9px 13px;border-radius:var(--r-md);background:rgba(255,255,255,.03);border:1px solid var(--bdr);font-size:.76rem;color:var(--ts)}
 .join-info svg{width:13px;height:13px;color:var(--cyan);flex-shrink:0}
-
-/* swimmer card */
 .sw-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;flex-wrap:wrap;gap:8px}
 .sw-hd h2{font-family:var(--f-disp);font-size:1rem;font-weight:800;display:flex;align-items:center;gap:7px}
 .sw-hd h2 svg{width:15px;height:15px;color:var(--cyan)}
@@ -45,7 +45,7 @@
 .sw-av{width:42px;height:42px;border-radius:50%;background:var(--grad-ocean);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1rem;color:#fff}
 .sw-name{font-weight:800;font-size:.9rem}
 .sw-sub{font-size:.7rem;color:var(--cyan);margin-top:2px}
-.sw-badge{margin-right:auto;font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:var(--r-full)}
+.sw-badge{margin-right:auto;font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:var(--r-full);flex-shrink:0}
 .b-on{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.25);color:var(--ok)}
 .b-off{background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.2);color:var(--err)}
 .sw-prog{margin-top:11px}
@@ -61,23 +61,63 @@
 .sd-v{color:var(--tp);font-weight:600}
 .detail-highlight{background:rgba(0,200,255,.05);border:1px solid rgba(0,200,255,.12);border-radius:var(--r-sm);padding:8px 12px;margin-bottom:10px;font-size:.74rem;color:var(--ts);display:flex;align-items:center;gap:7px}
 .detail-highlight svg{width:13px;height:13px;color:var(--cyan);flex-shrink:0}
-
-/* ── RATING DISPLAY ── */
+/* expiry badge */
+.expiry-badge{display:inline-flex;align-items:center;gap:4px;font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:var(--r-full)}
+.exp-ok{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.25);color:var(--ok)}
+.exp-warn{background:rgba(255,181,71,.1);border:1px solid rgba(255,181,71,.28);color:var(--warn)}
+.exp-over{background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.22);color:var(--err)}
+/* rating */
 .rating-section{background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.15);border-radius:var(--r-md);padding:12px 14px;margin-bottom:12px}
 .rating-title{font-size:.74rem;font-weight:700;color:var(--ts);margin-bottom:8px;display:flex;align-items:center;gap:5px}
 .rating-title svg{width:13px;height:13px;color:#ffd700}
 .rating-stars{display:flex;gap:3px;direction:ltr}
-.rs{font-size:1.4rem;color:rgba(255,255,255,.15)}
-.rs.filled{color:#ffd700}
+.rs-star{font-size:1.4rem;color:rgba(255,255,255,.15)}
+.rs-star.filled{color:#ffd700}
 .rating-note{font-size:.72rem;color:var(--ts);margin-top:6px;font-style:italic}
 .rating-by{font-size:.64rem;color:var(--tm);margin-top:3px}
 .no-rating{font-size:.74rem;color:var(--tm);font-style:italic}
-
-/* stars row for xp */
+/* level badge */
+.level-section{background:rgba(0,200,255,.04);border:1px solid rgba(0,200,255,.14);border-radius:var(--r-md);padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.level-val{font-family:var(--f-disp);font-size:1.1rem;font-weight:800;color:var(--cyan)}
+.level-lbl{font-size:.7rem;color:var(--ts)}
+.level-note{font-size:.68rem;color:var(--tm);font-style:italic}
+/* attendance calendar */
+.att-section{margin-bottom:12px}
+.att-sec-title{font-size:.76rem;font-weight:700;color:var(--ts);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.att-sec-title svg{width:13px;height:13px;color:var(--cyan)}
+.att-stats-bar{display:flex;gap:6px;margin-bottom:10px}
+.att-stat{flex:1;text-align:center;padding:6px 4px;border-radius:var(--r-sm);font-size:.66rem;font-weight:700}
+.as-p{background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);color:var(--ok)}
+.as-a{background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.18);color:var(--err)}
+.as-m{background:rgba(255,159,67,.08);border:1px solid rgba(255,159,67,.22);color:#ff9f43}
+.as-r{background:rgba(0,200,255,.06);border:1px solid rgba(0,200,255,.18);color:var(--cyan)}
+.cal-month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.cal-mnb{width:30px;height:30px;border-radius:var(--r-sm);background:rgba(255,255,255,.05);border:1px solid var(--bdr);color:var(--ts);font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all var(--fast)}
+.cal-mnb:hover:not(:disabled){color:var(--cyan);border-color:rgba(0,200,255,.3)}
+.cal-mnb:disabled{opacity:.2;pointer-events:none}
+.cal-month-lbl{font-family:var(--f-disp);font-weight:800;font-size:.84rem}
+.cal-day-hd{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:2px}
+.cal-day-h{text-align:center;font-size:.52rem;font-weight:700;color:var(--tm)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-cell{min-height:38px;border-radius:5px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid transparent}
+.cal-cell.empty{background:transparent;border-color:transparent}
+.cal-cell.rest{background:rgba(255,255,255,.015);opacity:.25}
+.cal-cell.upcoming{background:rgba(0,200,255,.04);border-color:rgba(0,200,255,.1)}
+.cal-cell.today-c{background:rgba(0,200,255,.12);border-color:var(--cyan)}
+.cal-cell.present{background:rgba(0,229,160,.09);border-color:rgba(0,229,160,.3)}
+.cal-cell.absent{background:rgba(255,77,109,.1);border-color:rgba(255,77,109,.3)}
+.cal-cell.makeup{background:rgba(255,159,67,.1);border-color:rgba(255,159,67,.35)}
+.cc-num{font-family:var(--f-disp);font-weight:800;font-size:.7rem;line-height:1.1}
+.cal-cell.today-c .cc-num{color:#fff}
+.cal-cell.present .cc-num{color:var(--ok)}
+.cal-cell.absent .cc-num{color:var(--err)}
+.cal-cell.makeup .cc-num{color:#ff9f43}
+.cal-cell.upcoming .cc-num{color:var(--tp)}
+.cc-ic{font-size:.5rem;font-weight:900;margin-top:1px}
+/* exp stars */
 .exp-stars{display:flex;gap:2px;direction:ltr;margin-top:2px}
 .exp-star{font-size:.9rem;color:rgba(255,255,255,.15)}
 .exp-star.lit{color:#ffd700}
-
 .sw-actions{display:flex;gap:6px;flex-wrap:wrap}
 .sa-btn{padding:6px 12px;border-radius:var(--r-full);font-size:.7rem;font-weight:700;display:inline-flex;align-items:center;gap:4px;transition:all var(--fast)}
 .sa-btn svg{width:11px;height:11px}
@@ -86,8 +126,6 @@
 .no-data{text-align:center;padding:48px 20px;color:var(--tm)}
 .no-data svg{width:40px;height:40px;margin:0 auto 12px;display:block;opacity:.3}
 .no-data p{font-size:.85rem;margin-bottom:16px}
-
-/* edit modal */
 .mo{position:fixed;inset:0;z-index:150;background:rgba(0,0,0,.8);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity var(--mid)}
 .mo.show{opacity:1;pointer-events:all}
 .mo-card{width:100%;max-width:460px;background:#080e1c;border:1px solid var(--bdr);border-radius:var(--r-xl);padding:24px 20px;max-height:88dvh;overflow-y:auto;position:relative;transform:translateY(16px);transition:transform var(--mid) var(--ease)}
@@ -115,14 +153,14 @@
 </nav>
 
 <div class="page-wrap">
-  <!-- Profile card -->
   <div class="prof-card">
     <div class="prof-top">
       <div class="prof-av" id="profAv">س</div>
-      <div>
+      <div style="flex:1;min-width:0">
         <div class="prof-name" id="profName">—</div>
         <div class="prof-user" id="profUser">—</div>
         <div class="prof-since"><i data-lucide="calendar"></i><span id="profSince">—</span></div>
+        <div id="profCityWrap" style="display:none"><span class="city-tag"><i data-lucide="map-pin"></i><span id="profCity">—</span></span></div>
       </div>
       <button class="logout-btn" id="logoutBtn"><i data-lucide="log-out"></i> خروج</button>
     </div>
@@ -134,7 +172,6 @@
     <div class="join-info"><i data-lucide="calendar"></i><span id="joinText">عضو في AquaFlow</span></div>
   </div>
 
-  <!-- Swimmers -->
   <div class="sw-hd">
     <h2><i data-lucide="users"></i> السباحون على حسابك</h2>
     <a href="register-swimmer.html" class="btn-outline ripple-btn" style="font-size:.76rem">
@@ -144,7 +181,7 @@
 
   <div class="search-bar">
     <i data-lucide="search"></i>
-    <input type="text" id="swSearch" placeholder="ابحث بالاسم أو رقم الاشتراك..."/>
+    <input type="text" id="swSearch" placeholder="ابحث بالاسم أو رقم الاشتراك (AQ-XXXXX)..."/>
   </div>
 
   <div id="swList">
@@ -158,7 +195,6 @@
   <a href="profile.html" class="nav-icon ripple-btn active"><i data-lucide="user"></i></a>
 </nav>
 
-<!-- EDIT MODAL (swimmer info only — no account edit) -->
 <div class="mo" id="editModal">
   <div class="mo-card">
     <div class="mo-hd">
@@ -169,22 +205,12 @@
       <div class="field"><label>الاسم</label><input type="text" class="fc" id="e_name"/></div>
       <div class="field"><label>الهاتف</label><input type="text" class="fc" id="e_phone"/></div>
       <div class="field"><label>وقت التدريب</label>
-        <select class="fc" id="e_time">
-          <option value="">بدون</option>
-          <option>06:00 ص</option><option>07:00 ص</option><option>08:00 ص</option>
-          <option>09:00 ص</option><option>10:00 ص</option>
-          <option>04:00 م</option><option>05:00 م</option><option>06:00 م</option><option>07:00 م</option>
-        </select></div>
+        <select class="fc" id="e_time"><option value="">بدون</option><option>06:00 ص</option><option>07:00 ص</option><option>08:00 ص</option><option>09:00 ص</option><option>10:00 ص</option><option>04:00 م</option><option>05:00 م</option><option>06:00 م</option><option>07:00 م</option></select>
+      </div>
       <div class="field"><label>الهدف</label>
-        <select class="fc" id="e_goal">
-          <option value="">—</option>
-          <option value="fitness">اللياقة البدنية</option>
-          <option value="competition">المنافسات</option>
-          <option value="safety">الأمان في الماء</option>
-          <option value="fun">الترفيه والمتعة</option>
-        </select></div>
-      <div class="field"><label>انتهاء الاشتراك</label>
-        <input type="date" class="fc" id="e_expiry"/></div>
+        <select class="fc" id="e_goal"><option value="">—</option><option value="fitness">اللياقة البدنية</option><option value="competition">المنافسات</option><option value="safety">الأمان في الماء</option><option value="fun">الترفيه والمتعة</option></select>
+      </div>
+      <div class="field"><label>انتهاء الاشتراك</label><input type="date" class="fc" id="e_expiry"/></div>
     </div>
     <button class="btn-save" id="saveBtn"><i data-lucide="save"></i><span id="saveTxt">حفظ التعديلات</span></button>
   </div>
@@ -193,13 +219,14 @@
 <div class="toast" id="toast"><span id="toastMsg"></span></div>
 
 <script>
-const API = 'https://backend-mohsen-swimming-academy.vercel.app/api';
+const API    = 'https://backend-mohsen-swimming-academy.vercel.app/api';
 const GOALS  = {fitness:'اللياقة البدنية',competition:'المنافسات',safety:'الأمان في الماء',fun:'الترفيه'};
 const DAYS   = ['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'];
 const MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-const STAR_LABELS=['','مبتدئ','مبتدئ متوسط','جيد','جيد جداً','ممتاز'];
 
 let token=null, user=null, swimmers=[], editId=null;
+// تقويم لكل سباح: subId → {year, month, statusMap}
+const calState = {};
 
 document.addEventListener('DOMContentLoaded',()=>{
   lucide.createIcons();
@@ -209,18 +236,24 @@ document.addEventListener('DOMContentLoaded',()=>{
   renderHero(); loadSwimmers(); bindUI();
 });
 
+/* ── HERO ── */
 function renderHero(){
   if(!user) return;
-  const name=user.displayName||'', uname=user.username||'';
-  document.getElementById('profAv').textContent=(name||uname).charAt(0).toUpperCase();
-  document.getElementById('profName').textContent=name||uname;
-  document.getElementById('profUser').textContent='@'+uname;
+  const name=user.displayName||'',uname=user.username||'';
+  $('profAv').textContent=(name||uname).charAt(0).toUpperCase();
+  $('profName').textContent=name||uname;
+  $('profUser').textContent='@'+uname;
   const created=user.createdAt?new Date(user.createdAt):null;
   if(created){
     const days=Math.floor((Date.now()-created.getTime())/(1000*60*60*24));
-    document.getElementById('profSince').textContent=`انضم في ${created.getDate()} ${MONTHS[created.getMonth()]} ${created.getFullYear()}`;
-    document.getElementById('qsDays').textContent=days||'<1';
-    document.getElementById('joinText').textContent=`عضو منذ ${created.getDate()} ${MONTHS[created.getMonth()]} ${created.getFullYear()}`;
+    $('profSince').textContent=`انضم في ${created.getDate()} ${MONTHS[created.getMonth()]} ${created.getFullYear()}`;
+    $('qsDays').textContent=days||'<1';
+    $('joinText').textContent=`عضو منذ ${created.getDate()} ${MONTHS[created.getMonth()]} ${created.getFullYear()}`;
+  }
+  // city
+  if(user.city){
+    $('profCity').textContent=user.city;
+    $('profCityWrap').style.display='inline';
   }
 }
 
@@ -228,52 +261,72 @@ async function loadSwimmers(){
   try{
     const d=await apiCall('/swimmer-auth/my-swimmers');
     swimmers=d.swimmers||[];
-    document.getElementById('qsTotal').textContent=swimmers.length;
-    document.getElementById('qsActive').textContent=swimmers.filter(s=>s.isActive).length;
+    $('qsTotal').textContent=swimmers.length;
+    $('qsActive').textContent=swimmers.filter(s=>s.isActive).length;
     render(''); lucide.createIcons();
   }catch(e){
-    document.getElementById('swList').innerHTML=`<div class="no-data"><i data-lucide="wifi-off"></i><p>${e.message}</p></div>`;
+    $('swList').innerHTML=`<div class="no-data"><i data-lucide="wifi-off"></i><p>${e.message}</p></div>`;
     lucide.createIcons();
   }
 }
 
 function render(q=''){
   let data=[...swimmers];
-  if(q){const lq=q.toLowerCase();data=data.filter(s=>s.fullName?.toLowerCase().includes(lq)||s.subscriptionId?.toLowerCase().includes(lq));}
-  const list=document.getElementById('swList');
+  if(q){
+    const lq=q.toLowerCase().trim();
+    data=data.filter(s=>
+      s.fullName?.toLowerCase().includes(lq)||
+      s.subscriptionId?.toLowerCase().includes(lq)  // بحث بالـ ID
+    );
+  }
+  const list=$('swList');
   if(!data.length){
     list.innerHTML=`<div class="no-data"><i data-lucide="users"></i><p>${q?`لا نتائج لـ "${q}"`:' لا يوجد سباحون مضافون بعد'}</p><a href="register-swimmer.html" class="btn-outline ripple-btn" style="font-size:.78rem"><i data-lucide="plus" style="width:12px;height:12px"></i> أضف الآن</a></div>`;
-    lucide.createIcons();return;
+    lucide.createIcons(); return;
   }
   list.innerHTML=data.map(s=>card(s)).join('');
   lucide.createIcons();
 }
 
+/* ── CARD ── */
 function card(s){
-  const att=s.sessionsAttended||0,tot=s.sessionsCount||1;
+  const att=s.sessionsAttended||0, tot=s.sessionsCount||1;
   const pct=Math.min(100,Math.round((att/tot)*100));
   const days=(s.trainingDays||[]).map(d=>DAYS[d]).join('، ')||'—';
-  const expiry=s.subscriptionExpiry?fmtDate(s.subscriptionExpiry):'—';
   const start=s.subscriptionStart?new Date(s.subscriptionStart):null;
   const daysSince=start?Math.floor((Date.now()-start.getTime())/(1000*60*60*24)):null;
-  const sinceStr=start?`انضم ${fmtDate(s.subscriptionStart)}${daysSince!==null?' · منذ '+daysSince+' يوم':''}`:  '—';
+  const sinceStr=start?`انضم ${fmtDate(s.subscriptionStart)}${daysSince!==null?' · منذ '+daysSince+' يوم':''}`:' —';
 
-  // خبرة سابقة — نجوم
+  // خبرة سابقة
   const expStars=s.starsCount?[1,2,3,4,5].map(i=>`<span class="exp-star${i<=s.starsCount?' lit':''}">★</span>`).join(''):'';
 
   // تقييم الكابتن
   let ratingHtml='<div class="no-rating">لم يُضَف تقييم بعد</div>';
-  if(s.rating && s.rating > 0){
-    const stars=[1,2,3,4,5].map(i=>`<span class="rs${i<=s.rating?' filled':''}">★</span>`).join('');
+  if(s.rating&&s.rating>0){
+    const stars=[1,2,3,4,5].map(i=>`<span class="rs-star${i<=s.rating?' filled':''}">★</span>`).join('');
     ratingHtml=`
       <div class="rating-stars">${stars}</div>
       ${s.ratingNote?`<div class="rating-note">"${s.ratingNote}"</div>`:''}
-      ${s.ratingUpdatedBy?`<div class="rating-by">بواسطة: ${s.ratingUpdatedBy} ${s.ratingUpdatedAt?'· '+fmtDate(s.ratingUpdatedAt):''}</div>`:''}`;
+      ${s.ratingUpdatedBy?`<div class="rating-by">بواسطة: ${s.ratingUpdatedBy}${s.ratingUpdatedAt?' · '+fmtDate(s.ratingUpdatedAt):''}</div>`:''}`;
   }
 
+  // level
+  const levelHtml=s.level?`
+    <div class="level-section">
+      <div class="level-val">LV ${s.level}</div>
+      <div>
+        <div class="level-lbl">المستوى الحالي</div>
+        ${s.levelNote?`<div class="level-note">"${s.levelNote}"</div>`:''}
+      </div>
+    </div>
+  `:'';
+
+  // انتهاء الاشتراك الذكي
+  const expiryHtml = calcExpiry(s);
+
   return `
-  <div class="sw-card">
-    <div class="sw-top" onclick="toggle(this.closest('.sw-card'))">
+  <div class="sw-card" id="swcard-${s.subscriptionId}">
+    <div class="sw-top" onclick="toggleCard('${s.subscriptionId}')">
       <div class="sw-av">${(s.fullName||'?').charAt(0)}</div>
       <div style="flex:1;min-width:0">
         <div class="sw-name">${s.fullName}</div>
@@ -285,11 +338,10 @@ function card(s){
       <div class="sp-labels"><span>الحضور: ${att}/${tot}</span><span>${pct}%</span></div>
       <div class="sp-bar-wrap"><div class="sp-fill" style="width:${pct}%"></div></div>
     </div>
-    <div class="sw-expand">
-      <div class="detail-highlight">
-        <i data-lucide="calendar-check"></i><span>${sinceStr}</span>
-      </div>
-      <!-- تقييم الكابتن -->
+    <div class="sw-expand" id="expand-${s.subscriptionId}">
+      <div class="detail-highlight"><i data-lucide="calendar-check"></i><span>${sinceStr}</span></div>
+      ${expiryHtml}
+      ${levelHtml}
       <div class="rating-section">
         <div class="rating-title"><i data-lucide="star"></i> تقييم الكابتن</div>
         ${ratingHtml}
@@ -298,10 +350,14 @@ function card(s){
         <div class="sd"><span class="sd-l">العمر: </span><span class="sd-v">${s.age??'—'} سنة</span></div>
         <div class="sd"><span class="sd-l">الهدف: </span><span class="sd-v">${GOALS[s.goal]||'—'}</span></div>
         <div class="sd"><span class="sd-l">أيام التدريب: </span><span class="sd-v">${days}</span></div>
-        <div class="sd"><span class="sd-l">انتهاء الاشتراك: </span><span class="sd-v">${expiry}</span></div>
         <div class="sd"><span class="sd-l">الهاتف: </span><span class="sd-v">${s.phone||'—'}</span></div>
         <div class="sd"><span class="sd-l">الكابتن: </span><span class="sd-v">${s.trainerName||'—'}</span></div>
         ${s.starsCount?`<div class="sd" style="grid-column:1/-1"><span class="sd-l">مستوى خبرة سابقة: </span><div class="exp-stars">${expStars}</div></div>`:''}
+      </div>
+      <!-- تقويم الحضور — الشهر الحالي -->
+      <div class="att-section" id="att-${s.subscriptionId}">
+        <div class="att-sec-title"><i data-lucide="calendar-days"></i> سجل الحضور — الشهر الحالي</div>
+        <div style="text-align:center;color:var(--tm);font-size:.78rem">جاري التحميل...</div>
       </div>
       <div class="sw-actions">
         <button class="sa-btn sa-edit ripple-btn" onclick="event.stopPropagation();openEdit('${s.subscriptionId}')">
@@ -312,71 +368,214 @@ function card(s){
   </div>`;
 }
 
-function toggle(card){card.querySelector('.sw-expand').classList.toggle('open');lucide.createIcons();}
+/* ── حساب انتهاء الاشتراك الذكي ── */
+function calcExpiry(s){
+  const att=s.sessionsAttended||0, tot=s.sessionsCount||1;
+  // لو الحصص خلصت
+  if(att>=tot) return `<div class="detail-highlight" style="background:rgba(255,77,109,.05);border-color:rgba(255,77,109,.2)"><i data-lucide="alert-circle" style="color:var(--err)"></i><span style="color:var(--err)">انتهت جميع الحصص (${att}/${tot})</span></div>`;
 
+  // لو في تاريخ محدد
+  if(s.subscriptionExpiry){
+    const exp=new Date(s.subscriptionExpiry),now=new Date();now.setHours(0,0,0,0);
+    const diff=Math.ceil((exp-now)/(1000*60*60*24));
+    if(diff<0) return `<div class="detail-highlight"><i data-lucide="calendar-x"></i><span>انتهى الاشتراك في ${fmtDate(s.subscriptionExpiry)}</span></div>`;
+    const cls=diff<=7?'exp-over':diff<=30?'exp-warn':'exp-ok';
+    const txt=diff===0?'ينتهي اليوم':diff===1?'ينتهي غداً':`ينتهي بعد ${diff} يوم`;
+    return `<div class="detail-highlight"><i data-lucide="calendar"></i><span>انتهاء الاشتراك: ${fmtDate(s.subscriptionExpiry)} — <span class="expiry-badge ${cls}">${txt}</span></span></div>`;
+  }
+
+  // لو مفيش تاريخ — احسب من الأيام المتبقية
+  if((s.trainingDays||[]).length>0){
+    const remaining=tot-att;
+    const now=new Date();now.setHours(0,0,0,0);
+    // احسب كم يوم تدريب متبقي بدءاً من اليوم
+    let days=0,counted=0,date=new Date(now);
+    while(counted<remaining&&days<365){
+      if((s.trainingDays||[]).includes(date.getDay())) counted++;
+      if(counted<remaining) date.setDate(date.getDate()+1);
+      days++;
+    }
+    if(counted>=remaining){
+      return `<div class="detail-highlight"><i data-lucide="calendar"></i><span>متوقع الانتهاء: ${fmtDate(date)} (متبقي ${remaining} حصة)</span></div>`;
+    }
+  }
+  return '';
+}
+
+/* ── toggle card + load calendar ── */
+async function toggleCard(subId){
+  const expand=document.getElementById(`expand-${subId}`);
+  const isOpen=expand.classList.contains('open');
+  expand.classList.toggle('open');
+  lucide.createIcons();
+  if(!isOpen){
+    // تحميل التقويم عند أول فتح
+    await loadCalendar(subId);
+  }
+}
+
+async function loadCalendar(subId){
+  const s=swimmers.find(x=>x.subscriptionId===subId);
+  if(!s) return;
+  if(!calState[subId]){
+    const now=new Date();
+    calState[subId]={year:now.getFullYear(),month:now.getMonth()+1,statusMap:{}};
+  }
+  const state=calState[subId];
+  const wrap=document.getElementById(`att-${subId}`);
+  if(!wrap) return;
+  try{
+    const d=await apiCall(`/attendance/${subId}/month?year=${state.year}&month=${state.month}`);
+    state.statusMap=d.statusMap||{};
+    renderCalendar(s,state,wrap);
+    lucide.createIcons();
+  }catch(e){
+    wrap.innerHTML=`<div class="att-sec-title"><i data-lucide="calendar-days"></i> سجل الحضور</div><div style="color:var(--tm);font-size:.76rem">خطأ في تحميل البيانات</div>`;
+  }
+}
+
+function renderCalendar(s,state,wrap){
+  const {year,month,statusMap}=state;
+  const now=new Date();now.setHours(0,0,0,0);
+  const todayStr=lds(new Date());
+  const firstDOW=new Date(year,month-1,1).getDay();
+  const lastDate=new Date(year,month,0).getDate();
+  const isCurrentMonth=(year===now.getFullYear()&&month===now.getMonth()+1);
+  const pad=n=>String(n).padStart(2,'0');
+  let present=0,absent=0,makeup=0,html='';
+
+  for(let i=0;i<firstDOW;i++) html+='<div class="cal-cell empty"></div>';
+  for(let d=1;d<=lastDate;d++){
+    const date=new Date(year,month-1,d),di=date.getDay();
+    const ds=`${year}-${pad(month)}-${pad(d)}`;
+    const isTD=(s.trainingDays||[]).includes(di);
+    const isPast=date<now,isToday=ds===todayStr;
+    const rec=statusMap[ds];
+    let state2='rest',icon='';
+    if(isTD){
+      if(rec?.isMakeup&&rec?.status==='present'){state2='makeup';makeup++;icon='↩';}
+      else if(rec?.status==='absent'){state2='absent';absent++;icon='✕';}
+      else if(rec?.status==='present'){state2='present';present++;icon='✓';}
+      else if(isToday){state2='today-c';icon='●';}
+      else if(isPast){state2='present';present++;icon='✓';}
+      else{state2='upcoming';}
+    }
+    html+=`<div class="cal-cell ${state2}"><span class="cc-num">${d}</span>${icon?`<span class="cc-ic">${icon}</span>`:''}</div>`;
+  }
+
+  // متبقي: أيام التدريب من اليوم حتى نهاية الشهر
+  let remaining=0;
+  const startDay=isCurrentMonth?now.getDate():1;
+  for(let d=startDay;d<=lastDate;d++){
+    const date=new Date(year,month-1,d),di=date.getDay();
+    if(!(s.trainingDays||[]).includes(di)) continue;
+    const ds=`${year}-${pad(month)}-${pad(d)}`;
+    const rec=statusMap[ds];
+    if(!rec||rec.status==='absent') remaining++;
+  }
+
+  const subId=s.subscriptionId;
+  const nowD=new Date();
+  const nextDisabled=(year===nowD.getFullYear()&&month===nowD.getMonth()+1);
+
+  wrap.innerHTML=`
+    <div class="att-sec-title"><i data-lucide="calendar-days"></i> سجل الحضور</div>
+    <div class="att-stats-bar">
+      <div class="att-stat as-p"><span style="font-family:var(--f-disp);font-size:1.1rem;font-weight:800">${present}</span><br>حضر</div>
+      <div class="att-stat as-a"><span style="font-family:var(--f-disp);font-size:1.1rem;font-weight:800">${absent}</span><br>غاب</div>
+      <div class="att-stat as-m"><span style="font-family:var(--f-disp);font-size:1.1rem;font-weight:800">${makeup}</span><br>تعويضي</div>
+      <div class="att-stat as-r"><span style="font-family:var(--f-disp);font-size:1.1rem;font-weight:800">${remaining}</span><br>متبقي</div>
+    </div>
+    <div class="cal-month-nav">
+      <button class="cal-mnb" onclick="navCalMonth('${subId}',-1)">›</button>
+      <span class="cal-month-lbl">${MONTHS[month-1]} ${year}</span>
+      <button class="cal-mnb" id="calNext-${subId}" ${nextDisabled?'disabled':''} onclick="navCalMonth('${subId}',1)">‹</button>
+    </div>
+    <div class="cal-day-hd">
+      ${['أحد','اثنين','ثلا','أربع','خميس','جمعة','سبت'].map(d=>`<div class="cal-day-h">${d}</div>`).join('')}
+    </div>
+    <div class="cal-grid">${html}</div>
+  `;
+  lucide.createIcons();
+}
+
+async function navCalMonth(subId,dir){
+  const state=calState[subId];if(!state) return;
+  state.month+=dir;
+  if(state.month<1){state.month=12;state.year--;}
+  if(state.month>12){state.month=1;state.year++;}
+  const s=swimmers.find(x=>x.subscriptionId===subId);
+  const wrap=document.getElementById(`att-${subId}`);
+  if(!s||!wrap) return;
+  try{
+    const d=await apiCall(`/attendance/${subId}/month?year=${state.year}&month=${state.month}`);
+    state.statusMap=d.statusMap||{};
+    renderCalendar(s,state,wrap);
+    lucide.createIcons();
+  }catch(e){}
+}
+
+/* ── EDIT ── */
 function bindUI(){
-  document.getElementById('logoutBtn').onclick=doLogout;
+  $('logoutBtn').onclick=doLogout;
   let st;
-  document.getElementById('swSearch').addEventListener('input',e=>{clearTimeout(st);st=setTimeout(()=>render(e.target.value.trim()),300);});
-  document.getElementById('closeEdit').onclick=()=>closeModal('editModal');
-  document.getElementById('editModal').addEventListener('click',e=>e.target===e.currentTarget&&closeModal('editModal'));
-  document.getElementById('saveBtn').onclick=doSave;
+  $('swSearch').addEventListener('input',e=>{clearTimeout(st);st=setTimeout(()=>render(e.target.value.trim()),300);});
+  $('closeEdit').onclick=()=>closeModal('editModal');
+  $('editModal').addEventListener('click',e=>e.target===e.currentTarget&&closeModal('editModal'));
+  $('saveBtn').onclick=doSave;
 }
 
-function doLogout(){
-  localStorage.removeItem('sw_token');localStorage.removeItem('sw_user');
-  window.location.href='auth.html';
-}
+function doLogout(){localStorage.removeItem('sw_token');localStorage.removeItem('sw_user');window.location.href='auth.html';}
 
 async function openEdit(subId){
   try{
     const d=await apiCall('/swimmers/'+subId);
     const s=d.data; editId=subId;
-    document.getElementById('e_name').value=s.fullName||'';
-    document.getElementById('e_phone').value=s.phone||'';
-    document.getElementById('e_time').value=s.trainingTime||'';
-    document.getElementById('e_goal').value=s.goal||'';
-    document.getElementById('e_expiry').value=s.subscriptionExpiry?new Date(s.subscriptionExpiry).toISOString().split('T')[0]:'';
+    $('e_name').value  =s.fullName||'';
+    $('e_phone').value =s.phone||'';
+    $('e_time').value  =s.trainingTime||'';
+    $('e_goal').value  =s.goal||'';
+    $('e_expiry').value=s.subscriptionExpiry?new Date(s.subscriptionExpiry).toISOString().split('T')[0]:'';
     openModal('editModal');lucide.createIcons();
   }catch(e){toast(e.message||'خطأ','er');}
 }
 
 async function doSave(){
   if(!editId) return;
-  const btn=document.getElementById('saveBtn');
-  btn.classList.add('loading');document.getElementById('saveTxt').textContent='جاري الحفظ...';
+  const btn=$('saveBtn');btn.classList.add('loading');$('saveTxt').textContent='جاري الحفظ...';
   try{
-    const r=await fetch(`${API}/swimmers/${editId}`,{
-      method:'PUT',
-      headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},
-      body:JSON.stringify({
-        fullName:document.getElementById('e_name').value.trim(),
-        phone:document.getElementById('e_phone').value.trim(),
-        trainingTime:document.getElementById('e_time').value||'',
-        goal:document.getElementById('e_goal').value||'',
-        subscriptionExpiry:document.getElementById('e_expiry').value||'',
-      }),
-    }).then(x=>x.json());
-    if(!r.success) throw new Error(r.message);
-    closeModal('editModal'); toast('✅ تم التحديث','ok');
+    // ✅ استخدام apiCall مع Bearer token (بدل fetch مباشر)
+    await apiCall(`/swimmers/${editId}`,'PUT',{
+      fullName:$('e_name').value.trim(),
+      phone:$('e_phone').value.trim(),
+      trainingTime:$('e_time').value||'',
+      goal:$('e_goal').value||'',
+      subscriptionExpiry:$('e_expiry').value||'',
+    });
+    closeModal('editModal');toast('✅ تم التحديث','ok');
     await loadSwimmers();
   }catch(e){toast(e.message||'خطأ','er');}
-  finally{btn.classList.remove('loading');document.getElementById('saveTxt').textContent='حفظ التعديلات';lucide.createIcons();}
+  finally{btn.classList.remove('loading');$('saveTxt').textContent='حفظ التعديلات';lucide.createIcons();}
 }
 
+/* ── API ── */
 async function apiCall(path,method='GET',body=null){
   const h={'Content-Type':'application/json','Authorization':`Bearer ${token}`};
-  const o={method,headers:h};if(body)o.body=JSON.stringify(body);
+  const o={method,headers:h};if(body) o.body=JSON.stringify(body);
   const r=await fetch(`${API}${path}`,o);
   const d=await r.json().catch(()=>({message:`HTTP ${r.status}`}));
   if(!r.ok){if(r.status===401)doLogout();throw new Error(d.message||`HTTP ${r.status}`);}
   return d;
 }
+
+/* ── HELPERS ── */
+function lds(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 function fmtDate(d){const dt=new Date(d);return `${dt.getDate()} ${MONTHS[dt.getMonth()]} ${dt.getFullYear()}`;}
-function openModal(id){document.getElementById(id).classList.add('show');}
-function closeModal(id){document.getElementById(id).classList.remove('show');if(id==='editModal')editId=null;}
+function $(id){return document.getElementById(id);}
+function openModal(id){$(id).classList.add('show');}
+function closeModal(id){$(id).classList.remove('show');if(id==='editModal')editId=null;}
 let toastT;
-function toast(msg,type='inf'){const el=document.getElementById('toast');el.className=`toast ${type} show`;document.getElementById('toastMsg').textContent=msg;clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),3200);}
+function toast(msg,type='inf'){const el=$('toast');el.className=`toast ${type} show`;$('toastMsg').textContent=msg;clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),3200);}
 </script>
 </body>
 </html>
