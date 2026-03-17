@@ -521,16 +521,14 @@ async function navCalMonth(subId,dir){
   }catch(e){}
 }
 
-/* ════ openEdit — يعدل بيانات المستخدم (SwimmerUser) مش بيانات السباح ════ */
 function openEdit(subId){
-  // بيانات المستخدم نفسه من الـ user المحفوظ
-  editId=subId;
-  $('e_name').value  = user?.displayName||'';
-  $('e_phone').value = user?.phone||'';
-  // وقت التدريب والهدف من بيانات السباح
   const s=swimmers.find(x=>x.subscriptionId===subId);
-  $('e_time').value  = s?.trainingTime||'';
-  $('e_goal').value  = s?.goal||'';
+  if(!s) return;
+  editId=subId;
+  $('e_name').value  = s.fullName||'';
+  $('e_phone').value = s.phone||'';
+  $('e_time').value  = s.trainingTime||'';
+  $('e_goal').value  = s.goal||'';
   openModal('editModal');
   lucide.createIcons();
 }
@@ -539,17 +537,12 @@ async function doSave(){
   if(!editId) return;
   const btn=$('saveBtn');btn.classList.add('loading');$('saveTxt').textContent='جاري الحفظ...';
   try{
-    const res=await apiCall('/swimmer-auth/me','PUT',{
-      displayName: $('e_name').value.trim(),
-      phone:       $('e_phone').value.trim(),
+    await apiCall(`/swimmer-auth/my-swimmers/${editId}`,'PUT',{
+      fullName:     $('e_name').value.trim(),
+      phone:        $('e_phone').value.trim(),
+      trainingTime: $('e_time').value||'',
+      goal:         $('e_goal').value||'',
     });
-    // حدّث الـ user المحلي
-    if(user){
-      user.displayName=$('e_name').value.trim();
-      user.phone=$('e_phone').value.trim();
-      localStorage.setItem('sw_user',JSON.stringify(user));
-    }
-    renderHero();
     closeModal('editModal');
     toast('✅ تم تحديث بياناتك','ok');
     await loadSwimmers();
