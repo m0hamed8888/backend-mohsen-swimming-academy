@@ -23,7 +23,7 @@
 .auth-tab:not(.active):hover{color:var(--ts);background:var(--surf2)}
 .auth-panel{display:none}.auth-panel.active{display:block}
 .login-type{display:flex;gap:6px;margin-bottom:16px}
-.lt-btn{flex:1;padding:8px 8px;border-radius:var(--r-md);font-size:.75rem;font-weight:700;border:1.5px solid var(--bdr);color:var(--tm);background:rgba(255,255,255,.03);transition:all var(--fast);display:flex;align-items:center;justify-content:center;gap:5px}
+.lt-btn{flex:1;padding:8px;border-radius:var(--r-md);font-size:.75rem;font-weight:700;border:1.5px solid var(--bdr);color:var(--tm);background:rgba(255,255,255,.03);transition:all var(--fast);display:flex;align-items:center;justify-content:center;gap:5px}
 .lt-btn svg{width:13px;height:13px}
 .lt-btn.active{border-color:var(--cyan);background:rgba(0,200,255,.1);color:var(--tp)}
 .lt-btn:hover:not(.active){color:var(--ts);border-color:rgba(255,255,255,.15)}
@@ -32,7 +32,7 @@
 .auth-err svg{width:13px;height:13px;flex-shrink:0}
 .rate-warn{display:none;align-items:center;gap:7px;padding:9px 13px;border-radius:var(--r-sm);background:rgba(255,181,71,.08);border:1px solid rgba(255,181,71,.22);font-size:.76rem;color:var(--warn);margin-bottom:11px}
 .rate-warn.show{display:flex}
-.rate-warn svg{width:13px;height:13px;flex-shrink:0}
+.rate-warn svg{width:13px;height:13px}
 .btn-full{width:100%;height:50px;border-radius:var(--r-md);background:var(--grad-ocean);color:#fff;font-size:.93rem;font-weight:800;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 8px 26px rgba(0,100,255,.4);margin-top:5px;transition:transform var(--fast) var(--spring),box-shadow var(--fast)}
 .btn-full:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(0,100,255,.6)}
 .btn-full:active{transform:scale(.97)}
@@ -45,6 +45,18 @@
 .back-link svg{width:13px;height:13px}
 .note-box{padding:9px 13px;border-radius:var(--r-sm);background:rgba(0,200,255,.05);border:1px solid rgba(0,200,255,.15);font-size:.75rem;color:var(--ts);margin-bottom:13px;display:flex;align-items:flex-start;gap:6px;line-height:1.5}
 .note-box svg{width:13px;height:13px;color:var(--cyan);flex-shrink:0;margin-top:2px}
+
+/* ── city pills ── */
+.city-wrap{margin-bottom:14px}
+.city-wrap label{font-size:.78rem;font-weight:700;color:var(--ts);margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.city-wrap label svg{width:12px;height:12px;color:var(--cyan)}
+.city-pills{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.city-pill{padding:9px 8px;border-radius:var(--r-md);font-size:.78rem;font-weight:700;border:1.5px solid var(--bdr);color:var(--tm);background:rgba(255,255,255,.03);cursor:pointer;transition:all var(--fast);text-align:center;display:flex;align-items:center;justify-content:center;gap:5px}
+.city-pill svg{width:12px;height:12px}
+.city-pill.active{border-color:var(--cyan);background:rgba(0,200,255,.1);color:var(--tp)}
+.city-pill:hover:not(.active){color:var(--ts);border-color:rgba(255,255,255,.15)}
+.city-err{font-size:.72rem;color:var(--err);margin-top:5px;display:none}
+.city-err.show{display:block}
   </style>
 </head>
 <body>
@@ -135,6 +147,27 @@
         <div class="field" style="grid-column:1/-1"><label>تأكيد كلمة المرور *</label>
           <input type="password" class="fc" id="rPass2" placeholder="أعد كتابة الباسورد"/></div>
       </div>
+
+      <!-- city pills -->
+      <div class="city-wrap" style="margin-top:4px">
+        <label><i data-lucide="map-pin"></i> مدينتك *</label>
+        <div class="city-pills">
+          <button type="button" class="city-pill" data-city="الشروق" onclick="selectCity(this)">
+            <i data-lucide="building-2"></i> الشروق
+          </button>
+          <button type="button" class="city-pill" data-city="العاشر من رمضان" onclick="selectCity(this)">
+            <i data-lucide="building-2"></i> العاشر من رمضان
+          </button>
+          <button type="button" class="city-pill" data-city="المستقبل" onclick="selectCity(this)">
+            <i data-lucide="building-2"></i> المستقبل
+          </button>
+          <button type="button" class="city-pill" data-city="بدر" onclick="selectCity(this)">
+            <i data-lucide="building-2"></i> بدر
+          </button>
+        </div>
+        <div class="city-err" id="cityErr">من فضلك اختر مدينتك</div>
+      </div>
+
       <button class="btn-full" id="rBtn"><i data-lucide="user-plus"></i><span id="rBtnTxt">إنشاء الحساب</span></button>
       <a href="index.html" class="back-link"><i data-lucide="arrow-right"></i> العودة للرئيسية</a>
     </div>
@@ -151,6 +184,7 @@ const RL  = {
   reset(k){delete this.s[k]}
 };
 let lType='swimmer';
+let selectedCity=null;
 
 document.addEventListener('DOMContentLoaded',()=>{
   lucide.createIcons();
@@ -179,6 +213,13 @@ function setType(type){
   document.getElementById('ltSw').classList.toggle('active',type==='swimmer');
   document.getElementById('ltTr').classList.toggle('active',type==='trainer');
   lucide.createIcons();
+}
+
+function selectCity(btn){
+  document.querySelectorAll('.city-pill').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  selectedCity=btn.dataset.city;
+  document.getElementById('cityErr').classList.remove('show');
 }
 
 async function doLogin(){
@@ -225,10 +266,11 @@ async function doRegister(){
   if(!user||!pass){showE('rErrMsg','rErr','اسم المستخدم وكلمة المرور مطلوبان');return;}
   if(pass!==pass2){showE('rErrMsg','rErr','كلمتا المرور غير متطابقتين');return;}
   if(pass.length<6){showE('rErrMsg','rErr','كلمة المرور 6 أحرف على الأقل');return;}
+  if(!selectedCity){document.getElementById('cityErr').classList.add('show');return;}
   document.getElementById('rErr').classList.remove('show');
   setBusy('rBtn','rBtnTxt',true,'جاري الإنشاء...');
   try{
-    const res=await post(`${API}/swimmer-auth/register`,{username:user,password:pass,displayName:name,phone});
+    const res=await post(`${API}/swimmer-auth/register`,{username:user,password:pass,displayName:name,phone,city:selectedCity});
     localStorage.setItem('sw_token',res.token);
     localStorage.setItem('sw_user',JSON.stringify(res.user));
     RL.reset('register');
