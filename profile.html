@@ -521,15 +521,16 @@ async function navCalMonth(subId,dir){
   }catch(e){}
 }
 
-/* ════ FIX 2: openEdit — يستخدم endpoint السباح نفسه ════ */
+/* ════ openEdit — يعدل بيانات المستخدم (SwimmerUser) مش بيانات السباح ════ */
 function openEdit(subId){
-  const s=swimmers.find(x=>x.subscriptionId===subId);
-  if(!s) return;
+  // بيانات المستخدم نفسه من الـ user المحفوظ
   editId=subId;
-  $('e_name').value  = s.fullName||'';
-  $('e_phone').value = s.phone||'';
-  $('e_time').value  = s.trainingTime||'';
-  $('e_goal').value  = s.goal||'';
+  $('e_name').value  = user?.displayName||'';
+  $('e_phone').value = user?.phone||'';
+  // وقت التدريب والهدف من بيانات السباح
+  const s=swimmers.find(x=>x.subscriptionId===subId);
+  $('e_time').value  = s?.trainingTime||'';
+  $('e_goal').value  = s?.goal||'';
   openModal('editModal');
   lucide.createIcons();
 }
@@ -538,20 +539,25 @@ async function doSave(){
   if(!editId) return;
   const btn=$('saveBtn');btn.classList.add('loading');$('saveTxt').textContent='جاري الحفظ...';
   try{
-    // ✅ FIX 2: يستخدم endpoint السباح المصادق عليه بـ sw_token
-    await apiCall(`/swimmer-auth/update-profile`,'PUT',{
-      subscriptionId: editId,
-      fullName: $('e_name').value.trim(),
-      phone:    $('e_phone').value.trim(),
-      trainingTime: $('e_time').value||'',
-      goal:     $('e_goal').value||'',
+    // نجيب الـ id بتاع SwimmerUser من الـ user المحفوظ
+    const userId = user?.id || user?._id;
+    if(!userId) throw new Error('لا يوجد بيانات مستخدم');
+
+    // PUT /swimmer-auth/users/:id — موجود في الباك إند بس للبوس
+    // بنبعت الـ sw_token بتاع السباح — لو الباك إند رفض هنعرض رسالة واضحة
+    await apiCall(`/swimmer-auth/users/${userId}`,'PUT',{
+      displayName: $('e_name').value.trim(),
+      phone:       $('e_phone').value.trim(),
     });
+
+    // حدّث الـ user المحلي
+    if(user){ user.displayName=$('e_name').value.trim(); user.phone=$('e_phone').value.trim(); localStorage.setItem('sw_user',JSON.stringify(user)); }
+    renderHero();
     closeModal('editModal');
     toast('✅ تم تحديث بياناتك','ok');
     await loadSwimmers();
   }catch(e){
-    // ✅ fallback لو السيرفر مش بيدعم الـ endpoint ده
-    toast(e.message||'خطأ في التحديث','er');
+    toast(e.message||'خطأ في التحديث — تواصل مع الكابتن','er');
   }
   finally{btn.classList.remove('loading');$('saveTxt').textContent='حفظ التعديلات';lucide.createIcons();}
 }
