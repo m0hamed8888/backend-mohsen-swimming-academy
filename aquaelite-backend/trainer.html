@@ -823,6 +823,9 @@ function renderMonth(stats) {
   monSelDate=null;
   $('monthLbl').textContent='اضغط على يوم تدريب لتحديده';
   $('mDelBtn').classList.remove('show');
+  // reset زرار التعويضي
+  $('mMakeupBtn').style.opacity='0.3';
+  $('mMakeupBtn').style.pointerEvents='none';
   hideMakeupUI();
 }
 
@@ -864,8 +867,17 @@ function selectMonthCell(cell,ds,di,recId,isMakeup){
   $('monthLbl').textContent=`المحدد: ${DAYS[di]} ${d.getDate()} ${MONTHS[d.getMonth()]}`;
   $('mDelBtn').classList.toggle('show',!!recId);
   const rec=monStatusMap[ds];
-  if(rec?.status==='absent' && !rec?.isMakeup) $('makeupBanner').classList.add('show');
-  else hideMakeupUI();
+  // إظهار banner التعويضي بس لو الغياب فعلي
+  if(rec?.status==='absent' && !rec?.isMakeup){
+    $('makeupBanner').classList.add('show');
+    $('mMakeupBtn').style.opacity='1';
+    $('mMakeupBtn').style.pointerEvents='all';
+  } else {
+    hideMakeupUI();
+    // تعتيم زرار التعويضي لو اليوم مش غياب
+    $('mMakeupBtn').style.opacity='0.3';
+    $('mMakeupBtn').style.pointerEvents='none';
+  }
   lucide.createIcons();
 }
 
@@ -885,6 +897,12 @@ async function markMonth(status) {
 
 function openMakeupPicker(){
   if(!monSelDate){toast('اختر يوماً أولاً','error');return;}
+  // التعويضي يشتغل بس لو اليوم المحدد غياب فعلي
+  const rec=monStatusMap[monSelDate.date];
+  if(!rec || rec.status !== 'absent'){
+    toast('اختر يوم غياب أولاً لتسجيل التعويضي','error');
+    return;
+  }
   $('makeupDateWrap').classList.add('show');
   const tomorrow=new Date(); tomorrow.setDate(tomorrow.getDate()+1);
   $('makeupDateInput').value=localDateStr(tomorrow);
