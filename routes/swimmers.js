@@ -184,7 +184,7 @@ router.get('/:subscriptionId', protect, async (req, res) => {
    يقبل: fullName, phone, trainingTime, goal, isActive,
           subscriptionExpiry, trainerName, level, levelNote, rating, ratingNote
    ───────────────────────────────────────────────────────────── */
-router.put('/:subscriptionId', protect, async (req, res) => {
+router.put('/:subscriptionId', async (req, res) => {
   try {
     const isBoss = req.trainer.role === 'boss';
     const filter = { subscriptionId: req.params.subscriptionId };
