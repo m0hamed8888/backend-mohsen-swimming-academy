@@ -3,7 +3,6 @@ const bcrypt   = require('bcryptjs');
 
 const swimmerUserSchema = new mongoose.Schema(
   {
-    // ── بيانات الحساب ─────────────────────────────────────
     username: {
       type:      String,
       required:  [true, 'اسم المستخدم مطلوب'],
@@ -28,13 +27,19 @@ const swimmerUserSchema = new mongoose.Schema(
       trim:    true,
       default: '',
     },
-    // email اختياري — للبوس فقط
     email: {
       type:    String,
       trim:    true,
       default: '',
     },
-    // ربط بـ Swimmer records (واحد أو أكثر)
+
+    // ── المدينة — تُسجَّل مع الحساب ──────────────────────────
+    city: {
+      type: String,
+      enum: ['الشروق', 'العاشر من رمضان', 'المستقبل', 'بدر', null],
+      default: null,
+    },
+
     swimmers: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -46,7 +51,6 @@ const swimmerUserSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// hash password قبل الحفظ
 swimmerUserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);
