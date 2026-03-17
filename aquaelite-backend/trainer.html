@@ -883,6 +883,7 @@ function selectMonthCell(cell,ds,di,recId,isMakeup){
 
 async function markMonth(status) {
   if(!monSelDate){toast('اختر يوماً أولاً','error');return;}
+  const savedDate = monSelDate.date;
   try {
     const res=await apiCall('/attendance','POST',{
       subscriptionId:swimmer.subscriptionId,
@@ -891,6 +892,7 @@ async function markMonth(status) {
     });
     if(res.sessionsAttended !== undefined) $('lcAttended').textContent=res.sessionsAttended;
     await loadMonthData();
+    reSelectCell(savedDate);
     toast(status==='present'?'✅ تم تسجيل الحضور':'❌ تم تسجيل الغياب', status==='present'?'success':'error');
   }catch(e){toast(e.message||'خطأ','error');}
 }
@@ -972,6 +974,17 @@ async function delMonthRec(){
     const updated=await apiCall(`/swimmers/${swimmer.subscriptionId}`);
     $('lcAttended').textContent=updated.data?.sessionsAttended||0;
   }catch(e){toast(e.message||'خطأ','error');}
+}
+
+/* إعادة تحديد نفس اليوم بعد إعادة رسم الشهر */
+function reSelectCell(dateStr) {
+  const cells = document.querySelectorAll('.month-grid .month-cell[onclick]');
+  cells.forEach(cell => {
+    const onclickAttr = cell.getAttribute('onclick') || '';
+    if(onclickAttr.includes(`'${dateStr}'`)) {
+      cell.click();
+    }
+  });
 }
 
 function navMonth(dir){
