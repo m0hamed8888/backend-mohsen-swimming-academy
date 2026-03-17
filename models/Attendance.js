@@ -10,9 +10,13 @@ const attendanceSchema = new mongoose.Schema(
     recordedBy:     { type: String,  default: 'system' },
     notes:          { type: String,  default: '' },
 
-    // ── اليوم التعويضي ──────────────────────────────────
+    // ── اليوم التعويضي (على سجل الحضور التعويضي نفسه) ──
     isMakeup:      { type: Boolean, default: false },
     makeupForDate: { type: Date,    default: null  },
+
+    // ✅ على سجل الغياب — عشان نعرف إن فيه تعويضي ليه
+    hasMakeup:  { type: Boolean, default: false },
+    makeupDate: { type: Date,    default: null  },
   },
   { timestamps: true }
 );
