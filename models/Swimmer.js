@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 
 const swimmerSchema = new mongoose.Schema(
   {
-    // ── بيانات التسجيل الأساسية ──────────────────────────────
     fullName: {
       type: String,
       required: [true, 'الاسم مطلوب'],
@@ -19,8 +18,6 @@ const swimmerSchema = new mongoose.Schema(
       trim: true,
     },
 
-    // ── خلفية السباحة ────────────────────────────────────────
-    // FIX 1: default بدل required — صفحة الكابتن مش بتسأل عنه
     swamBefore: {
       type: String,
       enum: ['yes', 'no'],
@@ -43,15 +40,12 @@ const swimmerSchema = new mongoose.Schema(
       default: null,
     },
 
-    // ── الهدف ────────────────────────────────────────────────
-    // ليست required — قد لا يكون محدداً عند تسجيل الكابتن
     goal: {
       type: String,
       enum: ['fitness', 'competition', 'safety', 'fun', null],
       default: null,
     },
 
-    // ── الاشتراك ─────────────────────────────────────────────
     subscriptionId: {
       type: String,
       unique: true,
@@ -63,22 +57,19 @@ const swimmerSchema = new mongoose.Schema(
       required: [true, 'عدد الحصص مطلوب'],
     },
 
-    // أيام التدريب: array من أرقام (0=أحد ... 6=سبت)
     trainingDays: {
       type: [Number],
       required: true,
       validate: {
         validator: function (arr) {
           if (!Array.isArray(arr) || arr.length === 0) return false;
-          // التحقق من عدد الأيام حسب نوع الاشتراك
           const count = this.sessionsCount;
           if (count === 8)  return arr.length === 2;
           if (count === 12) return arr.length === 3;
           if (count === 24) return arr.length === 6;
-          // لو مش معروف — اقبل أي عدد > 0
           return arr.length > 0;
         },
-        message: function(props) {
+        message: function () {
           const sess = this.sessionsCount;
           if (sess === 8)  return 'اشتراك ٨ حصص يتطلب يومين اثنين بالضبط';
           if (sess === 12) return 'اشتراك ١٢ حصة يتطلب ٣ أيام بالضبط';
@@ -88,7 +79,6 @@ const swimmerSchema = new mongoose.Schema(
       },
     },
 
-    // الجدول المختار من register.html أو 'custom' من trainer.html
     trainingSchedule: {
       type: String,
       enum: [
@@ -99,7 +89,6 @@ const swimmerSchema = new mongoose.Schema(
       default: null,
     },
 
-    // يوم الراحة لـ 24 حصة (0-6)
     restDay: {
       type: Number,
       min: 0,
@@ -116,15 +105,53 @@ const swimmerSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-    // ── ربط السباح بالكابتن المسؤول ──
-trainer: {
-  type:    mongoose.Schema.Types.ObjectId,
-  ref:     'Trainer',
-  default: null,
-},
 
-    // FIX 3: cache للأداء — بيتحدث تلقائياً عند كل تسجيل حضور
-    // ولو احتجت التأكد استخدم swimmer.recalcAttendance()
+    trainer: {
+      type:    mongoose.Schema.Types.ObjectId,
+      ref:     'Trainer',
+      default: null,
+    },
+
+    // ── اللِيفِل — يحدده الكابتن (LV 1 – LV 10) ─────────────
+    level: {
+      type: Number,
+      min: 1,
+      max: 10,
+      default: null,
+    },
+    levelNote: {
+      type: String,
+      default: '',
+    },
+    levelUpdatedBy: {
+      type: String,
+      default: null,
+    },
+    levelUpdatedAt: {
+      type: Date,
+      default: null,
+    },
+
+    // ── التقييم بالنجوم (1-5) — مختلف عن الليفِل ─────────────
+    rating: {
+      type: Number,
+      min: 0,
+      max: 5,
+      default: 0,
+    },
+    ratingNote: {
+      type: String,
+      default: '',
+    },
+    ratingUpdatedBy: {
+      type: String,
+      default: null,
+    },
+    ratingUpdatedAt: {
+      type: Date,
+      default: null,
+    },
+
     sessionsAttended: {
       type: Number,
       default: 0,
@@ -151,7 +178,6 @@ trainer: {
   }
 );
 
-// ── Virtual: العمر من تاريخ الميلاد ──────────────────────
 swimmerSchema.virtual('age').get(function () {
   if (!this.dob) return null;
   const today = new Date();
@@ -162,7 +188,6 @@ swimmerSchema.virtual('age').get(function () {
   return age;
 });
 
-// ── Pre-save: توليد رقم الاشتراك تلقائياً (AQ-XXXXX) ─────
 swimmerSchema.pre('save', async function (next) {
   if (!this.subscriptionId) {
     let id, exists;
@@ -175,9 +200,6 @@ swimmerSchema.pre('save', async function (next) {
   next();
 });
 
-// ── Method: إعادة حساب sessionsAttended من الـ DB (دقيق 100%) ─
-// استخدمه لو شككت في الـ cache:
-//   await swimmer.recalcAttendance();
 swimmerSchema.methods.recalcAttendance = async function () {
   const Attendance = mongoose.model('Attendance');
   const count = await Attendance.countDocuments({
@@ -189,7 +211,6 @@ swimmerSchema.methods.recalcAttendance = async function () {
   return count;
 };
 
-// ── Method: حل أيام التدريب من الجدول المختار ─────────────
 swimmerSchema.methods.resolveTrainingDays = function () {
   if (this.sessionsCount === 24 && this.restDay !== null) {
     return [0, 1, 2, 3, 4, 5, 6].filter((d) => d !== this.restDay);
