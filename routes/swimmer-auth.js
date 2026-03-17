@@ -223,5 +223,19 @@ router.delete('/users/:id', protectTrainer, requireBoss, async (req, res) => {
     res.status(500).json({ success: false, message: 'خطأ في الحذف' });
   }
 });
+/* PUT /swimmer-auth/me — السباح يعدل بياناته */
+router.put('/me', protectSwimmer, async (req, res) => {
+  try {
+    const { displayName, phone } = req.body;
+    const user = await SwimmerUser.findByIdAndUpdate(
+      req.swimmerUser._id,
+      { displayName, phone },
+      { new: true }
+    );
+    res.json({ success: true, user });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'خطأ في التحديث' });
+  }
+});
 
 module.exports = { router, protectSwimmer };
