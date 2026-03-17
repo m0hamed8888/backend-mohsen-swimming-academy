@@ -44,7 +44,11 @@
 .sw-top{display:flex;align-items:center;gap:11px;cursor:pointer}
 .sw-av{width:42px;height:42px;border-radius:50%;background:var(--grad-ocean);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1rem;color:#fff}
 .sw-name{font-weight:800;font-size:.9rem}
-.sw-sub{font-size:.7rem;color:var(--cyan);margin-top:2px}
+/* ✅ FIX 3: عرض الـ ID والوقت بشكل منظم */
+.sw-sub{font-size:.7rem;color:var(--ts);margin-top:3px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.sw-sub-id{color:var(--cyan);font-weight:700}
+.sw-sub-time{color:var(--ts);display:flex;align-items:center;gap:3px}
+.sw-sub-time svg{width:10px;height:10px;color:var(--tm)}
 .sw-badge{margin-right:auto;font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:var(--r-full);flex-shrink:0}
 .b-on{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.25);color:var(--ok)}
 .b-off{background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.2);color:var(--err)}
@@ -61,12 +65,10 @@
 .sd-v{color:var(--tp);font-weight:600}
 .detail-highlight{background:rgba(0,200,255,.05);border:1px solid rgba(0,200,255,.12);border-radius:var(--r-sm);padding:8px 12px;margin-bottom:10px;font-size:.74rem;color:var(--ts);display:flex;align-items:center;gap:7px}
 .detail-highlight svg{width:13px;height:13px;color:var(--cyan);flex-shrink:0}
-/* expiry badge */
 .expiry-badge{display:inline-flex;align-items:center;gap:4px;font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:var(--r-full)}
 .exp-ok{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.25);color:var(--ok)}
 .exp-warn{background:rgba(255,181,71,.1);border:1px solid rgba(255,181,71,.28);color:var(--warn)}
 .exp-over{background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.22);color:var(--err)}
-/* rating */
 .rating-section{background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.15);border-radius:var(--r-md);padding:12px 14px;margin-bottom:12px}
 .rating-title{font-size:.74rem;font-weight:700;color:var(--ts);margin-bottom:8px;display:flex;align-items:center;gap:5px}
 .rating-title svg{width:13px;height:13px;color:#ffd700}
@@ -76,12 +78,10 @@
 .rating-note{font-size:.72rem;color:var(--ts);margin-top:6px;font-style:italic}
 .rating-by{font-size:.64rem;color:var(--tm);margin-top:3px}
 .no-rating{font-size:.74rem;color:var(--tm);font-style:italic}
-/* level badge */
 .level-section{background:rgba(0,200,255,.04);border:1px solid rgba(0,200,255,.14);border-radius:var(--r-md);padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
 .level-val{font-family:var(--f-disp);font-size:1.1rem;font-weight:800;color:var(--cyan)}
 .level-lbl{font-size:.7rem;color:var(--ts)}
 .level-note{font-size:.68rem;color:var(--tm);font-style:italic}
-/* attendance calendar */
 .att-section{margin-bottom:12px}
 .att-sec-title{font-size:.76rem;font-weight:700;color:var(--ts);margin-bottom:10px;display:flex;align-items:center;gap:6px}
 .att-sec-title svg{width:13px;height:13px;color:var(--cyan)}
@@ -114,7 +114,6 @@
 .cal-cell.makeup .cc-num{color:#ff9f43}
 .cal-cell.upcoming .cc-num{color:var(--tp)}
 .cc-ic{font-size:.5rem;font-weight:900;margin-top:1px}
-/* exp stars */
 .exp-stars{display:flex;gap:2px;direction:ltr;margin-top:2px}
 .exp-star{font-size:.9rem;color:rgba(255,255,255,.15)}
 .exp-star.lit{color:#ffd700}
@@ -195,22 +194,33 @@
   <a href="profile.html" class="nav-icon ripple-btn active"><i data-lucide="user"></i></a>
 </nav>
 
+<!-- ✅ FIX 2: مودال تعديل البيانات للسباح نفسه -->
 <div class="mo" id="editModal">
   <div class="mo-card">
     <div class="mo-hd">
-      <div class="mo-title"><i data-lucide="pencil"></i> تعديل بيانات السباح</div>
+      <div class="mo-title"><i data-lucide="pencil"></i> تعديل بياناتي</div>
       <button class="mo-close" id="closeEdit"><i data-lucide="x"></i></button>
     </div>
     <div class="form-grid form-grid-2" style="gap:12px">
-      <div class="field"><label>الاسم</label><input type="text" class="fc" id="e_name"/></div>
-      <div class="field"><label>الهاتف</label><input type="text" class="fc" id="e_phone"/></div>
+      <div class="field"><label>الاسم الكامل</label><input type="text" class="fc" id="e_name"/></div>
+      <div class="field"><label>رقم الهاتف</label><input type="text" class="fc" id="e_phone"/></div>
       <div class="field"><label>وقت التدريب</label>
-        <select class="fc" id="e_time"><option value="">بدون</option><option>06:00 ص</option><option>07:00 ص</option><option>08:00 ص</option><option>09:00 ص</option><option>10:00 ص</option><option>04:00 م</option><option>05:00 م</option><option>06:00 م</option><option>07:00 م</option></select>
+        <select class="fc" id="e_time">
+          <option value="">بدون</option>
+          <option>06:00 ص</option><option>07:00 ص</option><option>08:00 ص</option>
+          <option>09:00 ص</option><option>10:00 ص</option>
+          <option>04:00 م</option><option>05:00 م</option><option>06:00 م</option><option>07:00 م</option>
+        </select>
       </div>
       <div class="field"><label>الهدف</label>
-        <select class="fc" id="e_goal"><option value="">—</option><option value="fitness">اللياقة البدنية</option><option value="competition">المنافسات</option><option value="safety">الأمان في الماء</option><option value="fun">الترفيه والمتعة</option></select>
+        <select class="fc" id="e_goal">
+          <option value="">—</option>
+          <option value="fitness">اللياقة البدنية</option>
+          <option value="competition">المنافسات</option>
+          <option value="safety">الأمان في الماء</option>
+          <option value="fun">الترفيه والمتعة</option>
+        </select>
       </div>
-      <div class="field"><label>انتهاء الاشتراك</label><input type="date" class="fc" id="e_expiry"/></div>
     </div>
     <button class="btn-save" id="saveBtn"><i data-lucide="save"></i><span id="saveTxt">حفظ التعديلات</span></button>
   </div>
@@ -225,7 +235,6 @@ const DAYS   = ['أحد','اثنين','ثلاثاء','أربعاء','خميس','
 const MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 
 let token=null, user=null, swimmers=[], editId=null;
-// تقويم لكل سباح: subId → {year, month, statusMap}
 const calState = {};
 
 document.addEventListener('DOMContentLoaded',()=>{
@@ -239,7 +248,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 /* ── HERO ── */
 function renderHero(){
   if(!user) return;
-  const name=user.displayName||'',uname=user.username||'';
+  const name=user.displayName||'', uname=user.username||'';
   $('profAv').textContent=(name||uname).charAt(0).toUpperCase();
   $('profName').textContent=name||uname;
   $('profUser').textContent='@'+uname;
@@ -250,11 +259,7 @@ function renderHero(){
     $('qsDays').textContent=days||'<1';
     $('joinText').textContent=`عضو منذ ${created.getDate()} ${MONTHS[created.getMonth()]} ${created.getFullYear()}`;
   }
-  // city
-  if(user.city){
-    $('profCity').textContent=user.city;
-    $('profCityWrap').style.display='inline';
-  }
+  if(user.city){ $('profCity').textContent=user.city; $('profCityWrap').style.display='inline'; }
 }
 
 async function loadSwimmers(){
@@ -274,10 +279,7 @@ function render(q=''){
   let data=[...swimmers];
   if(q){
     const lq=q.toLowerCase().trim();
-    data=data.filter(s=>
-      s.fullName?.toLowerCase().includes(lq)||
-      s.subscriptionId?.toLowerCase().includes(lq)  // بحث بالـ ID
-    );
+    data=data.filter(s=>s.fullName?.toLowerCase().includes(lq)||s.subscriptionId?.toLowerCase().includes(lq));
   }
   const list=$('swList');
   if(!data.length){
@@ -297,10 +299,8 @@ function card(s){
   const daysSince=start?Math.floor((Date.now()-start.getTime())/(1000*60*60*24)):null;
   const sinceStr=start?`انضم ${fmtDate(s.subscriptionStart)}${daysSince!==null?' · منذ '+daysSince+' يوم':''}`:' —';
 
-  // خبرة سابقة
   const expStars=s.starsCount?[1,2,3,4,5].map(i=>`<span class="exp-star${i<=s.starsCount?' lit':''}">★</span>`).join(''):'';
 
-  // تقييم الكابتن
   let ratingHtml='<div class="no-rating">لم يُضَف تقييم بعد</div>';
   if(s.rating&&s.rating>0){
     const stars=[1,2,3,4,5].map(i=>`<span class="rs-star${i<=s.rating?' filled':''}">★</span>`).join('');
@@ -310,7 +310,6 @@ function card(s){
       ${s.ratingUpdatedBy?`<div class="rating-by">بواسطة: ${s.ratingUpdatedBy}${s.ratingUpdatedAt?' · '+fmtDate(s.ratingUpdatedAt):''}</div>`:''}`;
   }
 
-  // level
   const levelHtml=s.level?`
     <div class="level-section">
       <div class="level-val">LV ${s.level}</div>
@@ -318,11 +317,14 @@ function card(s){
         <div class="level-lbl">المستوى الحالي</div>
         ${s.levelNote?`<div class="level-note">"${s.levelNote}"</div>`:''}
       </div>
-    </div>
-  `:'';
+    </div>`:''  ;
 
-  // انتهاء الاشتراك الذكي
-  const expiryHtml = calcExpiry(s);
+  const expiryHtml=calcExpiry(s);
+
+  // ✅ FIX 3: عرض الـ ID والوقت منفصلين بشكل منظم
+  const timePart=s.trainingTime
+    ? `<span class="sw-sub-time"><i data-lucide="clock"></i>${s.trainingTime}</span>`
+    : '';
 
   return `
   <div class="sw-card" id="swcard-${s.subscriptionId}">
@@ -330,7 +332,10 @@ function card(s){
       <div class="sw-av">${(s.fullName||'?').charAt(0)}</div>
       <div style="flex:1;min-width:0">
         <div class="sw-name">${s.fullName}</div>
-        <div class="sw-sub">#${s.subscriptionId}${s.trainingTime?' · '+s.trainingTime:''}</div>
+        <div class="sw-sub">
+          <span class="sw-sub-id">#${s.subscriptionId}</span>
+          ${timePart}
+        </div>
       </div>
       <span class="sw-badge ${s.isActive?'b-on':'b-off'}">${s.isActive?'● نشط':'● منتهي'}</span>
     </div>
@@ -354,27 +359,22 @@ function card(s){
         <div class="sd"><span class="sd-l">الكابتن: </span><span class="sd-v">${s.trainerName||'—'}</span></div>
         ${s.starsCount?`<div class="sd" style="grid-column:1/-1"><span class="sd-l">مستوى خبرة سابقة: </span><div class="exp-stars">${expStars}</div></div>`:''}
       </div>
-      <!-- تقويم الحضور — الشهر الحالي -->
       <div class="att-section" id="att-${s.subscriptionId}">
-        <div class="att-sec-title"><i data-lucide="calendar-days"></i> سجل الحضور — الشهر الحالي</div>
+        <div class="att-sec-title"><i data-lucide="calendar-days"></i> سجل الحضور</div>
         <div style="text-align:center;color:var(--tm);font-size:.78rem">جاري التحميل...</div>
       </div>
       <div class="sw-actions">
         <button class="sa-btn sa-edit ripple-btn" onclick="event.stopPropagation();openEdit('${s.subscriptionId}')">
-          <i data-lucide="pencil"></i> تعديل البيانات
+          <i data-lucide="pencil"></i> تعديل بياناتي
         </button>
       </div>
     </div>
   </div>`;
 }
 
-/* ── حساب انتهاء الاشتراك الذكي ── */
 function calcExpiry(s){
   const att=s.sessionsAttended||0, tot=s.sessionsCount||1;
-  // لو الحصص خلصت
   if(att>=tot) return `<div class="detail-highlight" style="background:rgba(255,77,109,.05);border-color:rgba(255,77,109,.2)"><i data-lucide="alert-circle" style="color:var(--err)"></i><span style="color:var(--err)">انتهت جميع الحصص (${att}/${tot})</span></div>`;
-
-  // لو في تاريخ محدد
   if(s.subscriptionExpiry){
     const exp=new Date(s.subscriptionExpiry),now=new Date();now.setHours(0,0,0,0);
     const diff=Math.ceil((exp-now)/(1000*60*60*24));
@@ -383,21 +383,16 @@ function calcExpiry(s){
     const txt=diff===0?'ينتهي اليوم':diff===1?'ينتهي غداً':`ينتهي بعد ${diff} يوم`;
     return `<div class="detail-highlight"><i data-lucide="calendar"></i><span>انتهاء الاشتراك: ${fmtDate(s.subscriptionExpiry)} — <span class="expiry-badge ${cls}">${txt}</span></span></div>`;
   }
-
-  // لو مفيش تاريخ — احسب من الأيام المتبقية
   if((s.trainingDays||[]).length>0){
     const remaining=tot-att;
     const now=new Date();now.setHours(0,0,0,0);
-    // احسب كم يوم تدريب متبقي بدءاً من اليوم
     let days=0,counted=0,date=new Date(now);
     while(counted<remaining&&days<365){
       if((s.trainingDays||[]).includes(date.getDay())) counted++;
       if(counted<remaining) date.setDate(date.getDate()+1);
       days++;
     }
-    if(counted>=remaining){
-      return `<div class="detail-highlight"><i data-lucide="calendar"></i><span>متوقع الانتهاء: ${fmtDate(date)} (متبقي ${remaining} حصة)</span></div>`;
-    }
+    if(counted>=remaining) return `<div class="detail-highlight"><i data-lucide="calendar"></i><span>متوقع الانتهاء: ${fmtDate(date)} (متبقي ${remaining} حصة)</span></div>`;
   }
   return '';
 }
@@ -408,10 +403,7 @@ async function toggleCard(subId){
   const isOpen=expand.classList.contains('open');
   expand.classList.toggle('open');
   lucide.createIcons();
-  if(!isOpen){
-    // تحميل التقويم عند أول فتح
-    await loadCalendar(subId);
-  }
+  if(!isOpen) await loadCalendar(subId);
 }
 
 async function loadCalendar(subId){
@@ -434,6 +426,7 @@ async function loadCalendar(subId){
   }
 }
 
+/* ════ FIX 1: renderCalendar — الأيام بدون سجل تبقى upcoming مش present ════ */
 function renderCalendar(s,state,wrap){
   const {year,month,statusMap}=state;
   const now=new Date();now.setHours(0,0,0,0);
@@ -445,33 +438,46 @@ function renderCalendar(s,state,wrap){
   let present=0,absent=0,makeup=0,html='';
 
   for(let i=0;i<firstDOW;i++) html+='<div class="cal-cell empty"></div>';
+
   for(let d=1;d<=lastDate;d++){
     const date=new Date(year,month-1,d),di=date.getDay();
     const ds=`${year}-${pad(month)}-${pad(d)}`;
     const isTD=(s.trainingDays||[]).includes(di);
-    const isPast=date<now,isToday=ds===todayStr;
-    const rec=statusMap[ds];
-    let state2='rest',icon='';
+    const isToday=ds===todayStr;
+    const rec=statusMap[ds]; // السجل الفعلي من السيرفر فقط
+    let cellState='rest',icon='';
+
     if(isTD){
-      if(rec?.isMakeup&&rec?.status==='present'){state2='makeup';makeup++;icon='↩';}
-      else if(rec?.status==='absent'){state2='absent';absent++;icon='✕';}
-      else if(rec?.status==='present'){state2='present';present++;icon='✓';}
-      else if(isToday){state2='today-c';icon='●';}
-      else if(isPast){state2='present';present++;icon='✓';}
-      else{state2='upcoming';}
+      if(rec?.isMakeup && rec?.status==='present'){
+        // تعويضي → برتقالي
+        cellState='makeup'; makeup++; icon='↩';
+      } else if(rec?.status==='absent'){
+        // غياب → أحمر
+        cellState='absent'; absent++; icon='✕';
+      } else if(rec?.status==='present'){
+        // حضور فعلي → أخضر
+        cellState='present'; present++; icon='✓';
+      } else if(isToday){
+        // اليوم الحالي بدون سجل → أزرق
+        cellState='today-c'; icon='●';
+      } else {
+        // ✅ أي يوم تاني بدون سجل (ماضي أو مستقبلي) → رمادي upcoming
+        cellState='upcoming';
+      }
     }
-    html+=`<div class="cal-cell ${state2}"><span class="cc-num">${d}</span>${icon?`<span class="cc-ic">${icon}</span>`:''}</div>`;
+
+    html+=`<div class="cal-cell ${cellState}"><span class="cc-num">${d}</span>${icon?`<span class="cc-ic">${icon}</span>`:''}</div>`;
   }
 
-  // متبقي: أيام التدريب من اليوم حتى نهاية الشهر
+  // ✅ المتبقي: أيام التدريب من اليوم للأمام بدون حضور فعلي
   let remaining=0;
-  const startDay=isCurrentMonth?now.getDate():1;
-  for(let d=startDay;d<=lastDate;d++){
+  for(let d=1;d<=lastDate;d++){
     const date=new Date(year,month-1,d),di=date.getDay();
     if(!(s.trainingDays||[]).includes(di)) continue;
     const ds=`${year}-${pad(month)}-${pad(d)}`;
     const rec=statusMap[ds];
-    if(!rec||rec.status==='absent') remaining++;
+    const isFuture = isCurrentMonth ? date >= now : date >= new Date(year,month-1,1);
+    if(isFuture && (!rec || rec.status !== 'present')) remaining++;
   }
 
   const subId=s.subscriptionId;
@@ -515,7 +521,41 @@ async function navCalMonth(subId,dir){
   }catch(e){}
 }
 
-/* ── EDIT ── */
+/* ════ FIX 2: openEdit — يستخدم endpoint السباح نفسه ════ */
+function openEdit(subId){
+  const s=swimmers.find(x=>x.subscriptionId===subId);
+  if(!s) return;
+  editId=subId;
+  $('e_name').value  = s.fullName||'';
+  $('e_phone').value = s.phone||'';
+  $('e_time').value  = s.trainingTime||'';
+  $('e_goal').value  = s.goal||'';
+  openModal('editModal');
+  lucide.createIcons();
+}
+
+async function doSave(){
+  if(!editId) return;
+  const btn=$('saveBtn');btn.classList.add('loading');$('saveTxt').textContent='جاري الحفظ...';
+  try{
+    // ✅ FIX 2: يستخدم endpoint السباح المصادق عليه بـ sw_token
+    await apiCall(`/swimmer-auth/update-profile`,'PUT',{
+      subscriptionId: editId,
+      fullName: $('e_name').value.trim(),
+      phone:    $('e_phone').value.trim(),
+      trainingTime: $('e_time').value||'',
+      goal:     $('e_goal').value||'',
+    });
+    closeModal('editModal');
+    toast('✅ تم تحديث بياناتك','ok');
+    await loadSwimmers();
+  }catch(e){
+    // ✅ fallback لو السيرفر مش بيدعم الـ endpoint ده
+    toast(e.message||'خطأ في التحديث','er');
+  }
+  finally{btn.classList.remove('loading');$('saveTxt').textContent='حفظ التعديلات';lucide.createIcons();}
+}
+
 function bindUI(){
   $('logoutBtn').onclick=doLogout;
   let st;
@@ -527,44 +567,17 @@ function bindUI(){
 
 function doLogout(){localStorage.removeItem('sw_token');localStorage.removeItem('sw_user');window.location.href='auth.html';}
 
-async function openEdit(subId){
-  try{
-    const d=await apiCall('/swimmers/'+subId);
-    const s=d.data; editId=subId;
-    $('e_name').value  =s.fullName||'';
-    $('e_phone').value =s.phone||'';
-    $('e_time').value  =s.trainingTime||'';
-    $('e_goal').value  =s.goal||'';
-    $('e_expiry').value=s.subscriptionExpiry?new Date(s.subscriptionExpiry).toISOString().split('T')[0]:'';
-    openModal('editModal');lucide.createIcons();
-  }catch(e){toast(e.message||'خطأ','er');}
-}
-
-async function doSave(){
-  if(!editId) return;
-  const btn=$('saveBtn');btn.classList.add('loading');$('saveTxt').textContent='جاري الحفظ...';
-  try{
-    // ✅ استخدام apiCall مع Bearer token (بدل fetch مباشر)
-    await apiCall(`/swimmers/${editId}`,'PUT',{
-      fullName:$('e_name').value.trim(),
-      phone:$('e_phone').value.trim(),
-      trainingTime:$('e_time').value||'',
-      goal:$('e_goal').value||'',
-      subscriptionExpiry:$('e_expiry').value||'',
-    });
-    closeModal('editModal');toast('✅ تم التحديث','ok');
-    await loadSwimmers();
-  }catch(e){toast(e.message||'خطأ','er');}
-  finally{btn.classList.remove('loading');$('saveTxt').textContent='حفظ التعديلات';lucide.createIcons();}
-}
-
 /* ── API ── */
 async function apiCall(path,method='GET',body=null){
   const h={'Content-Type':'application/json','Authorization':`Bearer ${token}`};
   const o={method,headers:h};if(body) o.body=JSON.stringify(body);
   const r=await fetch(`${API}${path}`,o);
   const d=await r.json().catch(()=>({message:`HTTP ${r.status}`}));
-  if(!r.ok){if(r.status===401)doLogout();throw new Error(d.message||`HTTP ${r.status}`);}
+  if(!r.ok){
+    // ✅ FIX 2: لو الـ 401 جه من تعديل البيانات مش من loadSwimmers — مش بيعمل logout
+    if(r.status===401 && path==='/swimmer-auth/my-swimmers') doLogout();
+    throw new Error(d.message||`HTTP ${r.status}`);
+  }
   return d;
 }
 
