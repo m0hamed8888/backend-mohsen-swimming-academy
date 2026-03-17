@@ -51,6 +51,16 @@ router.post('/', protect, async (req, res) => {
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
 
+    // ══ FIX: لو التعويضي — حدّث سجل الغياب الأصلي عشان يعرف إن فيه تعويضي ليه ══
+    if (isMakeup && makeupForDate) {
+      const [ay, am, ad] = makeupForDate.split('-').map(Number);
+      const absenceDate  = new Date(Date.UTC(ay, am - 1, ad));
+      await Attendance.findOneAndUpdate(
+        { swimmer: swimmer._id, date: absenceDate, status: 'absent' },
+        { $set: { hasMakeup: true, makeupDate: recordDate } }
+      );
+    }
+
     // إعادة حساب عداد الحضور (الحضور الأصلي + التعويضي)
     const totalPresent = await Attendance.countDocuments({ swimmer: swimmer._id, status: 'present' });
     await Swimmer.findByIdAndUpdate(swimmer._id, { sessionsAttended: totalPresent });
@@ -58,7 +68,7 @@ router.post('/', protect, async (req, res) => {
     res.status(201).json({
       success: true,
       message: `تم تسجيل ${status === 'present' ? 'الحضور' : 'الغياب'}`,
-      data: record,
+      data:    record,
       sessionsAttended: totalPresent,
     });
   } catch (err) {
@@ -69,7 +79,6 @@ router.post('/', protect, async (req, res) => {
 
 /* ─────────────────────────────────────────────────────────────
    GET /api/attendance/:subscriptionId/week
-   الآن يُعيد statusMap للأسبوع + بيانات الشهر الكامل لـ 8 و 12 حصة
    ───────────────────────────────────────────────────────────── */
 router.get('/:subscriptionId/week', async (req, res) => {
   try {
@@ -77,7 +86,6 @@ router.get('/:subscriptionId/week', async (req, res) => {
     if (!swimmer)
       return res.status(404).json({ success: false, message: 'السباح غير موجود' });
 
-    // نطاق الأسبوع
     const now         = new Date();
     const todayUTC    = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
     const dayOfWeek   = todayUTC.getUTCDay();
@@ -93,10 +101,15 @@ router.get('/:subscriptionId/week', async (req, res) => {
     const statusMap = {};
     weekRecords.forEach(r => {
       const key = toLocalDateStr(r.date);
-      statusMap[key] = { status: r.status, id: r._id.toString(), isMakeup: r.isMakeup || false };
+      statusMap[key] = {
+        status:    r.status,
+        id:        r._id.toString(),
+        isMakeup:  r.isMakeup  || false,
+        hasMakeup: r.hasMakeup || false,   // ✅ غياب عنده تعويضي
+        makeupDate: r.makeupDate ? toLocalDateStr(r.makeupDate) : null,
+      };
     });
 
-    // ── إحصائيات الشهر الكامل للعرض في الـ UI ──
     const year  = now.getFullYear();
     const month = now.getMonth() + 1;
     const startOfMonth = new Date(Date.UTC(year, month - 1, 1));
@@ -110,14 +123,17 @@ router.get('/:subscriptionId/week', async (req, res) => {
     const monthStatusMap = {};
     allMonthRecords.forEach(r => {
       monthStatusMap[toLocalDateStr(r.date)] = {
-        status: r.status, id: r._id.toString(), isMakeup: r.isMakeup || false
+        status:    r.status,
+        id:        r._id.toString(),
+        isMakeup:  r.isMakeup  || false,
+        hasMakeup: r.hasMakeup || false,
+        makeupDate: r.makeupDate ? toLocalDateStr(r.makeupDate) : null,
       };
     });
 
     const presentCount = allMonthRecords.filter(r => r.status === 'present').length;
     const absentCount  = allMonthRecords.filter(r => r.status === 'absent').length;
 
-    // حساب أيام التدريب في الشهر
     const lastDay = new Date(year, month, 0).getDate();
     let trainingDaysCount = 0;
     for (let d = 1; d <= lastDay; d++) {
@@ -133,8 +149,11 @@ router.get('/:subscriptionId/week', async (req, res) => {
       return {
         date: dateStr, dayIndex: dayIdx,
         isTrainingDay: swimmer.trainingDays.includes(dayIdx),
-        status: rec?.status || null, recordId: rec?.id || null,
-        isMakeup: rec?.isMakeup || false,
+        status:    rec?.status    || null,
+        recordId:  rec?.id        || null,
+        isMakeup:  rec?.isMakeup  || false,
+        hasMakeup: rec?.hasMakeup || false,
+        makeupDate: rec?.makeupDate || null,
       };
     });
 
@@ -156,8 +175,6 @@ router.get('/:subscriptionId/week', async (req, res) => {
 
 /* ─────────────────────────────────────────────────────────────
    GET /api/attendance/:subscriptionId/month
-   حضور شهر كامل — لكل أنواع الاشتراكات (8، 12، 24)
-   Query: ?year=2026&month=3
    ───────────────────────────────────────────────────────────── */
 router.get('/:subscriptionId/month', async (req, res) => {
   try {
@@ -180,14 +197,17 @@ router.get('/:subscriptionId/month', async (req, res) => {
     const statusMap = {};
     records.forEach(r => {
       statusMap[toLocalDateStr(r.date)] = {
-        status: r.status, id: r._id.toString(), isMakeup: r.isMakeup || false
+        status:    r.status,
+        id:        r._id.toString(),
+        isMakeup:  r.isMakeup  || false,
+        hasMakeup: r.hasMakeup || false,   // ✅ غياب عنده تعويضي
+        makeupDate: r.makeupDate ? toLocalDateStr(r.makeupDate) : null,
       };
     });
 
     const presentCount = records.filter(r => r.status === 'present').length;
     const absentCount  = records.filter(r => r.status === 'absent').length;
 
-    // حساب عدد أيام التدريب في الشهر
     const lastDay = new Date(year, month, 0).getDate();
     let trainingDaysCount = 0;
     for (let d = 1; d <= lastDay; d++) {
@@ -197,7 +217,7 @@ router.get('/:subscriptionId/month', async (req, res) => {
 
     res.json({
       success: true, year, month,
-      trainingDays: swimmer.trainingDays,
+      trainingDays:  swimmer.trainingDays,
       sessionsCount: swimmer.sessionsCount,
       statusMap,
       stats: {
@@ -231,6 +251,14 @@ router.delete('/:recordId', protect, async (req, res) => {
     const record = await Attendance.findByIdAndDelete(req.params.recordId);
     if (!record)
       return res.status(404).json({ success: false, message: 'السجل غير موجود' });
+
+    // لو كان تعويضي — امسح علامة hasMakeup من سجل الغياب الأصلي
+    if (record.isMakeup && record.makeupForDate) {
+      await Attendance.findOneAndUpdate(
+        { swimmer: record.swimmer, date: record.makeupForDate },
+        { $set: { hasMakeup: false, makeupDate: null } }
+      );
+    }
 
     const total = await Attendance.countDocuments({ swimmer: record.swimmer, status: 'present' });
     await Swimmer.findByIdAndUpdate(record.swimmer, { sessionsAttended: total });
