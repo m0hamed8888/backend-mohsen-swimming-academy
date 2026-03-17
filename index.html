@@ -194,42 +194,37 @@ function showDots(){
   document.getElementById('searchResult').innerHTML='<div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
 }
 
-/* ════ doSearch ════
-   - لو الـ query يشبه رقم اشتراك → نجيبه مباشرة بـ GET /swimmers/:subscriptionId
-   - لو مش لاقيه أو بحث بالاسم → GET /swimmers?search=...
-   ════ */
+/* ════ doSearch — بيبعت token لو موجود ════ */
 async function doSearch(q){
   if(!q) return;
   showDots();
   const res=document.getElementById('searchResult');
+
+  // جيب أي token متاح
+  const token=localStorage.getItem('aq_token')||localStorage.getItem('sw_token')||null;
+  const headers={'Content-Type':'application/json'};
+  if(token) headers['Authorization']=`Bearer ${token}`;
+
+  const apiFetch=async(url)=>{
+    const r=await fetch(url,{headers});
+    return r.json();
+  };
+
   try{
     let swimmers=[];
-    // رقم الاشتراك: AQ-XXXXX أو أرقام فقط
     const clean=q.trim().toUpperCase().replace(/\s/g,'');
-    const isSubId=/^(AQ-?)?\d+$/.test(clean);
 
-    if(isSubId){
-      // جرّب بصيغة AQ-XXXXX
+    // ✅ دايماً ابحث بالـ search parameter زي ما الكابتن بيعمل
+    const d=await apiFetch(`${API}/swimmers?search=${encodeURIComponent(q)}&limit=6`);
+    swimmers=d.data||[];
+
+    // لو مالقاش ورقم اشتراك — جرّب مباشر بالـ ID
+    if(!swimmers.length && /^(AQ-?)?\d+$/.test(clean)){
       const subId=clean.startsWith('AQ')?clean:'AQ-'+clean.replace(/\D/g,'');
       try{
-        const d=await fetch(`${API}/swimmers/${subId}`).then(r=>r.json());
-        if(d.data) swimmers=[d.data];
+        const d2=await apiFetch(`${API}/swimmers/${subId}`);
+        if(d2.data) swimmers=[d2.data];
       }catch(e){}
-
-      // لو مالقاش — جرّب بالأرقام فقط
-      if(!swimmers.length){
-        const numOnly=clean.replace(/\D/g,'');
-        try{
-          const d=await fetch(`${API}/swimmers/AQ-${numOnly}`).then(r=>r.json());
-          if(d.data) swimmers=[d.data];
-        }catch(e){}
-      }
-    }
-
-    // لو لسه مالقاش أو بحث بالاسم — ابحث عادي
-    if(!swimmers.length){
-      const d=await fetch(`${API}/swimmers?search=${encodeURIComponent(q)}&limit=6`).then(r=>r.json());
-      swimmers=d.data||[];
     }
 
     if(!swimmers.length){
