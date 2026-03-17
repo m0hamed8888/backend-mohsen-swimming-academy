@@ -223,17 +223,34 @@ router.delete('/users/:id', protectTrainer, requireBoss, async (req, res) => {
     res.status(500).json({ success: false, message: 'خطأ في الحذف' });
   }
 });
-router.put('/me', protectSwimmer, async (req, res) => {
+
+
+
+router.put('/my-swimmers/:subscriptionId', protectSwimmer, async (req, res) => {
   try {
-    const { displayName, phone } = req.body;
-    const user = await SwimmerUser.findByIdAndUpdate(
-      req.swimmerUser._id,
-      { displayName: displayName||'', phone: phone||'' },
+    const { fullName, phone, trainingTime, goal } = req.body;
+
+    // تأكد إن السباح ده تابع لحساب المستخدم ده بس
+    const user = await SwimmerUser.findById(req.swimmerUser._id).populate('swimmers');
+    const swimmer = user.swimmers.find(s => s.subscriptionId === req.params.subscriptionId);
+    if (!swimmer)
+      return res.status(403).json({ success: false, message: 'غير مصرح' });
+
+    const updated = await Swimmer.findByIdAndUpdate(
+      swimmer._id,
+      { fullName: fullName||swimmer.fullName,
+        phone: phone||swimmer.phone,
+        trainingTime: trainingTime||swimmer.trainingTime,
+        goal: goal||swimmer.goal },
       { new: true }
     );
-    res.json({ success:true, user });
+    res.json({ success: true, message: 'تم التحديث', data: updated });
   } catch(err) {
-    res.status(500).json({ success:false, message:'خطأ في التحديث' });
+    res.status(500).json({ success: false, message: 'خطأ في التحديث' });
   }
 });
+
+
+
+
 module.exports = { router, protectSwimmer };
