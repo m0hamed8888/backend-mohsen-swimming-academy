@@ -539,25 +539,22 @@ async function doSave(){
   if(!editId) return;
   const btn=$('saveBtn');btn.classList.add('loading');$('saveTxt').textContent='جاري الحفظ...';
   try{
-    // نجيب الـ id بتاع SwimmerUser من الـ user المحفوظ
-    const userId = user?.id || user?._id;
-    if(!userId) throw new Error('لا يوجد بيانات مستخدم');
-
-    // PUT /swimmer-auth/users/:id — موجود في الباك إند بس للبوس
-    // بنبعت الـ sw_token بتاع السباح — لو الباك إند رفض هنعرض رسالة واضحة
-    await apiCall(`/swimmer-auth/users/${userId}`,'PUT',{
+    const res=await apiCall('/swimmer-auth/me','PUT',{
       displayName: $('e_name').value.trim(),
       phone:       $('e_phone').value.trim(),
     });
-
     // حدّث الـ user المحلي
-    if(user){ user.displayName=$('e_name').value.trim(); user.phone=$('e_phone').value.trim(); localStorage.setItem('sw_user',JSON.stringify(user)); }
+    if(user){
+      user.displayName=$('e_name').value.trim();
+      user.phone=$('e_phone').value.trim();
+      localStorage.setItem('sw_user',JSON.stringify(user));
+    }
     renderHero();
     closeModal('editModal');
     toast('✅ تم تحديث بياناتك','ok');
     await loadSwimmers();
   }catch(e){
-    toast(e.message||'خطأ في التحديث — تواصل مع الكابتن','er');
+    toast(e.message||'خطأ في التحديث','er');
   }
   finally{btn.classList.remove('loading');$('saveTxt').textContent='حفظ التعديلات';lucide.createIcons();}
 }
