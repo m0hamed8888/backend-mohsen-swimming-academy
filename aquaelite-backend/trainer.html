@@ -731,7 +731,7 @@ async function loadMonthData() {
    ألوان الخلايا:
    - present  → أخضر   (حضور فعلي من السيرفر)
    - absent   → أحمر   (غياب بدون تعويضي)
-   - makeup   → برتقالي (يوم التعويضي نفسه  OR  يوم الغياب اللي عنده تعويضي hasMakeup)
+   - makeup   → برتقالي (يوم التعويضي نفسه فقط — isMakeup=true)
    - today    → أزرق   (اليوم بدون سجل)
    - upcoming → رمادي  (أي يوم تاني بدون سجل)
    ════ */
@@ -760,11 +760,8 @@ function renderMonth() {
       if(rec?.isMakeup && rec?.status==='present'){
         // يوم التعويضي نفسه → برتقالي
         state='makeup'; makeup++; icon='↩';
-      } else if(rec?.status==='absent' && rec?.hasMakeup){
-        // يوم الغياب اللي عنده تعويضي → برتقالي (مش أحمر)
-        state='makeup'; makeup++; icon='↩';
       } else if(rec?.status==='absent'){
-        // غياب بدون تعويضي → أحمر
+        // غياب → أحمر دايماً (حتى لو عنده تعويضي في يوم تاني)
         state='absent'; absent++; icon='✕';
       } else if(rec?.status==='present'){
         // حضور عادي → أخضر
@@ -796,9 +793,9 @@ function renderMonth() {
   monSelDate=null;
   $('monthLbl').textContent='اضغط على يوم تدريب لتحديده';
   $('mDelBtn').classList.remove('show');
-  // زرار التعويضي معتم لحد ما يتحدد يوم غياب
-  $('mMakeupBtn').style.opacity='0.35';
-  $('mMakeupBtn').style.pointerEvents='none';
+  // زرار التعويضي شغال دايماً
+  $('mMakeupBtn').style.opacity='1';
+  $('mMakeupBtn').style.pointerEvents='all';
   hideMakeupUI();
 }
 
@@ -834,19 +831,11 @@ function selectMonthCell(cell,ds,di,recId,isMakeup){
   const d=new Date(ds+'T00:00:00');
   $('monthLbl').textContent=`المحدد: ${DAYS[di]} ${d.getDate()} ${MONTHS[d.getMonth()]}`;
   $('mDelBtn').classList.toggle('show',!!recId);
-  const rec=monStatusMap[ds];
 
-  // زرار التعويضي يتفعل بس لو الغياب بدون تعويضي
-  const isAbsentWithoutMakeup = rec?.status==='absent' && !rec?.hasMakeup;
-  if(isAbsentWithoutMakeup){
-    $('makeupBanner').classList.add('show');
-    $('mMakeupBtn').style.opacity='1';
-    $('mMakeupBtn').style.pointerEvents='all';
-  } else {
-    hideMakeupUI();
-    $('mMakeupBtn').style.opacity='0.35';
-    $('mMakeupBtn').style.pointerEvents='none';
-  }
+  // زرار التعويضي شغال على أي يوم مهما كان حالته
+  $('mMakeupBtn').style.opacity='1';
+  $('mMakeupBtn').style.pointerEvents='all';
+  hideMakeupUI();
   lucide.createIcons();
 }
 
@@ -879,10 +868,6 @@ function reSelectCell(dateStr) {
 /* ════ openMakeupPicker ════ */
 function openMakeupPicker(){
   if(!monSelDate){toast('اختر يوماً أولاً','error');return;}
-  const rec=monStatusMap[monSelDate.date];
-  if(!rec || rec.status !== 'absent' || rec.hasMakeup){
-    toast('اختر يوم غياب بدون تعويضي','error'); return;
-  }
   $('makeupDateWrap').classList.add('show');
   const tomorrow=new Date(); tomorrow.setDate(tomorrow.getDate()+1);
   $('makeupDateInput').value=localDateStr(tomorrow);
@@ -899,44 +884,28 @@ async function confirmMakeup(){
   if(!mDate){toast('اختر تاريخ اليوم التعويضي','error');return;}
   if(!monSelDate) return;
 
-  const absenceDate=monSelDate.date;
-  const absenceRecordId=monSelDate.recordId;
-
   try {
     const res=await apiCall('/attendance','POST',{
       subscriptionId:swimmer.subscriptionId,
       date:mDate,
       status:'present',
       isMakeup:true,
-      makeupForDate:absenceDate,
     });
 
     if(res.sessionsAttended !== undefined) $('lcAttended').textContent=res.sessionsAttended;
 
     hideMakeupUI();
 
-    // ✅ حدّث خلية الغياب في الـ map — hasMakeup=true عشان اللون يتحوّل برتقالي فوراً
-    if(monStatusMap[absenceDate]){
-      monStatusMap[absenceDate].hasMakeup  = true;
-      monStatusMap[absenceDate].makeupDate = mDate;
-    }
-
-    // ✅ أضف سجل التعويضي في الـ map (لو في نفس الشهر)
-    const pad=n=>String(n).padStart(2,'0');
+    // أضف سجل التعويضي في الـ map لو في نفس الشهر
     const mkDate=new Date(mDate+'T00:00:00');
-    const mkY=mkDate.getFullYear(), mkM=mkDate.getMonth()+1;
-    if(mkY===viewYear && mkM===viewMonth){
+    if(mkDate.getFullYear()===viewYear && mkDate.getMonth()+1===viewMonth){
       monStatusMap[mDate]={
         status:'present', isMakeup:true,
-        makeupForDate:absenceDate,
         id:res.data?._id||res.data?.id||null
       };
     }
 
-    // ✅ إعادة رسم الشهر فوراً بالداتا المحدثة محلياً
     renderMonth();
-
-    // ✅ تحديث من السيرفر في الخلفية للتأكد من دقة البيانات
     loadMonthData().catch(()=>{});
 
     toast('↩ تم تسجيل اليوم التعويضي','makeup');
