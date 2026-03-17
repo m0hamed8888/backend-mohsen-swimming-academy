@@ -890,13 +890,13 @@ function openMakeupPicker(){
   $('makeupDateInput').value=localDateStr(tomorrow);
 }
 
-/* ════ FIX 3: confirmMakeup — يحتفظ بشهر الغياب ويحدّث بعد التسجيل ════ */
+/* ════ FIX 3: confirmMakeup — يحدّث اللون فوراً بدون انتظار السيرفر ════ */
 async function confirmMakeup(){
   const mDate=$('makeupDateInput').value;
   if(!mDate){toast('اختر تاريخ اليوم التعويضي','error');return;}
   if(!monSelDate) return;
 
-  // احفظ شهر الغياب قبل أي تغيير
+  const absenceDate=monSelDate.date;
   const absenceYear=viewYear, absenceMonth=viewMonth;
 
   try {
@@ -905,17 +905,41 @@ async function confirmMakeup(){
       date:mDate,
       status:'present',
       isMakeup:true,
-      makeupForDate:monSelDate.date,
+      makeupForDate:absenceDate,
     });
 
     if(res.sessionsAttended !== undefined) $('lcAttended').textContent=res.sessionsAttended;
 
     hideMakeupUI();
 
-    // ارجع لشهر الغياب الأصلي وحدّثه
+    // ✅ حدّث خلية الغياب في الـ map يدوياً فوراً عشان اللون يتغير
+    if(monStatusMap[absenceDate]){
+      monStatusMap[absenceDate].isMakeup = true;
+      monStatusMap[absenceDate].makeupDate = mDate;
+    } else {
+      monStatusMap[absenceDate] = {
+        status:'absent',
+        isMakeup:true,
+        makeupDate:mDate,
+        id: monSelDate.recordId || null
+      };
+    }
+
+    // أضف التعويضي في الـ map للتاريخ الجديد
+    monStatusMap[mDate] = {
+      status:'present',
+      isMakeup:true,
+      makeupForDate:absenceDate,
+      id: res.id || res.data?.id || null
+    };
+
+    // ارسم الشهر من جديد بدون طلب من السيرفر عشان اللون يظهر فوراً
     viewYear=absenceYear;
     viewMonth=absenceMonth;
-    await loadMonthData();
+    renderMonth(null);
+
+    // بعدين حدّث من السيرفر في الخلفية للتأكد
+    loadMonthData().catch(()=>{});
 
     toast('↩ تم تسجيل اليوم التعويضي','makeup');
   }catch(e){toast(e.message||'خطأ','error');}
