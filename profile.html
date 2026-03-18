@@ -1231,7 +1231,6 @@ function swimmerCard(s, idx) {
 function buildExpand(s) {
   const days = (s.trainingDays || []).map(d => DAYS[d]).join('، ') || '—';
   const start = s.subscriptionStart ? new Date(s.subscriptionStart) : null;
-  const daysSince = start ? Math.floor((Date.now() - start.getTime()) / 86400000) : null;
 
   // Expiry row
   const expiryRow = buildExpiryRow(s);
