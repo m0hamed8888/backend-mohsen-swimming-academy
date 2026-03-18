@@ -558,7 +558,7 @@ body::before {
 .stat-lbl { font-size:.72rem; font-weight:700; color:var(--ts); }
 
 /* ══════════════════════════════════════
-   TESTIMONIALS / CTA STRIP
+   CTA SECTION
 ══════════════════════════════════════ */
 .cta-section {
   padding:80px 20px; max-width:680px; margin:0 auto;
@@ -717,21 +717,38 @@ body::before {
 }
 .result-meta span { color:var(--tm); }
 .result-meta strong { color:var(--tp); font-weight:600; }
+
+/* ══ Level badge in search results ══ */
+.result-level {
+  display:inline-flex; align-items:center; gap:4px;
+  font-size:.68rem; font-weight:800;
+  padding:2px 8px; border-radius:var(--r-full);
+  background:rgba(0,200,255,.1); border:1px solid rgba(0,200,255,.25);
+  color:var(--cyan);
+}
+
 .result-empty {
   text-align:center; padding:24px 0; color:var(--tm); font-size:.85rem;
 }
 .result-empty svg { width:28px;height:28px;margin:0 auto 8px;display:block;opacity:.35; }
 
-/* Auth gate modal */
+/* ══════════════════════════════════════
+   AUTH GATE MODAL — FIX
+   المشكلة: .modal-wrap.open .modal-box كانت بتتطبق على
+   .modal-wrap بس مش على .auth-modal — فضّل opacity:0
+══════════════════════════════════════ */
 .auth-modal {
   position:fixed; inset:0; z-index:300;
   display:none; align-items:center; justify-content:center; padding:20px;
 }
 .auth-modal.open { display:flex; }
-.auth-modal .modal-box {
-  text-align:center; padding:44px 32px;
-  max-width:380px;
+
+/* ✅ FIX: نفس transition بتاع .modal-wrap بس للـ auth-modal */
+.auth-modal.open .modal-box {
+  transform:translateY(0) !important;
+  opacity:1 !important;
 }
+
 .auth-modal-icon {
   width:64px; height:64px; border-radius:50%;
   background:var(--grad-ocean);
@@ -1050,7 +1067,8 @@ body::before {
 <!-- ════ BOTTOM NAV ════ -->
 <nav class="bottom-nav">
   <button class="nav-icon rpl" id="searchTrigger"><i data-lucide="search"></i></button>
-<button class="nav-icon center-fab rpl" id="registerBtn"><i data-lucide="plus"></i></button>
+  <!-- ✅ FIX: button بدل <a> عشان preventDefault يشتغل صح -->
+  <button class="nav-icon center-fab rpl" id="registerBtn"><i data-lucide="plus"></i></button>
   <a href="profile.html" class="nav-icon rpl" id="profileBtn"><i data-lucide="user"></i></a>
 </nav>
 
@@ -1071,7 +1089,7 @@ body::before {
 <!-- ════ AUTH GATE MODAL ════ -->
 <div class="auth-modal" id="authModal">
   <div class="modal-backdrop" id="authBackdrop"></div>
-  <div class="modal-box">
+  <div class="modal-box" style="text-align:center;padding:44px 32px;max-width:380px;margin:auto;">
     <button class="modal-close" onclick="closeM('authModal')"><i data-lucide="x"></i></button>
     <div class="auth-modal-icon"><i data-lucide="lock"></i></div>
     <div style="font-family:var(--f-disp);font-size:1.1rem;font-weight:800;margin-bottom:8px">تسجيل الدخول مطلوب</div>
@@ -1093,7 +1111,7 @@ body::before {
 (function() {
   const canvas = document.getElementById('bgCanvas');
   const ctx = canvas.getContext('2d');
-  let W, H, particles = [], lines = [];
+  let W, H, particles = [];
   const N = window.innerWidth < 600 ? 40 : 70;
 
   function resize() {
@@ -1119,8 +1137,6 @@ body::before {
 
   function draw() {
     ctx.clearRect(0, 0, W, H);
-
-    // Draw connections
     for (let i = 0; i < particles.length; i++) {
       for (let j = i + 1; j < particles.length; j++) {
         const p = particles[i], q = particles[j];
@@ -1136,21 +1152,17 @@ body::before {
         }
       }
     }
-
-    // Draw particles
     particles.forEach(p => {
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
       ctx.fillStyle = `rgba(${p.color},${p.alpha})`;
       ctx.fill();
-
       p.x += p.vx; p.y += p.vy;
       if (p.x < -10) p.x = W + 10;
       if (p.x > W + 10) p.x = -10;
       if (p.y < -10) p.y = H + 10;
       if (p.y > H + 10) p.y = -10;
     });
-
     requestAnimationFrame(draw);
   }
   draw();
@@ -1171,13 +1183,7 @@ body::before {
     const left = Math.random() * 100;
     const dur  = Math.random() * 14 + 8;
     const delay = init ? Math.random() * -20 : 0;
-    b.style.cssText = `
-      width:${size}px; height:${size}px;
-      left:${left}%;
-      animation-duration:${dur}s;
-      animation-delay:${delay}s;
-      opacity:0;
-    `;
+    b.style.cssText = `width:${size}px;height:${size}px;left:${left}%;animation-duration:${dur}s;animation-delay:${delay}s;opacity:0;`;
     wrap.appendChild(b);
     setTimeout(() => b.remove(), (dur + Math.abs(delay)) * 1000 + 1000);
     setTimeout(() => spawnBubble(wrap, false), dur * 1000 + Math.abs(delay) * 1000);
@@ -1242,10 +1248,8 @@ document.querySelectorAll('.stats-inner').forEach(s => statsObs.observe(s));
 
   const cards = track.querySelectorAll('.prog-card');
   const cardW = 272 + 18;
-  const total = cards.length;
   let active = 0;
 
-  // build dots
   cards.forEach((_, i) => {
     const d = document.createElement('div');
     d.className = 'cdot' + (i === 0 ? ' active' : '');
@@ -1268,7 +1272,6 @@ document.querySelectorAll('.stats-inner').forEach(s => statsObs.observe(s));
     if (idx !== active) updateDots(idx);
   });
 
-  // drag
   let isDown = false, startX = 0, scrollLeft = 0;
   track.addEventListener('mousedown', e => { isDown=true; track.classList.add('grabbing'); startX=e.pageX-track.offsetLeft; scrollLeft=track.scrollLeft; });
   track.addEventListener('mouseleave', () => { isDown=false; track.classList.remove('grabbing'); });
@@ -1283,9 +1286,7 @@ document.querySelectorAll('.stats-inner').forEach(s => statsObs.observe(s));
    AUTH / NAV
 ══════════════════════════════════════ */
 const API    = 'https://backend-mohsen-swimming-academy.vercel.app/api';
-const GOALS  = {fitness:'اللياقة',competition:'المنافسات',safety:'الأمان',fun:'الترفيه'};
 const DAYS   = ['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'];
-const MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 let searchTimer = null;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1338,17 +1339,26 @@ function bindUI() {
   document.getElementById('searchBackdrop').onclick = () => closeM('searchModal');
   document.getElementById('authBackdrop').onclick = () => closeM('authModal');
 
-  document.getElementById('registerBtn').addEventListener('click', e => {
-    e.preventDefault();
-    if (localStorage.getItem('sw_token')) window.location.href = 'register-swimmer.html';
-    else openM('authModal');
+  /* ✅ FIX: registerBtn هو button دلوقتي — مش محتاج preventDefault */
+  document.getElementById('registerBtn').addEventListener('click', () => {
+    if (localStorage.getItem('sw_token')) {
+      window.location.href = 'register-swimmer.html';
+    } else {
+      openM('authModal');
+    }
   });
 
   document.getElementById('profileBtn').addEventListener('click', e => {
     e.preventDefault();
     const sw = localStorage.getItem('sw_token'), tr = localStorage.getItem('aq_token');
     if (sw) { window.location.href = 'profile.html'; return; }
-    if (tr) { try { const t = JSON.parse(localStorage.getItem('aq_trainer')); window.location.href = t?.role === 'boss' ? './aquaelite-backend/boss.html' : './aquaelite-backend/trainer.html'; } catch(e) { window.location.href = 'auth.html'; } return; }
+    if (tr) {
+      try {
+        const t = JSON.parse(localStorage.getItem('aq_trainer'));
+        window.location.href = t?.role === 'boss' ? './aquaelite-backend/boss.html' : './aquaelite-backend/trainer.html';
+      } catch(e) { window.location.href = 'auth.html'; }
+      return;
+    }
     window.location.href = 'auth.html';
   });
 
@@ -1387,23 +1397,35 @@ async function doSearch(q) {
   }
 }
 
+/* ══════════════════════════════════════
+   ✅ resultCard — نفس fields بتاعة profile.html
+   شيل: الهدف، انتهاء الاشتراك
+   ضيف: ساعة التدريب، المستوى (LV)، اسم الكابتن
+══════════════════════════════════════ */
 function resultCard(s) {
   const daysStr = (s.trainingDays || []).map(d => DAYS[d]).join('، ') || '—';
+  const levelBadge = s.level
+    ? `<span class="result-level">LV ${s.level}</span>`
+    : '';
+
   return `
   <div class="result-card">
     <div class="result-head">
       <div class="result-avatar">${(s.fullName||'?').charAt(0)}</div>
       <div style="flex:1">
         <div class="result-name">${s.fullName}</div>
-        <div class="result-id">#${s.subscriptionId}</div>
+        <div class="result-id" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span>#${s.subscriptionId}</span>
+          ${levelBadge}
+        </div>
       </div>
       <span class="result-badge ${s.isActive?'rb-active':'rb-inactive'}">${s.isActive?'● نشط':'● منتهي'}</span>
     </div>
     <div class="result-meta">
       <div><span>ساعة التدريب: </span><strong>${s.trainingTime||'—'}</strong></div>
-      <div><span>المستوى: </span><strong>${s.level||'—'}</strong></div>
+      <div><span>الحصص: </span><strong>${s.sessionsAttended??0}/${s.sessionsCount??'—'}</strong></div>
       <div><span>أيام التدريب: </span><strong>${daysStr}</strong></div>
-      <div><span>اسم الكابتن: </span><strong>${s.trainerName||s.trainer||'—'}</strong></div>
+      <div><span>الكابتن: </span><strong>${s.trainerName||'—'}</strong></div>
     </div>
   </div>`;
 }
