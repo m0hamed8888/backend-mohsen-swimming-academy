@@ -1146,8 +1146,9 @@ function swimmerCard(s, idx) {
       <div class="sw-info">
         <div class="sw-name">${s.fullName}</div>
         <div class="sw-tags">
-          <span class="sw-id">#${s.subscriptionId}</span>
-          ${s.trainingTime ? `<span class="sw-time"><i data-lucide="clock"></i>${s.trainingTime}</span>` : ''}
+<span class="sw-id" onclick="event.stopPropagation();copyId('${s.subscriptionId}')" style="cursor:pointer;user-select:none" title="انسخ الرقم">
+  #${s.subscriptionId} 📋
+</span>          ${s.trainingTime ? `<span class="sw-time"><i data-lucide="clock"></i>${s.trainingTime}</span>` : ''}
         </div>
       </div>
       <div class="sw-status">
@@ -1210,7 +1211,7 @@ function buildExpand(s) {
     <div class="info-row" style="margin-top:4px">
       <i data-lucide="calendar-check"></i>
       <span>
-        ${start ? `انضم في <strong>${fmtDate(s.subscriptionStart)}</strong>${daysSince !== null ? ` — منذ ${daysSince} يوم` : ''}` : 'تاريخ الانضمام غير محدد'}
+        ${start ? `انضم في <strong>${fmtDate(s.subscriptionStart)}</strong>` : 'تاريخ الانضمام غير محدد'}
       </span>
     </div>
 
@@ -1487,6 +1488,20 @@ async function api(path, method = 'GET', body = null) {
   }
   return d;
 }
+function copyId(id) {
+  navigator.clipboard.writeText(id)
+    .then(() => toast('تم نسخ رقم الاشتراك ✓', 'ok'))
+    .catch(() => {
+      // fallback لو clipboard مش شغال (بعض المتصفحات)
+      const el = document.createElement('textarea');
+      el.value = id;
+      el.style.position = 'fixed'; el.style.opacity = '0';
+      document.body.appendChild(el);
+      el.select(); document.execCommand('copy');
+      document.body.removeChild(el);
+      toast('تم نسخ رقم الاشتراك ✓', 'ok');
+    });
+}
 
 /* ══════════════════════════════════════
    HELPERS
@@ -1503,6 +1518,7 @@ function toast(msg, type = 'inf') {
   clearTimeout(toastT);
   toastT = setTimeout(() => el.classList.remove('show'), 3400);
 }
+
 </script>
 </body>
 </html>
