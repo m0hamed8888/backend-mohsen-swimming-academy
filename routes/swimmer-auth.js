@@ -55,12 +55,13 @@ router.post('/register', async (req, res) => {
       success: true, message: 'تم إنشاء الحساب بنجاح', token,
       user: { id: user._id, username: user.username, displayName: user.displayName, phone: user.phone, city: user.city, createdAt: user.createdAt, swimmers: [] },
     });
+    
   } catch (err) {
     if (err.name === 'ValidationError') {
       return res.status(400).json({ success: false, message: Object.values(err.errors).map(e => e.message).join(' — ') });
     }
-    res.status(500).json({ success: false, message: 'خطأ في إنشاء الحساب' });
-  }
+console.error('REGISTER ERR:', err.name, err.message, err.code);
+    res.status(500).json({ success: false, message: err.message || 'خطأ في إنشاء الحساب' });  }
 });
 
 /* ── POST /login ── */
