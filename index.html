@@ -524,8 +524,8 @@ body::before {
   background:rgba(5,15,35,.6);
   border:1px solid rgba(0,200,255,.1);
   border-radius:var(--r-xl);
-  padding:48px 28px;
-  display:grid; grid-template-columns:repeat(2,1fr); gap:2px;
+  padding:40px 20px;
+  display:grid; grid-template-columns:repeat(4,1fr);
   position:relative; overflow:hidden;
 }
 .stats-inner::before {
@@ -533,29 +533,48 @@ body::before {
   background:radial-gradient(ellipse at 50% 0%,rgba(0,100,255,.12),transparent 65%);
   pointer-events:none;
 }
-@media(min-width:600px) { .stats-inner { grid-template-columns:repeat(4,1fr); } }
 .stat-item {
-  text-align:center; padding:28px 20px;
+  text-align:center; padding:24px 12px;
   position:relative;
 }
-.stat-item:not(:last-child)::after {
+/* فاصل عمودي بين كل عنصر */
+.stat-item + .stat-item::before {
   content:''; position:absolute;
-  top:20%; bottom:20%; left:0;
+  top:20%; bottom:20%; right:0;
   width:1px; background:var(--bdr);
-}
-@media(max-width:599px) {
-  .stat-item:nth-child(2n)::after { display:none; }
-  .stat-item:nth-child(2)::after,.stat-item:nth-child(3)::after { display:block; }
 }
 .stat-num {
   font-family:var(--f-disp);
-  font-size:2.8rem; font-weight:800; line-height:1;
+  font-size:2.6rem; font-weight:800; line-height:1;
   background:var(--grad-glow);
   -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
   margin-bottom:6px;
 }
-.stat-suffix { font-size:1.4rem; }
-.stat-lbl { font-size:.72rem; font-weight:700; color:var(--ts); }
+.stat-suffix { font-size:1.3rem; }
+.stat-lbl { font-size:.7rem; font-weight:700; color:var(--ts); }
+
+/* ══ موبايل: صف واحد 2×2 ══ */
+@media(max-width:599px) {
+  .stats-inner {
+    grid-template-columns:repeat(2,1fr);
+    padding:24px 16px;
+  }
+  /* حذف كل الفواصل القديمة */
+  .stat-item + .stat-item::before { display:none; }
+  /* فاصل عمودي بين العمودين فقط */
+  .stat-item:nth-child(2n+1)::after {
+    content:''; position:absolute;
+    top:15%; bottom:15%; left:0;
+    width:1px; background:var(--bdr);
+  }
+  /* فاصل أفقي بين الصفين */
+  .stat-item:nth-child(3),
+  .stat-item:nth-child(4) {
+    border-top:1px solid var(--bdr);
+  }
+  .stat-num { font-size:2rem; }
+  .stat-item { padding:20px 8px; }
+}
 
 /* ══════════════════════════════════════
    CTA SECTION
@@ -1398,14 +1417,37 @@ async function doSearch(q) {
 }
 
 /* ══════════════════════════════════════
-   ✅ resultCard — نفس fields بتاعة profile.html
-   شيل: الهدف، انتهاء الاشتراك
-   ضيف: ساعة التدريب، المستوى (LV)، اسم الكابتن
+   resultCard — مع fallbacks لأسماء الـ fields
 ══════════════════════════════════════ */
 function resultCard(s) {
+  // 🔍 عشان تعرف الأسماء الصح للـ fields — افتح DevTools Console وشوف
+  console.log('[AquaFlow Search] swimmer fields:', Object.keys(s));
+  console.log('[AquaFlow Search] raw data:', s);
+
   const daysStr = (s.trainingDays || []).map(d => DAYS[d]).join('، ') || '—';
-  const levelBadge = s.level
-    ? `<span class="result-level">LV ${s.level}</span>`
+
+  // ✅ Fallbacks لاسم الكابتن — كل الاحتمالات الممكنة
+  const captainName = s.trainerName
+    || s.trainer
+    || s.captainName
+    || s.captain
+    || s.coachName
+    || s.coach
+    || s.assignedTrainer
+    || (s.trainerInfo && (s.trainerInfo.name || s.trainerInfo.fullName))
+    || '—';
+
+  // ✅ Fallbacks للمستوى — كل الاحتمالات الممكنة
+  const levelVal = s.level
+    || s.swimLevel
+    || s.swimmingLevel
+    || s.currentLevel
+    || s.playerLevel
+    || s.lvl
+    || null;
+
+  const levelBadge = levelVal
+    ? `<span class="result-level">LV ${levelVal}</span>`
     : '';
 
   return `
@@ -1425,7 +1467,7 @@ function resultCard(s) {
       <div><span>ساعة التدريب: </span><strong>${s.trainingTime||'—'}</strong></div>
       <div><span>الحصص: </span><strong>${s.sessionsAttended??0}/${s.sessionsCount??'—'}</strong></div>
       <div><span>أيام التدريب: </span><strong>${daysStr}</strong></div>
-      <div><span>الكابتن: </span><strong>${s.trainerName||'—'}</strong></div>
+      <div><span>الكابتن: </span><strong>${captainName}</strong></div>
     </div>
   </div>`;
 }
