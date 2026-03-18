@@ -80,9 +80,10 @@ router.get('/public/search', async (req, res) => {
     };
 
     const swimmers = await Swimmer.find(filter)
-      .select('fullName subscriptionId trainingDays trainingTime goal sessionsCount sessionsAttended isActive subscriptionExpiry')
-      .sort({ createdAt: -1 })
-      .limit(6);
+  .select('fullName subscriptionId trainingDays trainingTime dob level trainerName trainer sessionsCount sessionsAttended isActive subscriptionExpiry')
+  .populate('trainer', 'name')
+  .sort({ createdAt: -1 })
+  .limit(6);
 
     res.json({ success: true, total: swimmers.length, data: swimmers });
   } catch (err) {
