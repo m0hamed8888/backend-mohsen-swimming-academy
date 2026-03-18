@@ -38,7 +38,7 @@ const protectSwimmer = async (req, res, next) => {
 const { protect: protectTrainer, requireBoss } = require('../middleware/auth');
 
 /* ── POST /register ── */
-router.post('/register', async (req, res) => {
+router.post('/register', registerLimiter , async (req, res) => {
   try {
     const { username, password, displayName, phone, city } = req.body;
     if (!username || !password)
@@ -60,8 +60,9 @@ router.post('/register', async (req, res) => {
     if (err.name === 'ValidationError') {
       return res.status(400).json({ success: false, message: Object.values(err.errors).map(e => e.message).join(' — ') });
     }
-console.error('REGISTER ERR:', err.name, err.message, err.code);
-    res.status(500).json({ success: false, message: err.message || 'خطأ في إنشاء الحساب' });  }
+res.status(500).json({ success: false, message: 'خطأ في إنشاء الحساب' });
+  
+  }
 });
 
 /* ── POST /login ── */
