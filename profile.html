@@ -1271,7 +1271,7 @@ function buildExpand(s) {
     ${ratingHtml}
 
     <div class="detail-grid">
-      <div class="dg-item"><div class="dg-lbl">العمر</div><div class="dg-val">${s.age ?? '—'} سنة</div></div>
+<div class="dg-item"><div class="dg-lbl">العمر</div><div class="dg-val">${calcAge(s.dob)} سنة</div></div>
       <div class="dg-item"><div class="dg-lbl">الهدف</div><div class="dg-val">${GOALS[s.goal] || '—'}</div></div>
       <div class="dg-item"><div class="dg-lbl">أيام التدريب</div><div class="dg-val">${days}</div></div>
       <div class="dg-item"><div class="dg-lbl">الهاتف</div><div class="dg-val">${s.phone || '—'}</div></div>
@@ -1555,6 +1555,14 @@ function copyId(id) {
     });
 }
 
+function calcAge(dob) {
+  if (!dob) return '—';
+  const today = new Date(), birth = new Date(dob);
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+  return age;
+}
 /* ══════════════════════════════════════
    HELPERS
 ══════════════════════════════════════ */
