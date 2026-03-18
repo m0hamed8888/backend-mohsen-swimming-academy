@@ -62,6 +62,33 @@ router.post('/register', protect, async (req, res) => {
     res.status(500).json({ success: false, message: 'خطأ في الخادم' });
   }
 });
+/* ─────────────────────────────────────────────────────────────
+   GET /api/swimmers/public/search  ← عام بدون token
+   ───────────────────────────────────────────────────────────── */
+router.get('/public/search', async (req, res) => {
+  try {
+    const { search } = req.query;
+    if (!search || search.trim().length < 2)
+      return res.json({ success: true, total: 0, data: [] });
+
+    const q = search.trim();
+    const filter = {
+      $or: [
+        { fullName:       { $regex: q, $options: 'i' } },
+        { subscriptionId: { $regex: q, $options: 'i' } },
+      ]
+    };
+
+    const swimmers = await Swimmer.find(filter)
+      .select('fullName subscriptionId trainingDays trainingTime goal sessionsCount sessionsAttended isActive subscriptionExpiry')
+      .sort({ createdAt: -1 })
+      .limit(6);
+
+    res.json({ success: true, total: swimmers.length, data: swimmers });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'خطأ في الخادم' });
+  }
+});
 
 /* ─────────────────────────────────────────────────────────────
    GET /api/swimmers
@@ -179,33 +206,7 @@ router.get('/:subscriptionId', protect,async (req, res) => {
   }
 });
 
-/* ─────────────────────────────────────────────────────────────
-   GET /api/swimmers/public/search  ← عام بدون token
-   ───────────────────────────────────────────────────────────── */
-router.get('/public/search', async (req, res) => {
-  try {
-    const { search } = req.query;
-    if (!search || search.trim().length < 2)
-      return res.json({ success: true, total: 0, data: [] });
 
-    const q = search.trim();
-    const filter = {
-      $or: [
-        { fullName:       { $regex: q, $options: 'i' } },
-        { subscriptionId: { $regex: q, $options: 'i' } },
-      ]
-    };
-
-    const swimmers = await Swimmer.find(filter)
-      .select('fullName subscriptionId trainingDays trainingTime goal sessionsCount sessionsAttended isActive subscriptionExpiry')
-      .sort({ createdAt: -1 })
-      .limit(6);
-
-    res.json({ success: true, total: swimmers.length, data: swimmers });
-  } catch (err) {
-    res.status(500).json({ success: false, message: 'خطأ في الخادم' });
-  }
-});
 /* ─────────────────────────────────────────────────────────────
    PUT /api/swimmers/:subscriptionId
    يقبل: fullName, phone, trainingTime, goal, isActive,
