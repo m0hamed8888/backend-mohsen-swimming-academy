@@ -852,46 +852,28 @@ select.fc option { background:#0a1428; color:var(--t1); }
   .hero-av { width:88px; height:88px; font-size:2.2rem; }
   .sw-head { padding:20px 20px 18px; }
 }
-/* ══ Info Strip ══ */
+/* ══ Preview Chips ══ */
 .sw-card-wrap { margin-bottom:12px; }
-.info-strip {
-  display:grid; grid-template-columns:repeat(3,1fr);
-  background:rgba(0,180,255,.03);
-  border:1px solid var(--bdr);
-  border-top:none;
-  border-radius:0 0 var(--r-xl) var(--r-xl);
+.sw-preview { display:flex; gap:5px; flex-wrap:wrap; margin-top:7px; }
+.pv-chip {
+  font-size:.68rem; font-weight:700;
+  padding:3px 9px; border-radius:var(--r-full);
+  white-space:nowrap;
 }
-.is-item {
-  text-align:center; padding:10px 6px;
-  border-left:1px solid var(--bdr);
-  cursor:pointer;
-}
-.is-item:last-child { border-left:none; }
-.is-lbl { font-size:.6rem; font-weight:600; color:var(--t4); margin-bottom:3px; }
-.is-val { font-size:.82rem; font-weight:800; line-height:1.2; }
-.is-cyan   { color:var(--cyan); }
-.is-ok     { color:var(--ok); }
-.is-warn   { color:var(--warn); }
-.is-err    { color:var(--err); }
-.is-purple { color:#a37fff; }
-.is-muted  { color:var(--t3); }
+.pv-ok     { background:rgba(0,229,160,.1);  border:1px solid rgba(0,229,160,.22); color:var(--ok); }
+.pv-warn   { background:rgba(255,176,58,.1); border:1px solid rgba(255,176,58,.25); color:var(--warn); }
+.pv-err    { background:rgba(255,77,109,.1); border:1px solid rgba(255,77,109,.22); color:var(--err); }
+.pv-blue   { background:rgba(0,200,255,.08); border:1px solid rgba(0,200,255,.2);   color:var(--cyan); }
+.pv-purple { background:rgba(123,47,255,.1); border:1px solid rgba(123,47,255,.22); color:#a37fff; }
+.pv-gray   { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); color:var(--t3); }
 
-/* الكارت نفسه يفقد الـ radius السفلي لما يكون معاه strip */
+/* الكارت يرجع border-radius كامل */
 .sw-card-wrap .sw-card {
-  border-radius:var(--r-xl) var(--r-xl) 0 0;
-  border-bottom:none;
+  border-radius:var(--r-xl);
+  border-bottom:1px solid var(--bdr);
   margin-bottom:0;
 }
-/* شيل animation من هنا */
-.sw-card {
-  background:var(--card);
-  border:1px solid var(--bdr);
-  border-radius:var(--r-xl);
-  overflow:hidden;
-  box-shadow:var(--shadow-card);
-  transition:border-color var(--mid), box-shadow var(--mid);
-  /* animation:cardIn .5s var(--ease) both; ← احذف السطر ده */
-}
+
 </style>
 </head>
 <body>
@@ -1179,26 +1161,30 @@ function swimmerCard(s, idx) {
   const tot = Math.max(s.sessionsCount || 1, 1);
   const pct = Math.min(100, Math.round((att / tot) * 100));
 
-  // ── Info Strip data ───────────────────────────────────────
-  // Level
-  const stripLevel = s.level
-    ? `<div class="is-val is-cyan">LV ${s.level}</div>`
-    : `<div class="is-val is-muted">—</div>`;
+  // ── Chips ────────────────────────────────────────────────
+  const levelChip = s.level
+    ? `<span class="pv-chip pv-blue">LV ${s.level}</span>`
+    : '';
 
-  // Expiry
-  let stripExpiry = `<div class="is-val is-muted">—</div>`;
-  if (s.subscriptionExpiry) {
+  const trainerChip = s.trainerName
+    ? `<span class="pv-chip pv-purple">🎽 ${s.trainerName.split(' ')[0]}</span>`
+    : '';
+
+  const ageChip = (() => {
+    const age = calcAge(s.dob);
+    return age !== '—' ? `<span class="pv-chip pv-gray">${age} سنة</span>` : '';
+  })();
+
+  const expiryChip = (() => {
+    if (!s.subscriptionExpiry) return '';
     const diff = Math.ceil((new Date(s.subscriptionExpiry) - new Date().setHours(0,0,0,0)) / 86400000);
-    if (diff < 0)       stripExpiry = `<div class="is-val is-err">منتهي</div>`;
-    else if (diff === 0) stripExpiry = `<div class="is-val is-warn">اليوم</div>`;
-    else if (diff <= 7)  stripExpiry = `<div class="is-val is-warn">${diff} يوم</div>`;
-    else                 stripExpiry = `<div class="is-val is-ok">${diff} يوم</div>`;
-  }
+    if (diff < 0)        return `<span class="pv-chip pv-err">منتهي</span>`;
+    if (diff === 0)      return `<span class="pv-chip pv-warn">ينتهي اليوم</span>`;
+    if (diff <= 7)       return `<span class="pv-chip pv-warn">⚠ ${diff} يوم</span>`;
+    return `<span class="pv-chip pv-ok">${diff} يوم متبقي</span>`;
+  })();
 
-  // Trainer
-  const trainerShort = s.trainerName
-    ? `<div class="is-val is-purple">${s.trainerName.split(' ')[0]}</div>`
-    : `<div class="is-val is-muted">—</div>`;
+  const hasChips = levelChip || trainerChip || ageChip || expiryChip;
 
   return `
   <div class="sw-card-wrap" style="animation:cardIn .5s var(--ease) ${idx * 0.07}s both">
@@ -1215,6 +1201,7 @@ function swimmerCard(s, idx) {
             </span>
             ${s.trainingTime ? `<span class="sw-time"><i data-lucide="clock"></i>${s.trainingTime}</span>` : ''}
           </div>
+          ${hasChips ? `<div class="sw-preview">${levelChip}${trainerChip}${ageChip}${expiryChip}</div>` : ''}
         </div>
         <div class="sw-status">
           <span class="status-pill ${s.isActive ? 'sp-active' : 'sp-inactive'}">
@@ -1236,22 +1223,6 @@ function swimmerCard(s, idx) {
         <div class="sw-expand-inner" id="exp-${s.subscriptionId}">
           ${buildExpand(s)}
         </div>
-      </div>
-    </div>
-
-    <!-- Info Strip -->
-    <div class="info-strip" onclick="toggleCard('${s.subscriptionId}')">
-      <div class="is-item">
-        <div class="is-lbl">المستوى</div>
-        ${stripLevel}
-      </div>
-      <div class="is-item">
-        <div class="is-lbl">متبقي</div>
-        ${stripExpiry}
-      </div>
-      <div class="is-item">
-        <div class="is-lbl">الكابتن</div>
-        ${trainerShort}
       </div>
     </div>
   </div>`;
@@ -1359,7 +1330,6 @@ function buildRating(s) {
    TOGGLE CARD
 ══════════════════════════════════════ */
 async function toggleCard(subId) {
-  // دور على الـ sw-card جوا الـ wrapper
   const card = document.querySelector(`#swc-${subId}`);
   if (!card) return;
   const isOpen = card.classList.contains('expanded');
