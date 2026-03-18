@@ -1050,7 +1050,7 @@ body::before {
 <!-- ════ BOTTOM NAV ════ -->
 <nav class="bottom-nav">
   <button class="nav-icon rpl" id="searchTrigger"><i data-lucide="search"></i></button>
-  <a href="#" class="nav-icon center-fab rpl" id="registerBtn"><i data-lucide="plus"></i></a>
+<button class="nav-icon center-fab rpl" id="registerBtn"><i data-lucide="plus"></i></button>
   <a href="profile.html" class="nav-icon rpl" id="profileBtn"><i data-lucide="user"></i></a>
 </nav>
 
@@ -1388,8 +1388,6 @@ async function doSearch(q) {
 }
 
 function resultCard(s) {
-  const expiry = s.subscriptionExpiry ? new Date(s.subscriptionExpiry) : null;
-  const expStr = expiry ? `${expiry.getDate()} ${MONTHS[expiry.getMonth()]} ${expiry.getFullYear()}` : '—';
   const daysStr = (s.trainingDays || []).map(d => DAYS[d]).join('، ') || '—';
   return `
   <div class="result-card">
@@ -1397,15 +1395,15 @@ function resultCard(s) {
       <div class="result-avatar">${(s.fullName||'?').charAt(0)}</div>
       <div style="flex:1">
         <div class="result-name">${s.fullName}</div>
-        <div class="result-id">#${s.subscriptionId}${s.trainingTime?' · '+s.trainingTime:''}</div>
+        <div class="result-id">#${s.subscriptionId}</div>
       </div>
       <span class="result-badge ${s.isActive?'rb-active':'rb-inactive'}">${s.isActive?'● نشط':'● منتهي'}</span>
     </div>
     <div class="result-meta">
-      <div><span>الهدف: </span><strong>${GOALS[s.goal]||'—'}</strong></div>
-      <div><span>الحصص: </span><strong>${s.sessionsAttended??0}/${s.sessionsCount??'—'}</strong></div>
+      <div><span>ساعة التدريب: </span><strong>${s.trainingTime||'—'}</strong></div>
+      <div><span>المستوى: </span><strong>${s.level||'—'}</strong></div>
       <div><span>أيام التدريب: </span><strong>${daysStr}</strong></div>
-      <div><span>انتهاء الاشتراك: </span><strong>${expStr}</strong></div>
+      <div><span>اسم الكابتن: </span><strong>${s.trainerName||s.trainer||'—'}</strong></div>
     </div>
   </div>`;
 }
