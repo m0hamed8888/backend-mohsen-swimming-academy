@@ -195,50 +195,28 @@ function showDots(){
 }
 
 /* ════ doSearch — بيبعت token لو موجود ════ */
-async function doSearch(q){
-  if(!q) return;
+async function doSearch(q) {
+  if (!q) return;
   showDots();
-  const res=document.getElementById('searchResult');
+  const res = document.getElementById('searchResult');
 
-  // جيب أي token متاح
-  const token=localStorage.getItem('aq_token')||localStorage.getItem('sw_token')||null;
-  const headers={'Content-Type':'application/json'};
-  if(token) headers['Authorization']=`Bearer ${token}`;
+  try {
+    // استخدم الـ route العام دايماً للبحث من الهوم
+    const r = await fetch(`${API}/swimmers/public/search?search=${encodeURIComponent(q)}`);
+    const d = await r.json();
+    const swimmers = d.data || [];
 
-  const apiFetch=async(url)=>{
-    const r=await fetch(url,{headers});
-    return r.json();
-  };
-
-  try{
-    let swimmers=[];
-    const clean=q.trim().toUpperCase().replace(/\s/g,'');
-
-    // ✅ دايماً ابحث بالـ search parameter زي ما الكابتن بيعمل
-    const d=await apiFetch(`${API}/swimmers?search=${encodeURIComponent(q)}&limit=6`);
-    swimmers=d.data||[];
-
-    // لو مالقاش ورقم اشتراك — جرّب مباشر بالـ ID
-    if(!swimmers.length && /^(AQ-?)?\d+$/.test(clean)){
-      const subId=clean.startsWith('AQ')?clean:'AQ-'+clean.replace(/\D/g,'');
-      try{
-        const d2=await apiFetch(`${API}/swimmers/${subId}`);
-        if(d2.data) swimmers=[d2.data];
-      }catch(e){}
-    }
-
-    if(!swimmers.length){
-      res.innerHTML=`<div class="result-empty"><i data-lucide="search-x"></i>لا توجد نتائج لـ "${q}"</div>`;
+    if (!swimmers.length) {
+      res.innerHTML = `<div class="result-empty"><i data-lucide="search-x"></i>لا توجد نتائج لـ "${q}"</div>`;
       lucide.createIcons(); return;
     }
-    res.innerHTML=swimmers.map(s=>resultCard(s)).join('');
+    res.innerHTML = swimmers.map(s => resultCard(s)).join('');
     lucide.createIcons();
-  }catch(e){
-    res.innerHTML=`<div class="result-empty"><i data-lucide="wifi-off"></i>تعذّر الاتصال بالخادم</div>`;
+  } catch (e) {
+    res.innerHTML = `<div class="result-empty"><i data-lucide="wifi-off"></i>تعذّر الاتصال بالخادم</div>`;
     lucide.createIcons();
   }
 }
-
 function resultCard(s){
   const expiry=s.subscriptionExpiry?new Date(s.subscriptionExpiry):null;
   const expStr=expiry?`${expiry.getDate()} ${MONTHS[expiry.getMonth()]} ${expiry.getFullYear()}`:'—';
