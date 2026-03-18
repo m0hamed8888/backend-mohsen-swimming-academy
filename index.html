@@ -1,117 +1,1287 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>AquaFlow | أكاديمية السباحة</title>
-  <link rel="stylesheet" href="./assets/css/style.css"/>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-  <script src="./assets/js/config.js"></script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>AquaFlow | أكاديمية السباحة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+/* ═══════════════════════════════════════
+   AQUAFLOW — REBORN
+   Bioluminescent Deep Ocean Luxury
+   ═══════════════════════════════════════ */
+:root {
+  --bg:       #010a14;
+  --bg2:      #020d1c;
+  --surf:     rgba(255,255,255,.042);
+  --surf2:    rgba(0,200,255,.06);
+  --bdr:      rgba(255,255,255,.07);
+  --bdr2:     rgba(0,220,255,.25);
+
+  --cyan:     #00e5ff;
+  --blue:     #0055e5;
+  --violet:   #7b2fff;
+  --green:    #00ffb3;
+  --ok:       #00e5a0;
+  --warn:     #ffb547;
+  --err:      #ff4d6d;
+
+  --grad-ocean: linear-gradient(135deg,#00c8ff 0%,#0055e5 55%,#7b2fff 100%);
+  --grad-acc:   linear-gradient(135deg,#00e5ff,#0088ff);
+  --grad-glow:  linear-gradient(135deg,#00ffb3,#00c8ff,#0055e5);
+
+  --tp: rgba(255,255,255,.96);
+  --ts: rgba(255,255,255,.54);
+  --tm: rgba(255,255,255,.28);
+
+  --f-disp: 'Syne', sans-serif;
+  --f-body: 'Cairo', sans-serif;
+
+  --r-sm: 8px; --r-md: 14px; --r-lg: 22px; --r-xl: 30px; --r-full: 9999px;
+  --shadow: 0 24px 80px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.05);
+  --ease: cubic-bezier(.23,1,.32,1);
+  --spring: cubic-bezier(.34,1.56,.64,1);
+  --fast: 160ms; --mid: 320ms; --slow: 600ms;
+}
+
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: var(--f-body);
+  background: var(--bg);
+  color: var(--tp);
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  direction: rtl;
+}
+button { cursor:pointer; border:none; background:none; font-family:inherit; }
+a { text-decoration:none; color:inherit; }
+input, select, textarea { font-family:inherit; }
+
+/* ══ Scrollbar ══ */
+::-webkit-scrollbar { width:3px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:rgba(0,200,255,.25); border-radius:4px; }
+
+/* ══════════════════════════════════════
+   CANVAS BACKGROUND
+══════════════════════════════════════ */
+#bgCanvas {
+  position:fixed; inset:0; z-index:0;
+  pointer-events:none; opacity:.55;
+}
+
+/* ══════════════════════════════════════
+   NOISE OVERLAY
+══════════════════════════════════════ */
+body::before {
+  content:'';
+  position:fixed; inset:0; z-index:1;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity:.025;
+  pointer-events:none;
+}
+
+/* ══════════════════════════════════════
+   TOP NAV
+══════════════════════════════════════ */
+.top-nav {
+  position:fixed; top:0; inset-inline:0; z-index:200;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 20px;
+  background:rgba(1,10,20,.75);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid rgba(0,200,255,.08);
+  transition:padding var(--mid), background var(--mid);
+}
+.top-nav.scrolled {
+  padding:10px 20px;
+  background:rgba(1,10,20,.95);
+  border-bottom-color:rgba(0,200,255,.14);
+}
+.nav-brand {
+  display:flex; align-items:center; gap:8px;
+  font-family:var(--f-disp); font-weight:800; font-size:1.1rem;
+  position:relative;
+}
+.nav-brand-icon {
+  width:34px; height:34px; border-radius:10px;
+  background:var(--grad-ocean);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 0 20px rgba(0,100,255,.4);
+}
+.nav-brand-icon svg { width:16px; height:16px; color:#fff; }
+.nav-brand span {
+  background:var(--grad-acc);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.nav-actions { display:flex; align-items:center; gap:8px; }
+.nav-link {
+  font-size:.8rem; font-weight:600; color:var(--ts);
+  padding:6px 10px; border-radius:var(--r-full);
+  transition:color var(--fast), background var(--fast);
+}
+.nav-link:hover { color:var(--tp); background:var(--surf); }
+
+.btn-primary {
+  padding:8px 18px; border-radius:var(--r-full);
+  background:var(--grad-ocean); color:#fff;
+  font-size:.8rem; font-weight:800;
+  box-shadow:0 4px 16px rgba(0,100,255,.35);
+  transition:all var(--fast) var(--spring);
+  display:inline-flex; align-items:center; gap:6px;
+  position:relative; overflow:hidden;
+}
+.btn-primary::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.2),transparent);
+  opacity:0; transition:opacity var(--fast);
+}
+.btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(0,100,255,.55); }
+.btn-primary:hover::before { opacity:1; }
+.btn-primary:active { transform:scale(.97); }
+
+.btn-outline {
+  padding:8px 18px; border-radius:var(--r-full);
+  border:1.5px solid var(--bdr2); color:var(--cyan);
+  font-size:.8rem; font-weight:700;
+  display:inline-flex; align-items:center; gap:6px;
+  background:rgba(0,200,255,.04);
+  transition:all var(--fast);
+}
+.btn-outline:hover { background:rgba(0,200,255,.12); border-color:var(--cyan); }
+
+/* ══════════════════════════════════════
+   HERO
+══════════════════════════════════════ */
+.hero {
+  min-height:100dvh;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:90px 22px 160px;
+  text-align:center;
+  position:relative; overflow:hidden; z-index:2;
+}
+
+/* Radial glow spots */
+.hero-glow-1 {
+  position:absolute; width:700px; height:700px; border-radius:50%;
+  background:radial-gradient(circle,rgba(0,80,220,.22) 0%,transparent 65%);
+  top:-250px; right:-200px; pointer-events:none;
+  animation:glowPulse 8s ease-in-out infinite alternate;
+}
+.hero-glow-2 {
+  position:absolute; width:500px; height:500px; border-radius:50%;
+  background:radial-gradient(circle,rgba(123,47,255,.16) 0%,transparent 65%);
+  bottom:-150px; left:-150px; pointer-events:none;
+  animation:glowPulse 10s ease-in-out infinite alternate-reverse;
+}
+.hero-glow-3 {
+  position:absolute; width:300px; height:300px; border-radius:50%;
+  background:radial-gradient(circle,rgba(0,229,160,.1) 0%,transparent 65%);
+  top:35%; left:10%; pointer-events:none;
+  animation:glowPulse 7s ease-in-out infinite alternate;
+}
+@keyframes glowPulse {
+  0% { transform:scale(1); opacity:.8; }
+  100% { transform:scale(1.15); opacity:1; }
+}
+
+.hero-content { position:relative; z-index:2; max-width:680px; }
+
+/* Tag pill */
+.hero-tag {
+  display:inline-flex; align-items:center; gap:7px;
+  padding:6px 16px; border-radius:var(--r-full);
+  background:rgba(0,200,255,.08);
+  border:1px solid rgba(0,200,255,.22);
+  color:var(--cyan); font-size:.73rem; font-weight:700;
+  margin-bottom:24px;
+  animation:fadeDown .7s var(--ease) .1s both;
+}
+.hero-tag svg { width:13px; height:13px; }
+.hero-tag-dot {
+  width:6px; height:6px; border-radius:50%;
+  background:var(--cyan);
+  animation:blink 2s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+.hero-title {
+  font-family:var(--f-disp);
+  font-size:clamp(2rem,7vw,3.6rem);
+  font-weight:800; line-height:1.12;
+  margin-bottom:22px;
+  animation:fadeUp .8s var(--ease) .2s both;
+}
+.hero-title .line-1 {
+  display:block;
+  background:linear-gradient(135deg,#fff 0%,rgba(200,240,255,.9) 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.hero-title .line-2 {
+  display:block;
+  background:var(--grad-acc);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  position:relative;
+}
+.hero-title .line-2::after {
+  content:'';
+  position:absolute; bottom:-4px; right:0; left:0; height:2px;
+  background:var(--grad-acc); border-radius:2px;
+  transform:scaleX(0); transform-origin:right;
+  animation:lineReveal 1s var(--ease) 1s both;
+}
+@keyframes lineReveal { to { transform:scaleX(1); } }
+
+.hero-sub {
+  font-size:clamp(.88rem,2.5vw,1.05rem);
+  color:var(--ts); line-height:1.75;
+  margin-bottom:40px; font-weight:400;
+  animation:fadeUp .8s var(--ease) .4s both;
+}
+
+.hero-actions {
+  display:flex; gap:12px; justify-content:center; flex-wrap:wrap;
+  animation:fadeUp .8s var(--ease) .55s both;
+}
+
+.btn-glow {
+  display:inline-flex; align-items:center; gap:9px;
+  padding:14px 30px; border-radius:var(--r-full);
+  background:var(--grad-ocean); color:#fff;
+  font-family:var(--f-disp); font-size:.95rem; font-weight:700;
+  box-shadow:0 0 40px rgba(0,120,255,.4), 0 8px 32px rgba(0,80,220,.45);
+  position:relative; overflow:hidden;
+  transition:all var(--fast) var(--spring);
+}
+.btn-glow::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.2),transparent);
+  opacity:0; transition:opacity var(--fast);
+}
+.btn-glow::after {
+  content:''; position:absolute;
+  inset:-100%; background:conic-gradient(transparent 270deg,rgba(255,255,255,.15) 360deg);
+  animation:rotateShine 3s linear infinite;
+}
+@keyframes rotateShine { to { transform:rotate(360deg); } }
+.btn-glow:hover { transform:translateY(-3px) scale(1.02); box-shadow:0 0 60px rgba(0,150,255,.6),0 14px 40px rgba(0,80,220,.55); }
+.btn-glow:hover::before { opacity:1; }
+.btn-glow:active { transform:scale(.97); }
+.btn-glow span { position:relative; z-index:1; display:flex; align-items:center; gap:9px; }
+
+.btn-ghost {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:13px 26px; border-radius:var(--r-full);
+  border:1.5px solid rgba(255,255,255,.12); color:var(--ts);
+  font-size:.9rem; font-weight:600;
+  transition:all var(--fast);
+  background:rgba(255,255,255,.04);
+}
+.btn-ghost:hover { border-color:rgba(0,200,255,.35); color:var(--cyan); background:rgba(0,200,255,.06); }
+
+/* Scroll hint */
+.scroll-hint {
+  position:absolute; bottom:40px; left:50%; transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  z-index:2; animation:fadeUp 1s var(--ease) 1.2s both;
+}
+.scroll-hint span { font-size:.66rem; font-weight:700; color:var(--tm); letter-spacing:.1em; text-transform:uppercase; }
+.scroll-mouse {
+  width:22px; height:36px; border:1.5px solid rgba(255,255,255,.15);
+  border-radius:11px; display:flex; justify-content:center; padding-top:5px;
+}
+.scroll-dot {
+  width:3px; height:8px; background:var(--cyan); border-radius:2px;
+  animation:scrollBounce 1.6s ease-in-out infinite;
+}
+@keyframes scrollBounce { 0%,100%{transform:translateY(0);opacity:1} 60%{transform:translateY(10px);opacity:.3} }
+
+/* Waves */
+.hero-waves {
+  position:absolute; bottom:-2px; inset-inline:0; z-index:2;
+  pointer-events:none;
+}
+.hero-waves svg { display:block; width:100%; }
+
+/* ══════════════════════════════════════
+   REVEAL ANIMATIONS
+══════════════════════════════════════ */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(28px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes fadeDown {
+  from { opacity:0; transform:translateY(-14px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity:0; }
+  to   { opacity:1; }
+}
+@keyframes scaleIn {
+  from { opacity:0; transform:scale(.92); }
+  to   { opacity:1; transform:scale(1); }
+}
+
+.reveal {
+  opacity:0; transform:translateY(36px);
+  transition: opacity .7s var(--ease), transform .7s var(--ease);
+}
+.reveal.visible { opacity:1; transform:translateY(0); }
+.reveal-left {
+  opacity:0; transform:translateX(30px);
+  transition: opacity .7s var(--ease), transform .7s var(--ease);
+}
+.reveal-left.visible { opacity:1; transform:translateX(0); }
+.reveal-scale {
+  opacity:0; transform:scale(.93);
+  transition: opacity .7s var(--ease), transform .7s var(--ease);
+}
+.reveal-scale.visible { opacity:1; transform:scale(1); }
+
+.delay-1 { transition-delay:.1s; }
+.delay-2 { transition-delay:.2s; }
+.delay-3 { transition-delay:.3s; }
+.delay-4 { transition-delay:.4s; }
+.delay-5 { transition-delay:.5s; }
+
+/* ══════════════════════════════════════
+   GLASS PANEL
+══════════════════════════════════════ */
+.glass {
+  background:rgba(5,18,38,.55);
+  backdrop-filter:blur(28px);
+  -webkit-backdrop-filter:blur(28px);
+  border:1px solid var(--bdr);
+  border-radius:var(--r-xl);
+  box-shadow:var(--shadow);
+  position:relative; overflow:hidden;
+}
+.glass::before {
+  content:''; position:absolute;
+  top:0; inset-inline:0; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,200,255,.35),transparent);
+}
+
+/* ══════════════════════════════════════
+   SECTION COMMONS
+══════════════════════════════════════ */
+.section-title {
+  font-family:var(--f-disp);
+  font-size:clamp(1.5rem,5vw,2.2rem);
+  font-weight:800; text-align:center; margin-bottom:14px;
+  background:linear-gradient(135deg,#fff,rgba(0,200,255,.85));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.section-sub {
+  text-align:center; color:var(--ts); font-size:.88rem;
+  margin-bottom:48px; line-height:1.7; max-width:500px; margin-inline:auto;
+}
+.section-label {
+  display:inline-flex; align-items:center; gap:7px;
+  padding:4px 14px; border-radius:var(--r-full);
+  background:rgba(0,200,255,.07); border:1px solid rgba(0,200,255,.18);
+  color:var(--cyan); font-size:.7rem; font-weight:800;
+  letter-spacing:.06em; text-transform:uppercase;
+  margin-bottom:16px;
+}
+
+/* ══════════════════════════════════════
+   WHY US / FEATURES
+══════════════════════════════════════ */
+.features-section {
+  padding:100px 20px; max-width:1100px; margin:0 auto;
+  position:relative; z-index:2;
+}
+
+.features-grid {
+  display:grid;
+  grid-template-columns:1fr;
+  gap:16px;
+}
+@media(min-width:600px) { .features-grid { grid-template-columns:repeat(3,1fr); } }
+
+.feature-card {
+  padding:32px 26px; text-align:center;
+  cursor:default;
+  transition:transform var(--mid) var(--ease), box-shadow var(--mid);
+}
+.feature-card:hover {
+  transform:translateY(-8px);
+  box-shadow:0 32px 72px rgba(0,0,0,.55), 0 0 0 1px rgba(0,200,255,.18);
+}
+.f-icon {
+  width:60px; height:60px; border-radius:18px;
+  background:var(--grad-ocean);
+  display:flex; align-items:center; justify-content:center;
+  margin:0 auto 20px;
+  box-shadow:0 8px 24px rgba(0,100,255,.4);
+  position:relative;
+}
+.f-icon::after {
+  content:''; position:absolute; inset:-1px;
+  border-radius:19px;
+  background:var(--grad-ocean);
+  z-index:-1; opacity:.4; filter:blur(10px);
+}
+.f-icon svg { width:24px; height:24px; color:#fff; }
+.feature-card h3 {
+  font-family:var(--f-disp); font-size:1.05rem; font-weight:700;
+  margin-bottom:10px;
+}
+.feature-card p { font-size:.84rem; color:var(--ts); line-height:1.7; }
+
+/* ══════════════════════════════════════
+   PROGRAMS
+══════════════════════════════════════ */
+.programs-section {
+  padding:40px 0 100px; position:relative; z-index:2;
+}
+.programs-header { padding:0 20px; text-align:center; margin-bottom:48px; }
+
+.carousel-wrap { overflow:hidden; position:relative; }
+.carousel-wrap::before,
+.carousel-wrap::after {
+  content:''; position:absolute; top:0; bottom:0; width:60px; z-index:5; pointer-events:none;
+}
+.carousel-wrap::before { right:0; background:linear-gradient(to left,var(--bg),transparent); }
+.carousel-wrap::after  { left:0; background:linear-gradient(to right,var(--bg),transparent); }
+
+.carousel-track {
+  display:flex; gap:18px;
+  padding:10px 20px 24px;
+  overflow-x:auto; scroll-snap-type:x mandatory;
+  scrollbar-width:none; cursor:grab;
+}
+.carousel-track::-webkit-scrollbar { display:none; }
+.carousel-track.grabbing { cursor:grabbing; }
+
+.prog-card {
+  width:272px; flex-shrink:0; scroll-snap-align:start;
+  border-radius:var(--r-xl); overflow:hidden;
+  background:rgba(5,18,38,.7);
+  border:1px solid var(--bdr);
+  transition:transform var(--mid) var(--ease), box-shadow var(--mid);
+  position:relative;
+}
+.prog-card:hover { transform:translateY(-8px) scale(1.015); box-shadow:0 28px 60px rgba(0,0,0,.6), 0 0 0 1px rgba(0,200,255,.2); }
+.prog-card-img {
+  height:170px; background-size:cover; background-position:center;
+  position:relative;
+}
+.prog-card-img::after {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(to bottom,transparent 40%,rgba(1,10,20,.9));
+}
+.prog-badge {
+  position:absolute; top:14px; right:14px; z-index:2;
+  display:inline-flex; align-items:center;
+  padding:4px 12px; border-radius:var(--r-full);
+  background:rgba(0,200,255,.15); border:1px solid rgba(0,200,255,.3);
+  color:var(--cyan); font-size:.66rem; font-weight:800;
+  backdrop-filter:blur(8px);
+}
+.prog-card-body { padding:20px 18px 22px; }
+.prog-card-body h3 {
+  font-family:var(--f-disp); font-size:1rem; font-weight:700;
+  margin-bottom:8px;
+}
+.prog-card-body p { font-size:.8rem; color:var(--ts); line-height:1.6; margin-bottom:16px; }
+.prog-card-link {
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:.78rem; font-weight:700; color:var(--cyan);
+  transition:gap var(--fast);
+}
+.prog-card:hover .prog-card-link { gap:10px; }
+.prog-card-link svg { width:13px; height:13px; }
+
+/* Carousel dots */
+.carousel-dots {
+  display:flex; gap:6px; justify-content:center; padding-top:12px;
+}
+.cdot {
+  width:6px; height:6px; border-radius:3px;
+  background:rgba(0,200,255,.25);
+  transition:all var(--mid); cursor:pointer;
+}
+.cdot.active { width:22px; background:var(--cyan); }
+
+/* ══════════════════════════════════════
+   STATS
+══════════════════════════════════════ */
+.stats-section {
+  padding:80px 20px; max-width:960px; margin:0 auto;
+  position:relative; z-index:2;
+}
+.stats-inner {
+  background:rgba(5,15,35,.6);
+  border:1px solid rgba(0,200,255,.1);
+  border-radius:var(--r-xl);
+  padding:48px 28px;
+  display:grid; grid-template-columns:repeat(2,1fr); gap:2px;
+  position:relative; overflow:hidden;
+}
+.stats-inner::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(0,100,255,.12),transparent 65%);
+  pointer-events:none;
+}
+@media(min-width:600px) { .stats-inner { grid-template-columns:repeat(4,1fr); } }
+.stat-item {
+  text-align:center; padding:28px 20px;
+  position:relative;
+}
+.stat-item:not(:last-child)::after {
+  content:''; position:absolute;
+  top:20%; bottom:20%; left:0;
+  width:1px; background:var(--bdr);
+}
+@media(max-width:599px) {
+  .stat-item:nth-child(2n)::after { display:none; }
+  .stat-item:nth-child(2)::after,.stat-item:nth-child(3)::after { display:block; }
+}
+.stat-num {
+  font-family:var(--f-disp);
+  font-size:2.8rem; font-weight:800; line-height:1;
+  background:var(--grad-glow);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  margin-bottom:6px;
+}
+.stat-suffix { font-size:1.4rem; }
+.stat-lbl { font-size:.72rem; font-weight:700; color:var(--ts); }
+
+/* ══════════════════════════════════════
+   TESTIMONIALS / CTA STRIP
+══════════════════════════════════════ */
+.cta-section {
+  padding:80px 20px; max-width:680px; margin:0 auto;
+  text-align:center; position:relative; z-index:2;
+}
+.cta-box {
+  padding:56px 36px;
+  background:linear-gradient(135deg,rgba(0,50,160,.25),rgba(100,0,200,.15));
+  border:1px solid rgba(0,200,255,.18);
+  border-radius:var(--r-xl);
+  position:relative; overflow:hidden;
+}
+.cta-box::before {
+  content:''; position:absolute; top:0; inset-inline:0; height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+}
+.cta-box::after {
+  content:''; position:absolute;
+  width:300px; height:300px; border-radius:50%;
+  background:radial-gradient(circle,rgba(0,100,255,.2),transparent 65%);
+  top:-100px; right:-80px; pointer-events:none;
+}
+.cta-box h2 {
+  font-family:var(--f-disp); font-size:clamp(1.5rem,5vw,2rem);
+  font-weight:800; margin-bottom:14px;
+  background:linear-gradient(135deg,#fff,rgba(0,200,255,.85));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.cta-box p { font-size:.9rem; color:var(--ts); line-height:1.7; margin-bottom:32px; }
+.cta-actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+
+/* ══════════════════════════════════════
+   BOTTOM NAV
+══════════════════════════════════════ */
+.bottom-nav {
+  position:fixed; bottom:20px;
+  left:50%; transform:translateX(-50%);
+  z-index:200; display:flex; align-items:center; gap:6px;
+  padding:9px 14px; border-radius:var(--r-full);
+  background:rgba(3,12,28,.92);
+  backdrop-filter:blur(24px);
+  border:1px solid rgba(0,200,255,.1);
+  box-shadow:0 8px 32px rgba(0,0,0,.5), 0 0 0 1px rgba(0,0,0,.3);
+  animation:slideUpNav .6s var(--spring) .8s both;
+}
+@keyframes slideUpNav {
+  from { transform:translateX(-50%) translateY(60px); opacity:0; }
+  to   { transform:translateX(-50%) translateY(0); opacity:1; }
+}
+.nav-icon {
+  width:42px; height:42px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  color:var(--ts); transition:all var(--fast);
+  background:transparent; position:relative; overflow:hidden;
+}
+.nav-icon svg { width:19px; height:19px; position:relative; z-index:1; }
+.nav-icon:hover { color:var(--cyan); background:rgba(0,200,255,.08); }
+.nav-icon.active { color:var(--cyan); }
+
+.center-fab {
+  width:50px; height:50px; border-radius:50%;
+  background:var(--grad-ocean); color:#fff !important;
+  box-shadow:0 4px 20px rgba(0,100,255,.5);
+  transition:all var(--fast) var(--spring) !important;
+}
+.center-fab:hover {
+  transform:scale(1.12) rotate(15deg) !important;
+  box-shadow:0 8px 32px rgba(0,100,255,.65) !important;
+}
+
+/* ══════════════════════════════════════
+   SEARCH MODAL
+══════════════════════════════════════ */
+.modal-wrap {
+  position:fixed; inset:0; z-index:300;
+  display:none; align-items:flex-end; justify-content:center;
+  padding:20px;
+}
+.modal-wrap.open { display:flex; }
+.modal-backdrop {
+  position:absolute; inset:0;
+  background:rgba(0,0,0,.75); backdrop-filter:blur(12px);
+}
+.modal-box {
+  position:relative; z-index:1;
+  width:100%; max-width:500px;
+  padding:28px 22px; border-radius:var(--r-xl);
+  background:rgba(4,14,32,.95);
+  border:1px solid rgba(0,200,255,.15);
+  box-shadow:0 24px 80px rgba(0,0,0,.7);
+  transform:translateY(30px); opacity:0;
+  transition:all .35s var(--ease);
+}
+.modal-wrap.open .modal-box { transform:translateY(0); opacity:1; }
+.modal-title {
+  font-family:var(--f-disp); font-size:1.05rem; font-weight:800;
+  margin-bottom:18px; display:flex; align-items:center; gap:8px;
+}
+.modal-title svg { width:16px; height:16px; color:var(--cyan); }
+.modal-close {
+  position:absolute; top:14px; left:14px;
+  width:28px; height:28px; border-radius:50%;
+  background:rgba(255,255,255,.06); color:var(--ts);
+  display:flex; align-items:center; justify-content:center;
+  transition:all var(--fast);
+}
+.modal-close:hover { background:rgba(255,77,109,.15); color:var(--err); }
+.modal-close svg { width:13px; height:13px; }
+
+.search-input-wrap { position:relative; margin-bottom:16px; }
+.search-input-wrap svg {
+  position:absolute; right:14px; top:50%; transform:translateY(-50%);
+  width:17px; height:17px; color:var(--cyan); pointer-events:none;
+}
+.search-input-wrap input {
+  width:100%; height:52px;
+  padding:0 14px 0 14px; padding-right:44px;
+  background:rgba(255,255,255,.05);
+  border:1.5px solid var(--bdr2); border-radius:var(--r-md);
+  color:var(--tp); font-size:.9rem; outline:none; direction:rtl;
+  transition:border-color var(--mid), box-shadow var(--mid);
+}
+.search-input-wrap input:focus {
+  border-color:var(--cyan);
+  box-shadow:0 0 0 3px rgba(0,200,255,.1);
+}
+.search-input-wrap input::placeholder { color:var(--tm); }
+
+.search-results { min-height:50px; }
+.result-card {
+  background:rgba(0,200,255,.04);
+  border:1px solid rgba(0,200,255,.14);
+  border-radius:var(--r-lg);
+  padding:16px; margin-bottom:8px;
+  animation:fadeUp .3s var(--ease);
+}
+.result-head { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+.result-avatar {
+  width:44px; height:44px; border-radius:50%;
+  background:var(--grad-ocean); flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:1.05rem; color:#fff;
+}
+.result-name { font-weight:800; font-size:.92rem; }
+.result-id { font-size:.7rem; color:var(--cyan); margin-top:2px; }
+.result-badge {
+  margin-right:auto; flex-shrink:0;
+  font-size:.63rem; font-weight:800;
+  padding:3px 9px; border-radius:var(--r-full);
+}
+.rb-active  { background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.25);color:var(--ok); }
+.rb-inactive{ background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.2);color:var(--err); }
+.result-meta {
+  display:grid; grid-template-columns:1fr 1fr; gap:6px;
+  font-size:.72rem;
+}
+.result-meta span { color:var(--tm); }
+.result-meta strong { color:var(--tp); font-weight:600; }
+.result-empty {
+  text-align:center; padding:24px 0; color:var(--tm); font-size:.85rem;
+}
+.result-empty svg { width:28px;height:28px;margin:0 auto 8px;display:block;opacity:.35; }
+
+/* Auth gate modal */
+.auth-modal {
+  position:fixed; inset:0; z-index:300;
+  display:none; align-items:center; justify-content:center; padding:20px;
+}
+.auth-modal.open { display:flex; }
+.auth-modal .modal-box {
+  text-align:center; padding:44px 32px;
+  max-width:380px;
+}
+.auth-modal-icon {
+  width:64px; height:64px; border-radius:50%;
+  background:var(--grad-ocean);
+  display:flex; align-items:center; justify-content:center;
+  margin:0 auto 20px;
+  box-shadow:0 0 30px rgba(0,100,255,.45);
+}
+.auth-modal-icon svg { width:26px; height:26px; color:#fff; }
+
+/* ══════════════════════════════════════
+   TOAST
+══════════════════════════════════════ */
+.toast {
+  position:fixed; bottom:90px; left:50%; transform:translateX(-50%) translateY(10px);
+  z-index:400;
+  display:flex; align-items:center; gap:9px;
+  padding:10px 22px; border-radius:var(--r-full);
+  font-size:.84rem; font-weight:700;
+  backdrop-filter:blur(20px);
+  opacity:0; pointer-events:none;
+  transition:opacity var(--mid), transform var(--mid);
+  white-space:nowrap;
+}
+.toast.ok  { background:rgba(0,229,160,.12);border:1px solid rgba(0,229,160,.3);color:var(--ok); }
+.toast.er  { background:rgba(255,77,109,.12);border:1px solid rgba(255,77,109,.3);color:var(--err); }
+.toast.inf { background:rgba(0,200,255,.12);border:1px solid rgba(0,200,255,.3);color:var(--cyan); }
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ══════════════════════════════════════
+   RIPPLE
+══════════════════════════════════════ */
+.rpl { position:relative; overflow:hidden; }
+.rpl .ripple {
+  position:absolute; border-radius:50%;
+  background:rgba(255,255,255,.2);
+  transform:scale(0); animation:rplAnim .5s linear;
+  pointer-events:none;
+}
+@keyframes rplAnim { to { transform:scale(4); opacity:0; } }
+
+/* ══════════════════════════════════════
+   DOTS LOADER
+══════════════════════════════════════ */
+.dots { display:flex; gap:5px; justify-content:center; padding:20px; }
+.dot {
+  width:7px; height:7px; border-radius:50%; background:var(--cyan);
+  animation:dotB 1.2s ease-in-out infinite;
+}
+.dot:nth-child(2){animation-delay:.2s}
+.dot:nth-child(3){animation-delay:.4s}
+@keyframes dotB {0%,80%,100%{transform:scale(.7);opacity:.3}40%{transform:scale(1);opacity:1}}
+
+/* ══════════════════════════════════════
+   FLOATING BUBBLES (CSS)
+══════════════════════════════════════ */
+.bubbles-wrap {
+  position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:1;
+}
+.bubble {
+  position:absolute; bottom:-80px; border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,rgba(0,200,255,.35),rgba(0,100,200,.08));
+  border:1px solid rgba(0,200,255,.18);
+  animation:floatBubble linear infinite;
+}
+@keyframes floatBubble {
+  0%   { transform:translateY(0) translateX(0) scale(1); opacity:0; }
+  5%   { opacity:1; }
+  90%  { opacity:.6; }
+  100% { transform:translateY(-110vh) translateX(20px) scale(1.1); opacity:0; }
+}
+
+/* ══════════════════════════════════════
+   WATER CURSOR RIPPLE
+══════════════════════════════════════ */
+.cursor-ripple {
+  position:fixed; border-radius:50%; pointer-events:none; z-index:9999;
+  border:1.5px solid rgba(0,200,255,.45);
+  animation:cursorRipple .8s ease-out forwards;
+}
+@keyframes cursorRipple {
+  0%   { width:0; height:0; opacity:.8; transform:translate(-50%,-50%); }
+  100% { width:80px; height:80px; opacity:0; transform:translate(-50%,-50%); }
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
+@media(max-width:400px) {
+  .hero { padding:80px 16px 160px; }
+  .btn-glow { padding:12px 22px; font-size:.88rem; }
+  .stat-num { font-size:2.2rem; }
+}
+</style>
 </head>
 <body>
-<div class="bg-orb orb-1"></div>
-<div class="bg-orb orb-2"></div>
-<div class="bg-orb orb-3"></div>
-<nav class="top-nav">
-  <a href="index.html" class="nav-brand ripple-btn"><i data-lucide="waves"></i><span>AquaFlow</span></a>
-  <div class="nav-actions" id="navActions">
+
+<!-- Particle Canvas -->
+<canvas id="bgCanvas"></canvas>
+
+<!-- ════ NAV ════ -->
+<nav class="top-nav" id="topNav">
+  <a href="index.html" class="nav-brand rpl">
+    <div class="nav-brand-icon"><i data-lucide="waves"></i></div>
+    <span>AquaFlow</span>
+  </a>
+  <div class="nav-actions">
     <div id="navGuest" style="display:flex;gap:8px;align-items:center">
-      <a href="auth.html" class="nav-link ripple-btn">تسجيل الدخول</a>
-      <a href="auth.html?tab=register" class="btn-primary ripple-btn">انضم الآن</a>
+      <a href="auth.html" class="nav-link rpl">دخول</a>
+      <a href="auth.html?tab=register" class="btn-primary rpl"><i data-lucide="rocket"></i>انضم</a>
     </div>
     <div id="navSwimmer" style="display:none;gap:8px;align-items:center">
-      <a href="profile.html" class="nav-link ripple-btn" id="navSwName">ملفي</a>
-      <button onclick="doLogout('sw')" style="font-size:.76rem;font-weight:600;color:var(--err);padding:5px 10px;border-radius:var(--r-full);background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.2)">خروج</button>
+      <a href="profile.html" class="nav-link rpl" id="navSwName">ملفي</a>
+      <button onclick="doLogout('sw')" style="font-size:.75rem;font-weight:700;color:var(--err);padding:5px 12px;border-radius:var(--r-full);background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.2)">خروج</button>
     </div>
     <div id="navTrainer" style="display:none;gap:8px;align-items:center">
-      <a href="#" class="nav-link ripple-btn" id="navDashLink">لوحة التحكم</a>
-      <a href="#" class="btn-primary ripple-btn" id="navDashBtn" style="font-size:.78rem">لوحتي</a>
-      <button onclick="doLogout('trainer')" style="font-size:.76rem;font-weight:600;color:var(--err);padding:5px 10px;border-radius:var(--r-full);background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.2)">خروج</button>
+      <a href="#" class="nav-link rpl" id="navDashLink">لوحة التحكم</a>
+      <a href="#" class="btn-primary rpl" id="navDashBtn" style="font-size:.76rem">لوحتي</a>
+      <button onclick="doLogout('trainer')" style="font-size:.75rem;font-weight:700;color:var(--err);padding:5px 12px;border-radius:var(--r-full);background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.2)">خروج</button>
     </div>
   </div>
 </nav>
+
+<!-- ════ HERO ════ -->
 <header class="hero">
-  <div class="hero-bg-elements"><div class="glow-shape shape-1"></div><div class="glow-shape shape-2"></div></div>
+  <div class="hero-glow-1"></div>
+  <div class="hero-glow-2"></div>
+  <div class="hero-glow-3"></div>
+
+  <!-- Bubbles -->
+  <div class="bubbles-wrap" id="bubblesWrap"></div>
+
   <div class="hero-content">
-    <div class="hero-tag"><i data-lucide="waves"></i> أكاديمية السباحة الاحترافية</div>
-    <h1 class="hero-title">احترف السباحة مع أمهر المدربين في بيئة عالمية</h1>
-    <p class="hero-subtitle">برامج تدريبية متكاملة لجميع المستويات — من المبتدئ حتى المنافسات الدولية، في منشأة حديثة ومجهزة بأعلى المعايير.</p>
-    <a href="auth.html?tab=register" class="btn-glow ripple-btn" id="heroBtn"><i data-lucide="rocket"></i> ابدأ رحلتك</a>
+    <div class="hero-tag">
+      <div class="hero-tag-dot"></div>
+      <i data-lucide="waves"></i>
+      <span>أكاديمية السباحة الاحترافية</span>
+    </div>
+
+    <h1 class="hero-title">
+      <span class="line-1">احترف السباحة</span>
+      <span class="line-2">مع أمهر المدربين</span>
+    </h1>
+
+    <p class="hero-sub">
+      برامج تدريبية متكاملة لجميع المستويات — من المبتدئ حتى المنافسات الدولية،
+      في منشأة حديثة مجهزة بأعلى المعايير العالمية.
+    </p>
+
+    <div class="hero-actions">
+      <a href="auth.html?tab=register" class="btn-glow rpl" id="heroBtn">
+        <span><i data-lucide="rocket"></i> ابدأ رحلتك</span>
+      </a>
+      <a href="#programs" class="btn-ghost rpl">
+        <i data-lucide="play-circle"></i> استكشف البرامج
+      </a>
+    </div>
   </div>
-  <div class="animated-waves"></div>
+
+  <div class="scroll-hint">
+    <div class="scroll-mouse"><div class="scroll-dot"></div></div>
+    <span>اسحب للأسفل</span>
+  </div>
+
+  <!-- Waves SVG -->
+  <div class="hero-waves">
+    <svg viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="wg" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#00c8ff" stop-opacity=".18"/>
+          <stop offset="50%" stop-color="#0055e5" stop-opacity=".12"/>
+          <stop offset="100%" stop-color="#7b2fff" stop-opacity=".18"/>
+        </linearGradient>
+      </defs>
+      <path fill="url(#wg)" d="M0,60 C240,100 480,20 720,60 C960,100 1200,20 1440,60 L1440,120 L0,120 Z" opacity=".6">
+        <animate attributeName="d" dur="6s" repeatCount="indefinite"
+          values="M0,60 C240,100 480,20 720,60 C960,100 1200,20 1440,60 L1440,120 L0,120 Z;
+                  M0,60 C240,20 480,100 720,60 C960,20 1200,100 1440,60 L1440,120 L0,120 Z;
+                  M0,60 C240,100 480,20 720,60 C960,100 1200,20 1440,60 L1440,120 L0,120 Z"/>
+      </path>
+      <path fill="#010a14" d="M0,80 C240,110 480,50 720,80 C960,110 1200,50 1440,80 L1440,120 L0,120 Z">
+        <animate attributeName="d" dur="8s" repeatCount="indefinite"
+          values="M0,80 C240,110 480,50 720,80 C960,110 1200,50 1440,80 L1440,120 L0,120 Z;
+                  M0,80 C240,50 480,110 720,80 C960,50 1200,110 1440,80 L1440,120 L0,120 Z;
+                  M0,80 C240,110 480,50 720,80 C960,110 1200,50 1440,80 L1440,120 L0,120 Z"/>
+      </path>
+    </svg>
+  </div>
 </header>
-<section class="features">
-  <h2 class="section-title">لماذا AquaFlow؟</h2>
+
+<!-- ════ FEATURES ════ -->
+<section class="features-section">
+  <div style="text-align:center;margin-bottom:48px">
+    <div class="section-label reveal"><i data-lucide="star"></i> مميزاتنا</div>
+    <h2 class="section-title reveal delay-1">لماذا AquaFlow؟</h2>
+    <p class="section-sub reveal delay-2">نقدم أفضل تجربة تدريبية في بيئة احترافية آمنة وممتعة</p>
+  </div>
   <div class="features-grid">
-    <div class="feature-card glass-panel"><div class="icon-wrapper"><i data-lucide="award"></i></div><h3>مدربون محترفون</h3><p>تعلّم على يد أبطال وطنيين ومدربين معتمدين دوليًا.</p></div>
-    <div class="feature-card glass-panel"><div class="icon-wrapper"><i data-lucide="activity"></i></div><h3>برامج متطورة</h3><p>خطط تدريبية مخصصة مدعومة بأحدث أساليب قياس الأداء.</p></div>
-    <div class="feature-card glass-panel"><div class="icon-wrapper"><i data-lucide="shield-check"></i></div><h3>بيئة آمنة 100%</h3><p>أعلى معايير نقاء المياه مع مراقبة مستمرة على مدار الساعة.</p></div>
+    <div class="feature-card glass reveal delay-1">
+      <div class="f-icon"><i data-lucide="award"></i></div>
+      <h3>مدربون محترفون</h3>
+      <p>تعلّم على يد أبطال وطنيين ومدربين معتمدين دوليًا بخبرات تمتد لسنوات.</p>
+    </div>
+    <div class="feature-card glass reveal delay-2">
+      <div class="f-icon"><i data-lucide="activity"></i></div>
+      <h3>برامج متطورة</h3>
+      <p>خطط تدريبية مخصصة مدعومة بأحدث أساليب قياس الأداء وتحليل الحركة.</p>
+    </div>
+    <div class="feature-card glass reveal delay-3">
+      <div class="f-icon"><i data-lucide="shield-check"></i></div>
+      <h3>بيئة آمنة 100%</h3>
+      <p>أعلى معايير نقاء المياه مع مراقبة مستمرة ومنقذون معتمدون على مدار الساعة.</p>
+    </div>
   </div>
 </section>
-<section class="programs">
-  <h2 class="section-title">برامجنا التدريبية</h2>
-  <div class="carousel-container"><div class="carousel-track">
-    <div class="program-card glass-panel"><div class="card-img" style="background-image:url('https://images.unsplash.com/photo-1519315901367-f34f11d56d6d?auto=format&fit=crop&q=80')"></div><div class="card-content"><h3>السباحة للمبتدئين</h3><p>تغلّب على خوف الماء وتعلّم الأساسيات بأمان وثقة.</p><span class="prog-badge">8 حصص</span></div></div>
-    <div class="program-card glass-panel"><div class="card-img" style="background-image:url('https://images.unsplash.com/photo-1600965962102-9d260a71890d?auto=format&fit=crop&q=80')"></div><div class="card-content"><h3>تدريب الأطفال</h3><p>برامج ممتعة وتفاعلية مصممة خصيصًا للأجيال الصاعدة.</p><span class="prog-badge">12 حصة</span></div></div>
-    <div class="program-card glass-panel"><div class="card-img" style="background-image:url('https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&q=80')"></div><div class="card-content"><h3>التدريب الاحترافي</h3><p>تقنيات متقدمة وبناء اللياقة للمنافسين الطموحين.</p><span class="prog-badge">24 حصة</span></div></div>
-    <div class="program-card glass-panel"><div class="card-img" style="background-image:url('https://images.unsplash.com/photo-1576610616656-d3aa5d1f4534?auto=format&fit=crop&q=80')"></div><div class="card-content"><h3>التدريب الخاص</h3><p>جلسات فردية مخصصة بالكامل لأهدافك الشخصية.</p><span class="prog-badge">مرن</span></div></div>
-  </div></div>
+
+<!-- ════ PROGRAMS ════ -->
+<section class="programs-section" id="programs">
+  <div class="programs-header">
+    <div class="section-label reveal"><i data-lucide="layers"></i> برامجنا</div>
+    <h2 class="section-title reveal delay-1">برامجنا التدريبية</h2>
+    <p class="section-sub reveal delay-2">اختر البرنامج المناسب لمستواك وأهدافك</p>
+  </div>
+
+  <div class="carousel-wrap reveal">
+    <div class="carousel-track" id="carouselTrack">
+
+      <div class="prog-card">
+        <div class="prog-card-img" style="background-image:url('https://images.unsplash.com/photo-1519315901367-f34f11d56d6d?auto=format&fit=crop&q=80&w=600')">
+          <span class="prog-badge">8 حصص</span>
+        </div>
+        <div class="prog-card-body">
+          <h3>السباحة للمبتدئين</h3>
+          <p>تغلّب على خوف الماء وتعلّم الأساسيات بأمان وثقة مع مدربينا المتخصصين.</p>
+          <a href="auth.html?tab=register" class="prog-card-link">سجّل الآن <i data-lucide="arrow-left"></i></a>
+        </div>
+      </div>
+
+      <div class="prog-card">
+        <div class="prog-card-img" style="background-image:url('https://images.unsplash.com/photo-1600965962102-9d260a71890d?auto=format&fit=crop&q=80&w=600')">
+          <span class="prog-badge">12 حصة</span>
+        </div>
+        <div class="prog-card-body">
+          <h3>تدريب الأطفال</h3>
+          <p>برامج ممتعة وتفاعلية مصممة خصيصًا للأجيال الصاعدة بأسلوب شيّق.</p>
+          <a href="auth.html?tab=register" class="prog-card-link">سجّل الآن <i data-lucide="arrow-left"></i></a>
+        </div>
+      </div>
+
+      <div class="prog-card">
+        <div class="prog-card-img" style="background-image:url('https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&q=80&w=600')">
+          <span class="prog-badge">24 حصة</span>
+        </div>
+        <div class="prog-card-body">
+          <h3>التدريب الاحترافي</h3>
+          <p>تقنيات متقدمة وبناء اللياقة للمنافسين الطموحين الساعين للتميز.</p>
+          <a href="auth.html?tab=register" class="prog-card-link">سجّل الآن <i data-lucide="arrow-left"></i></a>
+        </div>
+      </div>
+
+      <div class="prog-card">
+        <div class="prog-card-img" style="background-image:url('https://images.unsplash.com/photo-1576610616656-d3aa5d1f4534?auto=format&fit=crop&q=80&w=600')">
+          <span class="prog-badge">مرن</span>
+        </div>
+        <div class="prog-card-body">
+          <h3>التدريب الخاص</h3>
+          <p>جلسات فردية مخصصة بالكامل لأهدافك الشخصية وجدولك الزمني.</p>
+          <a href="auth.html?tab=register" class="prog-card-link">سجّل الآن <i data-lucide="arrow-left"></i></a>
+        </div>
+      </div>
+
+    </div>
+    <div class="carousel-dots" id="carouselDots"></div>
+  </div>
 </section>
+
+<!-- ════ STATS ════ -->
 <section class="stats-section">
-  <div class="stats-grid">
-    <div class="stat-item"><div class="stat-num" data-target="500">0</div><div class="stat-label">سباح مسجّل</div></div>
-    <div class="stat-item"><div class="stat-num" data-target="15">0</div><div class="stat-label">مدرب محترف</div></div>
-    <div class="stat-item"><div class="stat-num" data-target="8">0</div><div class="stat-label">سنوات خبرة</div></div>
-    <div class="stat-item"><div class="stat-num" data-target="98">0</div><div class="stat-label">% رضا العملاء</div></div>
+  <div class="stats-inner reveal-scale">
+    <div class="stat-item">
+      <div class="stat-num" data-target="500">0</div>
+      <div class="stat-lbl">سباح مسجّل</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" data-target="15">0</div>
+      <div class="stat-lbl">مدرب محترف</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" data-target="8">0</div>
+      <div class="stat-lbl">سنوات خبرة</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" data-target="98" data-suffix="%">0</div>
+      <div class="stat-lbl">رضا العملاء</div>
+    </div>
   </div>
 </section>
+
+<!-- ════ CTA ════ -->
+<section class="cta-section">
+  <div class="cta-box reveal-scale">
+    <h2>هل أنت جاهز لتبدأ؟</h2>
+    <p>انضم إلى أكثر من 500 سباح يثقون في AquaFlow لتحقيق أهدافهم. سجّل الآن وابدأ رحلتك نحو الاحتراف.</p>
+    <div class="cta-actions">
+      <a href="auth.html?tab=register" class="btn-glow rpl">
+        <span><i data-lucide="rocket"></i> انضم مجاناً</span>
+      </a>
+      <a href="auth.html" class="btn-ghost rpl">
+        <i data-lucide="log-in"></i> تسجيل الدخول
+      </a>
+    </div>
+  </div>
+</section>
+
 <div style="height:100px"></div>
-<nav class="bottom-nav glass-panel">
-  <button id="searchTrigger" class="nav-icon ripple-btn"><i data-lucide="search"></i></button>
-  <a href="#" class="nav-icon center-plus ripple-btn" id="registerBtn"><i data-lucide="plus"></i></a>
-  <a href="profile.html" class="nav-icon ripple-btn" id="profileBtn"><i data-lucide="user"></i></a>
+
+<!-- ════ BOTTOM NAV ════ -->
+<nav class="bottom-nav">
+  <button class="nav-icon rpl" id="searchTrigger"><i data-lucide="search"></i></button>
+  <a href="#" class="nav-icon center-fab rpl" id="registerBtn"><i data-lucide="plus"></i></a>
+  <a href="profile.html" class="nav-icon rpl" id="profileBtn"><i data-lucide="user"></i></a>
 </nav>
-<div id="searchModal" class="search-modal">
-  <div class="modal-overlay" id="modalOverlay"></div>
-  <div class="modal-content glass-panel">
-    <button id="closeSearch" class="close-btn"><i data-lucide="x"></i></button>
+
+<!-- ════ SEARCH MODAL ════ -->
+<div class="modal-wrap" id="searchModal">
+  <div class="modal-backdrop" id="searchBackdrop"></div>
+  <div class="modal-box">
+    <button class="modal-close" id="closeSearch"><i data-lucide="x"></i></button>
     <div class="modal-title"><i data-lucide="search"></i> البحث عن مشترك</div>
-    <div class="search-input-wrapper">
+    <div class="search-input-wrap">
       <i data-lucide="user-search"></i>
       <input type="text" id="subSearchInput" placeholder="ابحث بالاسم أو رقم الاشتراك..." autocomplete="off"/>
     </div>
-    <div id="searchResult" class="search-result-area"></div>
+    <div class="search-results" id="searchResult"></div>
   </div>
 </div>
-<div id="authModal" class="search-modal">
-  <div class="modal-overlay" id="authOverlay"></div>
-  <div class="modal-content glass-panel" style="text-align:center;padding:40px 28px">
-    <button class="close-btn" onclick="closeModal('authModal')"><i data-lucide="x"></i></button>
-    <div style="width:60px;height:60px;border-radius:50%;background:var(--grad-ocean);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 8px 24px rgba(0,100,255,.4)"><i data-lucide="lock" style="width:24px;height:24px;color:#fff"></i></div>
+
+<!-- ════ AUTH GATE MODAL ════ -->
+<div class="auth-modal" id="authModal">
+  <div class="modal-backdrop" id="authBackdrop"></div>
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeM('authModal')"><i data-lucide="x"></i></button>
+    <div class="auth-modal-icon"><i data-lucide="lock"></i></div>
     <div style="font-family:var(--f-disp);font-size:1.1rem;font-weight:800;margin-bottom:8px">تسجيل الدخول مطلوب</div>
-    <p style="font-size:.84rem;color:var(--ts);margin-bottom:24px;line-height:1.6">لإضافة بياناتك كسباح، يجب إنشاء حساب أو تسجيل الدخول أولاً.</p>
-    <div style="display:flex;gap:10px;justify-content:center">
-      <a href="auth.html" class="btn-primary ripple-btn"><i data-lucide="log-in"></i> تسجيل الدخول</a>
-      <a href="auth.html?tab=register" class="btn-outline ripple-btn">إنشاء حساب</a>
+    <p style="font-size:.84rem;color:var(--ts);margin-bottom:28px;line-height:1.65">لإضافة بياناتك كسباح، يجب إنشاء حساب أو تسجيل الدخول أولاً.</p>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <a href="auth.html" class="btn-primary rpl"><i data-lucide="log-in"></i> تسجيل الدخول</a>
+      <a href="auth.html?tab=register" class="btn-outline rpl">إنشاء حساب</a>
     </div>
   </div>
 </div>
+
+<!-- Toast -->
 <div class="toast" id="toast"><span id="toastMsg"></span></div>
-<style>
-.prog-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:var(--r-full);background:rgba(0,200,255,.1);border:1px solid rgba(0,200,255,.2);color:var(--cyan);font-size:.68rem;font-weight:800}
-.stats-section{padding:60px 20px;max-width:800px;margin:0 auto}
-.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-@media(min-width:600px){.stats-grid{grid-template-columns:repeat(4,1fr)}}
-.stat-item{text-align:center;padding:24px 16px;background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r-lg);position:relative;overflow:hidden}
-.stat-item::before{content:'';position:absolute;top:0;inset-inline:0;height:2px;background:var(--grad-ocean)}
-.stat-num{font-family:var(--f-disp);font-size:2.4rem;font-weight:800;background:var(--grad-acc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.stat-label{font-size:.72rem;font-weight:600;color:var(--tm);margin-top:4px}
-.dots{display:flex;gap:5px;justify-content:center;padding:16px 0}
-.dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);animation:dotBounce 1.2s ease-in-out infinite}
-.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
-@keyframes dotBounce{0%,80%,100%{transform:scale(.8);opacity:.4}40%{transform:scale(1.1);opacity:1}}
-</style>
+
 <script>
+/* ══════════════════════════════════════
+   CANVAS — PARTICLE FIELD
+══════════════════════════════════════ */
+(function() {
+  const canvas = document.getElementById('bgCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [], lines = [];
+  const N = window.innerWidth < 600 ? 40 : 70;
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function mkParticle() {
+    return {
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - .5) * .35,
+      vy: (Math.random() - .5) * .35,
+      r: Math.random() * 1.8 + .4,
+      alpha: Math.random() * .6 + .2,
+      color: Math.random() > .5 ? '0,200,255' : '0,100,255',
+    };
+  }
+
+  for (let i = 0; i < N; i++) particles.push(mkParticle());
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Draw connections
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const p = particles[i], q = particles[j];
+        const dx = p.x - q.x, dy = p.y - q.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 130) {
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(0,150,255,${.08 * (1 - dist/130)})`;
+          ctx.lineWidth = .5;
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Draw particles
+    particles.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${p.color},${p.alpha})`;
+      ctx.fill();
+
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < -10) p.x = W + 10;
+      if (p.x > W + 10) p.x = -10;
+      if (p.y < -10) p.y = H + 10;
+      if (p.y > H + 10) p.y = -10;
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ══════════════════════════════════════
+   BUBBLES
+══════════════════════════════════════ */
+(function() {
+  const wrap = document.getElementById('bubblesWrap');
+  const count = window.innerWidth < 600 ? 10 : 18;
+  for (let i = 0; i < count; i++) spawnBubble(wrap, true);
+
+  function spawnBubble(wrap, init) {
+    const b = document.createElement('div');
+    b.className = 'bubble';
+    const size = Math.random() * 22 + 6;
+    const left = Math.random() * 100;
+    const dur  = Math.random() * 14 + 8;
+    const delay = init ? Math.random() * -20 : 0;
+    b.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${left}%;
+      animation-duration:${dur}s;
+      animation-delay:${delay}s;
+      opacity:0;
+    `;
+    wrap.appendChild(b);
+    setTimeout(() => b.remove(), (dur + Math.abs(delay)) * 1000 + 1000);
+    setTimeout(() => spawnBubble(wrap, false), dur * 1000 + Math.abs(delay) * 1000);
+  }
+})();
+
+/* ══════════════════════════════════════
+   WATER CURSOR RIPPLE
+══════════════════════════════════════ */
+document.addEventListener('click', function(e) {
+  const r = document.createElement('div');
+  r.className = 'cursor-ripple';
+  r.style.left = e.clientX + 'px';
+  r.style.top  = e.clientY + 'px';
+  document.body.appendChild(r);
+  setTimeout(() => r.remove(), 850);
+});
+
+/* ══════════════════════════════════════
+   NAV SCROLL
+══════════════════════════════════════ */
+window.addEventListener('scroll', () => {
+  document.getElementById('topNav').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+/* ══════════════════════════════════════
+   SCROLL REVEAL
+══════════════════════════════════════ */
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal,.reveal-left,.reveal-scale').forEach(el => revObs.observe(el));
+
+/* ══════════════════════════════════════
+   STATS COUNTER
+══════════════════════════════════════ */
+const statsObs = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    entry.target.querySelectorAll('.stat-num').forEach(el => {
+      const target = +el.dataset.target;
+      const suffix = el.dataset.suffix || '';
+      let cur = 0; const step = target / 70;
+      const iv = setInterval(() => {
+        cur = Math.min(cur + step, target);
+        el.textContent = Math.floor(cur) + suffix;
+        if (cur >= target) clearInterval(iv);
+      }, 22);
+    });
+    statsObs.unobserve(entry.target);
+  });
+}, { threshold: 0.4 });
+document.querySelectorAll('.stats-inner').forEach(s => statsObs.observe(s));
+
+/* ══════════════════════════════════════
+   CAROUSEL — DRAG & DOTS
+══════════════════════════════════════ */
+(function() {
+  const track = document.getElementById('carouselTrack');
+  const dotsWrap = document.getElementById('carouselDots');
+  if (!track || !dotsWrap) return;
+
+  const cards = track.querySelectorAll('.prog-card');
+  const cardW = 272 + 18;
+  const total = cards.length;
+  let active = 0;
+
+  // build dots
+  cards.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'cdot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => scrollTo(i));
+    dotsWrap.appendChild(d);
+  });
+
+  function updateDots(idx) {
+    active = idx;
+    dotsWrap.querySelectorAll('.cdot').forEach((d, i) => d.classList.toggle('active', i === idx));
+  }
+
+  function scrollTo(idx) {
+    track.scrollTo({ left: idx * cardW, behavior: 'smooth' });
+    updateDots(idx);
+  }
+
+  track.addEventListener('scroll', () => {
+    const idx = Math.round(track.scrollLeft / cardW);
+    if (idx !== active) updateDots(idx);
+  });
+
+  // drag
+  let isDown = false, startX = 0, scrollLeft = 0;
+  track.addEventListener('mousedown', e => { isDown=true; track.classList.add('grabbing'); startX=e.pageX-track.offsetLeft; scrollLeft=track.scrollLeft; });
+  track.addEventListener('mouseleave', () => { isDown=false; track.classList.remove('grabbing'); });
+  track.addEventListener('mouseup', () => { isDown=false; track.classList.remove('grabbing'); });
+  track.addEventListener('mousemove', e => {
+    if (!isDown) return; e.preventDefault();
+    track.scrollLeft = scrollLeft - (e.pageX - track.offsetLeft - startX);
+  });
+})();
+
+/* ══════════════════════════════════════
+   AUTH / NAV
+══════════════════════════════════════ */
 const API    = 'https://backend-mohsen-swimming-academy.vercel.app/api';
 const GOALS  = {fitness:'اللياقة',competition:'المنافسات',safety:'الأمان',fun:'الترفيه'};
 const DAYS   = ['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'];
@@ -120,161 +1290,156 @@ let searchTimer = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   lucide.createIcons();
-  updateNav(); bindUI(); animateStats(); addRipples();
+  updateNav(); bindUI(); addRipples();
 });
 
 function updateNav() {
-  const swToken=localStorage.getItem('sw_token'), trainerToken=localStorage.getItem('aq_token');
-  document.getElementById('navGuest').style.display='none';
-  document.getElementById('navSwimmer').style.display='none';
-  document.getElementById('navTrainer').style.display='none';
-  const heroBtn=document.getElementById('heroBtn');
-  if(trainerToken){
-    document.getElementById('navTrainer').style.display='flex';
-    try{
-      const t=JSON.parse(localStorage.getItem('aq_trainer'));
-      const isBoss=t?.role==='boss';
-      const dashPath=isBoss?'./aquaelite-backend/boss.html':'./aquaelite-backend/trainer.html';
-      document.getElementById('navDashLink').textContent=t?.name||'لوحة التحكم';
-      document.getElementById('navDashLink').href=dashPath;
-      document.getElementById('navDashBtn').textContent=isBoss?'👑 Boss Panel':'⚡ لوحتي';
-      document.getElementById('navDashBtn').href=dashPath;
-      heroBtn.innerHTML=isBoss?'<i data-lucide="crown"></i> Boss Panel':'<i data-lucide="layout-dashboard"></i> لوحة التحكم';
-      heroBtn.href=dashPath;
-    }catch(e){}
+  const swToken = localStorage.getItem('sw_token');
+  const trainerToken = localStorage.getItem('aq_token');
+  document.getElementById('navGuest').style.display = 'none';
+  document.getElementById('navSwimmer').style.display = 'none';
+  document.getElementById('navTrainer').style.display = 'none';
+  const heroBtn = document.getElementById('heroBtn');
+
+  if (trainerToken) {
+    document.getElementById('navTrainer').style.display = 'flex';
+    try {
+      const t = JSON.parse(localStorage.getItem('aq_trainer'));
+      const isBoss = t?.role === 'boss';
+      const dashPath = isBoss ? './aquaelite-backend/boss.html' : './aquaelite-backend/trainer.html';
+      document.getElementById('navDashLink').textContent = t?.name || 'لوحة التحكم';
+      document.getElementById('navDashLink').href = dashPath;
+      document.getElementById('navDashBtn').textContent = isBoss ? '👑 Boss' : '⚡ لوحتي';
+      document.getElementById('navDashBtn').href = dashPath;
+      if (heroBtn) { heroBtn.querySelector('span').innerHTML = isBoss ? '<i data-lucide="crown"></i> Boss Panel' : '<i data-lucide="layout-dashboard"></i> لوحة التحكم'; heroBtn.href = dashPath; }
+    } catch(e) {}
     lucide.createIcons(); return;
   }
-  if(swToken){
-    document.getElementById('navSwimmer').style.display='flex';
-    try{const u=JSON.parse(localStorage.getItem('sw_user'));document.getElementById('navSwName').textContent=u?.displayName||'ملفي';}catch(e){}
-    heroBtn.innerHTML='<i data-lucide="user"></i> ملفي الشخصي'; heroBtn.href='profile.html';
+  if (swToken) {
+    document.getElementById('navSwimmer').style.display = 'flex';
+    try { const u = JSON.parse(localStorage.getItem('sw_user')); document.getElementById('navSwName').textContent = u?.displayName || 'ملفي'; } catch(e) {}
+    if (heroBtn) { heroBtn.querySelector('span').innerHTML = '<i data-lucide="user"></i> ملفي الشخصي'; heroBtn.href = 'profile.html'; }
     lucide.createIcons(); return;
   }
-  document.getElementById('navGuest').style.display='flex';
-  heroBtn.innerHTML='<i data-lucide="rocket"></i> ابدأ رحلتك'; heroBtn.href='auth.html?tab=register';
+  document.getElementById('navGuest').style.display = 'flex';
+  if (heroBtn) { heroBtn.querySelector('span').innerHTML = '<i data-lucide="rocket"></i> ابدأ رحلتك'; heroBtn.href = 'auth.html?tab=register'; }
   lucide.createIcons();
 }
 
-function doLogout(type){
-  if(type==='sw'){localStorage.removeItem('sw_token');localStorage.removeItem('sw_user');}
-  else{localStorage.removeItem('aq_token');localStorage.removeItem('aq_trainer');}
+function doLogout(type) {
+  if (type === 'sw') { localStorage.removeItem('sw_token'); localStorage.removeItem('sw_user'); }
+  else { localStorage.removeItem('aq_token'); localStorage.removeItem('aq_trainer'); }
   updateNav();
 }
 
-function bindUI(){
-  document.getElementById('searchTrigger').onclick=()=>openModal('searchModal');
-  document.getElementById('closeSearch').onclick=()=>closeModal('searchModal');
-  document.getElementById('modalOverlay').onclick=()=>closeModal('searchModal');
-  document.getElementById('authOverlay').onclick=()=>closeModal('authModal');
-  document.getElementById('registerBtn').addEventListener('click',e=>{
+function bindUI() {
+  document.getElementById('searchTrigger').onclick = () => openM('searchModal');
+  document.getElementById('closeSearch').onclick = () => closeM('searchModal');
+  document.getElementById('searchBackdrop').onclick = () => closeM('searchModal');
+  document.getElementById('authBackdrop').onclick = () => closeM('authModal');
+
+  document.getElementById('registerBtn').addEventListener('click', e => {
     e.preventDefault();
-    if(localStorage.getItem('sw_token')) window.location.href='register-swimmer.html';
-    else openModal('authModal');
+    if (localStorage.getItem('sw_token')) window.location.href = 'register-swimmer.html';
+    else openM('authModal');
   });
-  document.getElementById('profileBtn').addEventListener('click',e=>{
+
+  document.getElementById('profileBtn').addEventListener('click', e => {
     e.preventDefault();
-    const swToken=localStorage.getItem('sw_token'), trainerToken=localStorage.getItem('aq_token');
-    if(swToken){window.location.href='profile.html';return;}
-    if(trainerToken){try{const t=JSON.parse(localStorage.getItem('aq_trainer'));window.location.href=t?.role==='boss'?'./aquaelite-backend/boss.html':'./aquaelite-backend/trainer.html';}catch(e){window.location.href='auth.html';}return;}
-    window.location.href='auth.html';
+    const sw = localStorage.getItem('sw_token'), tr = localStorage.getItem('aq_token');
+    if (sw) { window.location.href = 'profile.html'; return; }
+    if (tr) { try { const t = JSON.parse(localStorage.getItem('aq_trainer')); window.location.href = t?.role === 'boss' ? './aquaelite-backend/boss.html' : './aquaelite-backend/trainer.html'; } catch(e) { window.location.href = 'auth.html'; } return; }
+    window.location.href = 'auth.html';
   });
-  document.getElementById('subSearchInput').addEventListener('input',e=>{
+
+  document.getElementById('subSearchInput').addEventListener('input', e => {
     clearTimeout(searchTimer);
-    const q=e.target.value.trim();
-    if(!q){document.getElementById('searchResult').innerHTML='';return;}
+    const q = e.target.value.trim();
+    if (!q) { document.getElementById('searchResult').innerHTML = ''; return; }
     showDots();
-    searchTimer=setTimeout(()=>doSearch(q),420);
+    searchTimer = setTimeout(() => doSearch(q), 420);
   });
-  document.getElementById('subSearchInput').addEventListener('keydown',e=>{
-    if(e.key==='Enter'){clearTimeout(searchTimer);doSearch(e.target.value.trim());}
+  document.getElementById('subSearchInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { clearTimeout(searchTimer); doSearch(e.target.value.trim()); }
   });
 }
 
-function showDots(){
-  document.getElementById('searchResult').innerHTML='<div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+function showDots() {
+  document.getElementById('searchResult').innerHTML = '<div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
 }
 
-/* ════ doSearch — بيبعت token لو موجود ════ */
 async function doSearch(q) {
-  if (!q) return;
-  showDots();
+  if (!q) return; showDots();
   const res = document.getElementById('searchResult');
-
   try {
-    // استخدم الـ route العام دايماً للبحث من الهوم
     const r = await fetch(`${API}/swimmers/public/search?search=${encodeURIComponent(q)}`);
     const d = await r.json();
     const swimmers = d.data || [];
-
     if (!swimmers.length) {
       res.innerHTML = `<div class="result-empty"><i data-lucide="search-x"></i>لا توجد نتائج لـ "${q}"</div>`;
       lucide.createIcons(); return;
     }
     res.innerHTML = swimmers.map(s => resultCard(s)).join('');
     lucide.createIcons();
-  } catch (e) {
+  } catch(e) {
     res.innerHTML = `<div class="result-empty"><i data-lucide="wifi-off"></i>تعذّر الاتصال بالخادم</div>`;
     lucide.createIcons();
   }
 }
-function resultCard(s){
-  const expiry=s.subscriptionExpiry?new Date(s.subscriptionExpiry):null;
-  const expStr=expiry?`${expiry.getDate()} ${MONTHS[expiry.getMonth()]} ${expiry.getFullYear()}`:'—';
-  const daysStr=(s.trainingDays||[]).map(d=>DAYS[d]).join('، ')||'—';
+
+function resultCard(s) {
+  const expiry = s.subscriptionExpiry ? new Date(s.subscriptionExpiry) : null;
+  const expStr = expiry ? `${expiry.getDate()} ${MONTHS[expiry.getMonth()]} ${expiry.getFullYear()}` : '—';
+  const daysStr = (s.trainingDays || []).map(d => DAYS[d]).join('، ') || '—';
   return `
-  <div class="result-card" style="flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:8px">
-    <div style="display:flex;align-items:center;gap:12px;width:100%">
+  <div class="result-card">
+    <div class="result-head">
       <div class="result-avatar">${(s.fullName||'?').charAt(0)}</div>
       <div style="flex:1">
         <div class="result-name">${s.fullName}</div>
-        <div class="result-sub">#${s.subscriptionId}${s.trainingTime?' · '+s.trainingTime:''}</div>
+        <div class="result-id">#${s.subscriptionId}${s.trainingTime?' · '+s.trainingTime:''}</div>
       </div>
       <span class="result-badge ${s.isActive?'rb-active':'rb-inactive'}">${s.isActive?'● نشط':'● منتهي'}</span>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%;font-size:.74rem">
-      <div style="color:var(--tm)">الهدف: <span style="color:var(--tp);font-weight:600">${GOALS[s.goal]||'—'}</span></div>
-      <div style="color:var(--tm)">الحصص: <span style="color:var(--tp);font-weight:600">${s.sessionsAttended??0}/${s.sessionsCount??'—'}</span></div>
-      <div style="color:var(--tm)">أيام التدريب: <span style="color:var(--tp);font-weight:600">${daysStr}</span></div>
-      <div style="color:var(--tm)">انتهاء الاشتراك: <span style="color:var(--tp);font-weight:600">${expStr}</span></div>
+    <div class="result-meta">
+      <div><span>الهدف: </span><strong>${GOALS[s.goal]||'—'}</strong></div>
+      <div><span>الحصص: </span><strong>${s.sessionsAttended??0}/${s.sessionsCount??'—'}</strong></div>
+      <div><span>أيام التدريب: </span><strong>${daysStr}</strong></div>
+      <div><span>انتهاء الاشتراك: </span><strong>${expStr}</strong></div>
     </div>
   </div>`;
 }
 
-function animateStats(){
-  const obs=new IntersectionObserver(entries=>{
-    entries.forEach(entry=>{
-      if(!entry.isIntersecting) return;
-      entry.target.querySelectorAll('.stat-num').forEach(el=>{
-        const target=+el.dataset.target; let cur=0;
-        const step=target/60;
-        const iv=setInterval(()=>{cur=Math.min(cur+step,target);el.textContent=Math.floor(cur);if(cur>=target)clearInterval(iv);},20);
-      });
-      obs.unobserve(entry.target);
-    });
-  },{threshold:0.4});
-  document.querySelectorAll('.stats-section').forEach(s=>obs.observe(s));
-}
+function openM(id)  { document.getElementById(id).classList.add('open'); }
+function closeM(id) { document.getElementById(id).classList.remove('open'); }
 
-function openModal(id){document.getElementById(id).classList.add('open');}
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-
-function addRipples(){
-  document.querySelectorAll('.ripple-btn').forEach(btn=>{
-    btn.addEventListener('click',function(e){
-      const r=document.createElement('span');r.classList.add('ripple');
-      const rect=this.getBoundingClientRect(),size=Math.max(rect.width,rect.height);
-      r.style.cssText=`width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
-      this.appendChild(r);setTimeout(()=>r.remove(),500);
+/* ══════════════════════════════════════
+   RIPPLES
+══════════════════════════════════════ */
+function addRipples() {
+  document.querySelectorAll('.rpl').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      const r = document.createElement('span');
+      r.className = 'ripple';
+      const rect = this.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      r.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
+      this.appendChild(r);
+      setTimeout(() => r.remove(), 550);
     });
   });
 }
 
+/* ══════════════════════════════════════
+   TOAST
+══════════════════════════════════════ */
 let toastT;
-function toast(msg,type='inf'){
-  const el=document.getElementById('toast');
-  el.className=`toast ${type} show`;
-  document.getElementById('toastMsg').textContent=msg;
-  clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),3200);
+function toast(msg, type='inf') {
+  const el = document.getElementById('toast');
+  el.className = `toast ${type} show`;
+  document.getElementById('toastMsg').textContent = msg;
+  clearTimeout(toastT);
+  toastT = setTimeout(() => el.classList.remove('show'), 3200);
 }
 </script>
 </body>
