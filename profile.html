@@ -380,14 +380,21 @@ input, select { font-family:inherit; font-size:16px; /* Prevent iOS zoom */ }
 .sp-inactive { background:rgba(255,77,109,.08); border:1px solid rgba(255,77,109,.2); color:var(--err); }
 .status-pill .dot { width:5px; height:5px; border-radius:50%; background:currentColor; }
 .expand-icon {
-  width:24px; height:24px; border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  background:rgba(255,255,255,.06);
-  transition:transform var(--mid) var(--ease), background var(--fast);
+  width: auto;
+  height: 28px;
+  border-radius: var(--r-full);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 10px 0 8px;
+  background: rgba(255,255,255,.06);
+  transition: transform var(--mid) var(--ease), background var(--fast);
 }
 .expand-icon svg { width:13px; height:13px; color:var(--t3); transition:color var(--fast); }
-.sw-card.expanded .expand-icon { transform:rotate(180deg); background:rgba(0,200,255,.1); }
-.sw-card.expanded .expand-icon svg { color:var(--cyan); }
+/* بعد */
+.sw-card.expanded .expand-icon { background:rgba(0,200,255,.1); }
+.sw-card.expanded .expand-icon svg { color:var(--cyan); transform:rotate(180deg); }
+.expand-icon svg { transition: transform var(--mid) var(--ease), color var(--fast); }
 
 /* Progress bar */
 .sw-progress { padding:0 18px 16px; }
@@ -1151,13 +1158,17 @@ function swimmerCard(s, idx) {
 </span>          ${s.trainingTime ? `<span class="sw-time"><i data-lucide="clock"></i>${s.trainingTime}</span>` : ''}
         </div>
       </div>
-      <div class="sw-status">
+
+   <div class="sw-status">
         <span class="status-pill ${s.isActive ? 'sp-active' : 'sp-inactive'}">
           <span class="dot"></span>${s.isActive ? 'نشط' : 'منتهي'}
         </span>
-        <div class="expand-icon"><i data-lucide="chevron-down"></i>المزيد</div>
+        <div class="expand-icon">
+          <i data-lucide="chevron-down"></i>
+          <span style="font-size:.68rem;font-weight:700;color:var(--t3)">المزيد</span>
+        </div>
       </div>
-    </div>
+    </div>  <!-- ← إقفال sw-head -->
 
     <div class="sw-progress">
       <div class="sp-top">
