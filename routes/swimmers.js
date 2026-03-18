@@ -115,7 +115,7 @@ router.get('/', protect, async (req, res) => {
 /* ─────────────────────────────────────────────────────────────
    GET /api/swimmers/:subscriptionId
    ───────────────────────────────────────────────────────────── */
-router.get('/:subscriptionId', async (req, res) => {
+router.get('/:subscriptionId', protect,async (req, res) => {
   try {
     const isBoss  = req.trainer.role === 'boss';
     const filter  = { subscriptionId: req.params.subscriptionId.trim() };
@@ -179,6 +179,33 @@ router.get('/:subscriptionId', async (req, res) => {
   }
 });
 
+/* ─────────────────────────────────────────────────────────────
+   GET /api/swimmers/public/search  ← عام بدون token
+   ───────────────────────────────────────────────────────────── */
+router.get('/public/search', async (req, res) => {
+  try {
+    const { search } = req.query;
+    if (!search || search.trim().length < 2)
+      return res.json({ success: true, total: 0, data: [] });
+
+    const q = search.trim();
+    const filter = {
+      $or: [
+        { fullName:       { $regex: q, $options: 'i' } },
+        { subscriptionId: { $regex: q, $options: 'i' } },
+      ]
+    };
+
+    const swimmers = await Swimmer.find(filter)
+      .select('fullName subscriptionId trainingDays trainingTime goal sessionsCount sessionsAttended isActive subscriptionExpiry')
+      .sort({ createdAt: -1 })
+      .limit(6);
+
+    res.json({ success: true, total: swimmers.length, data: swimmers });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'خطأ في الخادم' });
+  }
+});
 /* ─────────────────────────────────────────────────────────────
    PUT /api/swimmers/:subscriptionId
    يقبل: fullName, phone, trainingTime, goal, isActive,
@@ -245,5 +272,9 @@ router.delete('/:subscriptionId', protect, async (req, res) => {
     res.status(500).json({ success: false, message: 'خطأ في الحذف: ' + err.message });
   }
 });
+
+
+
+
 
 module.exports = router;
