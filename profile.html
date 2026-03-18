@@ -852,28 +852,6 @@ select.fc option { background:#0a1428; color:var(--t1); }
   .hero-av { width:88px; height:88px; font-size:2.2rem; }
   .sw-head { padding:20px 20px 18px; }
 }
-/* ══ Preview Chips ══ */
-.sw-card-wrap { margin-bottom:12px; }
-.sw-preview { display:flex; gap:5px; flex-wrap:wrap; margin-top:7px; }
-.pv-chip {
-  font-size:.68rem; font-weight:700;
-  padding:3px 9px; border-radius:var(--r-full);
-  white-space:nowrap;
-}
-.pv-ok     { background:rgba(0,229,160,.1);  border:1px solid rgba(0,229,160,.22); color:var(--ok); }
-.pv-warn   { background:rgba(255,176,58,.1); border:1px solid rgba(255,176,58,.25); color:var(--warn); }
-.pv-err    { background:rgba(255,77,109,.1); border:1px solid rgba(255,77,109,.22); color:var(--err); }
-.pv-blue   { background:rgba(0,200,255,.08); border:1px solid rgba(0,200,255,.2);   color:var(--cyan); }
-.pv-purple { background:rgba(123,47,255,.1); border:1px solid rgba(123,47,255,.22); color:#a37fff; }
-.pv-gray   { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); color:var(--t3); }
-
-/* الكارت يرجع border-radius كامل */
-.sw-card-wrap .sw-card {
-  border-radius:var(--r-xl);
-  border-bottom:1px solid var(--bdr);
-  margin-bottom:0;
-}
-
 </style>
 </head>
 <body>
@@ -1161,68 +1139,39 @@ function swimmerCard(s, idx) {
   const tot = Math.max(s.sessionsCount || 1, 1);
   const pct = Math.min(100, Math.round((att / tot) * 100));
 
-  // ── Chips ────────────────────────────────────────────────
-  const levelChip = s.level
-    ? `<span class="pv-chip pv-blue">LV ${s.level}</span>`
-    : '';
-
-  const trainerChip = s.trainerName
-    ? `<span class="pv-chip pv-purple">🎽 ${s.trainerName.split(' ')[0]}</span>`
-    : '';
-
-  const ageChip = (() => {
-    const age = calcAge(s.dob);
-    return age !== '—' ? `<span class="pv-chip pv-gray">${age} سنة</span>` : '';
-  })();
-
-  const expiryChip = (() => {
-    if (!s.subscriptionExpiry) return '';
-    const diff = Math.ceil((new Date(s.subscriptionExpiry) - new Date().setHours(0,0,0,0)) / 86400000);
-    if (diff < 0)        return `<span class="pv-chip pv-err">منتهي</span>`;
-    if (diff === 0)      return `<span class="pv-chip pv-warn">ينتهي اليوم</span>`;
-    if (diff <= 7)       return `<span class="pv-chip pv-warn">⚠ ${diff} يوم</span>`;
-    return `<span class="pv-chip pv-ok">${diff} يوم متبقي</span>`;
-  })();
-
-  const hasChips = levelChip || trainerChip || ageChip || expiryChip;
-
   return `
-  <div class="sw-card-wrap" style="animation:cardIn .5s var(--ease) ${idx * 0.07}s both">
-    <div class="sw-card" id="swc-${s.subscriptionId}">
-      <div class="sw-head" onclick="toggleCard('${s.subscriptionId}')">
-        <div class="sw-av">${(s.fullName || '?').charAt(0)}</div>
-        <div class="sw-info">
-          <div class="sw-name">${s.fullName}</div>
-          <div class="sw-tags">
-            <span class="sw-id"
-              onclick="event.stopPropagation();copyId('${s.subscriptionId}')"
-              style="cursor:pointer;user-select:none" title="انسخ الرقم">
-              #${s.subscriptionId} 📋
-            </span>
-            ${s.trainingTime ? `<span class="sw-time"><i data-lucide="clock"></i>${s.trainingTime}</span>` : ''}
-          </div>
-          ${hasChips ? `<div class="sw-preview">${levelChip}${trainerChip}${ageChip}${expiryChip}</div>` : ''}
-        </div>
-        <div class="sw-status">
-          <span class="status-pill ${s.isActive ? 'sp-active' : 'sp-inactive'}">
-            <span class="dot"></span>${s.isActive ? 'نشط' : 'منتهي'}
-          </span>
-          <div class="expand-icon"><i data-lucide="chevron-down"></i></div>
+  <div class="sw-card" id="swc-${s.subscriptionId}" style="animation-delay:${idx * 0.07}s">
+    <div class="sw-head" onclick="toggleCard('${s.subscriptionId}')">
+      <div class="sw-av">${(s.fullName || '?').charAt(0)}</div>
+      <div class="sw-info">
+        <div class="sw-name">${s.fullName}</div>
+        <div class="sw-tags">
+<span class="sw-id" onclick="event.stopPropagation();copyId('${s.subscriptionId}')" style="cursor:pointer;user-select:none" title="انسخ الرقم">
+  #${s.subscriptionId} 📋
+</span>          ${s.trainingTime ? `<span class="sw-time"><i data-lucide="clock"></i>${s.trainingTime}</span>` : ''}
         </div>
       </div>
-
-      <div class="sw-progress">
-        <div class="sp-top">
-          <span class="sp-label">الحضور: <strong style="color:var(--t1)">${att}/${tot} حصة</strong></span>
-          <span class="sp-pct">${pct}%</span>
-        </div>
-        <div class="sp-track"><div class="sp-fill" style="width:${pct}%"></div></div>
+      <div class="sw-status">
+        <span class="status-pill ${s.isActive ? 'sp-active' : 'sp-inactive'}">
+          <span class="dot"></span>${s.isActive ? 'نشط' : 'منتهي'}
+        </span>
+        <div class="expand-icon"><i data-lucide="chevron-down"></i>المزيد</div>
       </div>
+    </div>
 
-      <div class="sw-expand">
-        <div class="sw-expand-inner" id="exp-${s.subscriptionId}">
-          ${buildExpand(s)}
-        </div>
+    <div class="sw-progress">
+      <div class="sp-top">
+        <span class="sp-label">الحضور: <strong style="color:var(--t1)">${att}/${tot} حصة</strong></span>
+        <span class="sp-pct">${pct}%</span>
+      </div>
+      <div class="sp-track">
+        <div class="sp-fill" style="width:${pct}%"></div>
+      </div>
+    </div>
+
+    <div class="sw-expand">
+      <div class="sw-expand-inner" id="exp-${s.subscriptionId}">
+        ${buildExpand(s)}
       </div>
     </div>
   </div>`;
@@ -1231,6 +1180,7 @@ function swimmerCard(s, idx) {
 function buildExpand(s) {
   const days = (s.trainingDays || []).map(d => DAYS[d]).join('، ') || '—';
   const start = s.subscriptionStart ? new Date(s.subscriptionStart) : null;
+  const daysSince = start ? Math.floor((Date.now() - start.getTime()) / 86400000) : null;
 
   // Expiry row
   const expiryRow = buildExpiryRow(s);
@@ -1270,7 +1220,7 @@ function buildExpand(s) {
     ${ratingHtml}
 
     <div class="detail-grid">
-<div class="dg-item"><div class="dg-lbl">العمر</div><div class="dg-val">${calcAge(s.dob)} سنة</div></div>
+      <div class="dg-item"><div class="dg-lbl">العمر</div><div class="dg-val">${s.age ?? '—'} سنة</div></div>
       <div class="dg-item"><div class="dg-lbl">الهدف</div><div class="dg-val">${GOALS[s.goal] || '—'}</div></div>
       <div class="dg-item"><div class="dg-lbl">أيام التدريب</div><div class="dg-val">${days}</div></div>
       <div class="dg-item"><div class="dg-lbl">الهاتف</div><div class="dg-val">${s.phone || '—'}</div></div>
@@ -1329,8 +1279,7 @@ function buildRating(s) {
    TOGGLE CARD
 ══════════════════════════════════════ */
 async function toggleCard(subId) {
-  const card = document.querySelector(`#swc-${subId}`);
-  if (!card) return;
+  const card = g(`swc-${subId}`);
   const isOpen = card.classList.contains('expanded');
   card.classList.toggle('expanded');
   lucide.createIcons();
@@ -1554,14 +1503,6 @@ function copyId(id) {
     });
 }
 
-function calcAge(dob) {
-  if (!dob) return '—';
-  const today = new Date(), birth = new Date(dob);
-  let age = today.getFullYear() - birth.getFullYear();
-  const m = today.getMonth() - birth.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
-  return age;
-}
 /* ══════════════════════════════════════
    HELPERS
 ══════════════════════════════════════ */
