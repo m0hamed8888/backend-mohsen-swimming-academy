@@ -1416,60 +1416,54 @@ async function doSearch(q) {
   }
 }
 
-/* ══════════════════════════════════════
-   resultCard — مع fallbacks لأسماء الـ fields
-══════════════════════════════════════ */
 function resultCard(s) {
-  // 🔍 عشان تعرف الأسماء الصح للـ fields — افتح DevTools Console وشوف
-  console.log('[AquaFlow Search] swimmer fields:', Object.keys(s));
-  console.log('[AquaFlow Search] raw data:', s);
+  const daysStr  = (s.trainingDays || []).map(d => DAYS[d]).join('، ') || '—';
+  const attended = s.sessionsAttended ?? 0;
+  const total    = s.sessionsCount    ?? 0;
+  const remaining = Math.max(0, total - attended);
+  const pct = total > 0 ? Math.round((attended / total) * 100) : 0;
 
-  const daysStr = (s.trainingDays || []).map(d => DAYS[d]).join('، ') || '—';
+  let expiryBadge = '';
+  if (s.subscriptionExpiry) {
+    const exp  = new Date(s.subscriptionExpiry);
+    const now  = new Date(); now.setHours(0,0,0,0);
+    const diff = Math.ceil((exp - now) / (1000*60*60*24));
+    const cls  = diff <= 0 ? 'rb-inactive' : diff <= 7 ? 'rb-inactive' : 'rb-active';
+    const txt  = diff < 0  ? 'منتهي'
+               : diff === 0 ? 'ينتهي اليوم'
+               : 'ينتهي بعد ' + diff + ' يوم';
+    expiryBadge = '<span class="result-badge ' + cls + '" style="margin-right:0;font-size:.62rem">' + txt + '</span>';
+  }
 
-  // ✅ Fallbacks لاسم الكابتن — كل الاحتمالات الممكنة
-  const captainName = s.trainerName
-    || s.trainer
-    || s.captainName
-    || s.captain
-    || s.coachName
-    || s.coach
-    || s.assignedTrainer
-    || (s.trainerInfo && (s.trainerInfo.name || s.trainerInfo.fullName))
-    || '—';
+  const timePart = s.trainingTime ? '<span style="color:var(--ts)">· ' + s.trainingTime + '</span>' : '';
 
-  // ✅ Fallbacks للمستوى — كل الاحتمالات الممكنة
-  const levelVal = s.level
-    || s.swimLevel
-    || s.swimmingLevel
-    || s.currentLevel
-    || s.playerLevel
-    || s.lvl
-    || null;
-
-  const levelBadge = levelVal
-    ? `<span class="result-level">LV ${levelVal}</span>`
-    : '';
-
-  return `
-  <div class="result-card">
-    <div class="result-head">
-      <div class="result-avatar">${(s.fullName||'?').charAt(0)}</div>
-      <div style="flex:1">
-        <div class="result-name">${s.fullName}</div>
-        <div class="result-id" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-          <span>#${s.subscriptionId}</span>
-          ${levelBadge}
-        </div>
-      </div>
-      <span class="result-badge ${s.isActive?'rb-active':'rb-inactive'}">${s.isActive?'● نشط':'● منتهي'}</span>
-    </div>
-    <div class="result-meta">
-      <div><span>ساعة التدريب: </span><strong>${s.trainingTime||'—'}</strong></div>
-      <div><span>الحصص: </span><strong>${s.sessionsAttended??0}/${s.sessionsCount??'—'}</strong></div>
-      <div><span>أيام التدريب: </span><strong>${daysStr}</strong></div>
-      <div><span>الكابتن: </span><strong>${captainName}</strong></div>
-    </div>
-  </div>`;
+  return '<div class="result-card">' +
+    '<div class="result-head">' +
+      '<div class="result-avatar">' + (s.fullName||'?').charAt(0) + '</div>' +
+      '<div style="flex:1;min-width:0">' +
+        '<div class="result-name">' + s.fullName + '</div>' +
+        '<div class="result-id" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:3px">' +
+          '<span>#' + s.subscriptionId + '</span>' +
+          timePart +
+          expiryBadge +
+        '</div>' +
+      '</div>' +
+      '<span class="result-badge ' + (s.isActive?'rb-active':'rb-inactive') + '" style="flex-shrink:0">' + (s.isActive?'● نشط':'● منتهي') + '</span>' +
+    '</div>' +
+    '<div style="margin:10px 0 12px">' +
+      '<div style="display:flex;justify-content:space-between;font-size:.66rem;color:var(--tm);margin-bottom:5px">' +
+        '<span>الحضور: ' + attended + '/' + total + '</span>' +
+        '<span>متبقي: ' + remaining + ' حصة  ' + pct + '%</span>' +
+      '</div>' +
+      '<div style="height:4px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden">' +
+        '<div style="height:100%;width:' + pct + '%;border-radius:4px;background:linear-gradient(90deg,#00c8ff,#0055e5)"></div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="result-meta">' +
+      '<div><span>أيام التدريب: </span><strong>' + daysStr + '</strong></div>' +
+      '<div><span>العمر: </span><strong>' + (s.age ? s.age + ' سنة' : '—') + '</strong></div>' +
+    '</div>' +
+  '</div>';
 }
 
 function openM(id)  { document.getElementById(id).classList.add('open'); }
