@@ -38,7 +38,7 @@ const protectSwimmer = async (req, res, next) => {
 const { protect: protectTrainer, requireBoss } = require('../middleware/auth');
 
 /* ── POST /register ── */
-router.post('/register', registerLimiter, async (req, res) => {
+router.post('/register', async (req, res) => {
   try {
     const { username, password, displayName, phone, city } = req.body;
     if (!username || !password)
