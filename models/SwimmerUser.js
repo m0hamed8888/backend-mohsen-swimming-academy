@@ -27,11 +27,12 @@ const swimmerUserSchema = new mongoose.Schema(
       trim:    true,
       default: '',
     },
-    email: {
-      type:    String,
-      trim:    true,
-      default: '',
-    },
+  email: {
+  type:    String,
+  trim:    true,
+  default: null,
+  sparse:  true,   // ← يسمح بـ null متكرر
+},
 
     // ── المدينة — تُسجَّل مع الحساب ──────────────────────────
     city: {
