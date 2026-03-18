@@ -852,6 +852,46 @@ select.fc option { background:#0a1428; color:var(--t1); }
   .hero-av { width:88px; height:88px; font-size:2.2rem; }
   .sw-head { padding:20px 20px 18px; }
 }
+/* ══ Info Strip ══ */
+.sw-card-wrap { margin-bottom:12px; }
+.info-strip {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  background:rgba(0,180,255,.03);
+  border:1px solid var(--bdr);
+  border-top:none;
+  border-radius:0 0 var(--r-xl) var(--r-xl);
+}
+.is-item {
+  text-align:center; padding:10px 6px;
+  border-left:1px solid var(--bdr);
+  cursor:pointer;
+}
+.is-item:last-child { border-left:none; }
+.is-lbl { font-size:.6rem; font-weight:600; color:var(--t4); margin-bottom:3px; }
+.is-val { font-size:.82rem; font-weight:800; line-height:1.2; }
+.is-cyan   { color:var(--cyan); }
+.is-ok     { color:var(--ok); }
+.is-warn   { color:var(--warn); }
+.is-err    { color:var(--err); }
+.is-purple { color:#a37fff; }
+.is-muted  { color:var(--t3); }
+
+/* الكارت نفسه يفقد الـ radius السفلي لما يكون معاه strip */
+.sw-card-wrap .sw-card {
+  border-radius:var(--r-xl) var(--r-xl) 0 0;
+  border-bottom:none;
+  margin-bottom:0;
+}
+/* شيل animation من هنا */
+.sw-card {
+  background:var(--card);
+  border:1px solid var(--bdr);
+  border-radius:var(--r-xl);
+  overflow:hidden;
+  box-shadow:var(--shadow-card);
+  transition:border-color var(--mid), box-shadow var(--mid);
+  /* animation:cardIn .5s var(--ease) both; ← احذف السطر ده */
+}
 </style>
 </head>
 <body>
@@ -1139,39 +1179,79 @@ function swimmerCard(s, idx) {
   const tot = Math.max(s.sessionsCount || 1, 1);
   const pct = Math.min(100, Math.round((att / tot) * 100));
 
+  // ── Info Strip data ───────────────────────────────────────
+  // Level
+  const stripLevel = s.level
+    ? `<div class="is-val is-cyan">LV ${s.level}</div>`
+    : `<div class="is-val is-muted">—</div>`;
+
+  // Expiry
+  let stripExpiry = `<div class="is-val is-muted">—</div>`;
+  if (s.subscriptionExpiry) {
+    const diff = Math.ceil((new Date(s.subscriptionExpiry) - new Date().setHours(0,0,0,0)) / 86400000);
+    if (diff < 0)       stripExpiry = `<div class="is-val is-err">منتهي</div>`;
+    else if (diff === 0) stripExpiry = `<div class="is-val is-warn">اليوم</div>`;
+    else if (diff <= 7)  stripExpiry = `<div class="is-val is-warn">${diff} يوم</div>`;
+    else                 stripExpiry = `<div class="is-val is-ok">${diff} يوم</div>`;
+  }
+
+  // Trainer
+  const trainerShort = s.trainerName
+    ? `<div class="is-val is-purple">${s.trainerName.split(' ')[0]}</div>`
+    : `<div class="is-val is-muted">—</div>`;
+
   return `
-  <div class="sw-card" id="swc-${s.subscriptionId}" style="animation-delay:${idx * 0.07}s">
-    <div class="sw-head" onclick="toggleCard('${s.subscriptionId}')">
-      <div class="sw-av">${(s.fullName || '?').charAt(0)}</div>
-      <div class="sw-info">
-        <div class="sw-name">${s.fullName}</div>
-        <div class="sw-tags">
-<span class="sw-id" onclick="event.stopPropagation();copyId('${s.subscriptionId}')" style="cursor:pointer;user-select:none" title="انسخ الرقم">
-  #${s.subscriptionId} 📋
-</span>          ${s.trainingTime ? `<span class="sw-time"><i data-lucide="clock"></i>${s.trainingTime}</span>` : ''}
+  <div class="sw-card-wrap" style="animation:cardIn .5s var(--ease) ${idx * 0.07}s both">
+    <div class="sw-card" id="swc-${s.subscriptionId}">
+      <div class="sw-head" onclick="toggleCard('${s.subscriptionId}')">
+        <div class="sw-av">${(s.fullName || '?').charAt(0)}</div>
+        <div class="sw-info">
+          <div class="sw-name">${s.fullName}</div>
+          <div class="sw-tags">
+            <span class="sw-id"
+              onclick="event.stopPropagation();copyId('${s.subscriptionId}')"
+              style="cursor:pointer;user-select:none" title="انسخ الرقم">
+              #${s.subscriptionId} 📋
+            </span>
+            ${s.trainingTime ? `<span class="sw-time"><i data-lucide="clock"></i>${s.trainingTime}</span>` : ''}
+          </div>
+        </div>
+        <div class="sw-status">
+          <span class="status-pill ${s.isActive ? 'sp-active' : 'sp-inactive'}">
+            <span class="dot"></span>${s.isActive ? 'نشط' : 'منتهي'}
+          </span>
+          <div class="expand-icon"><i data-lucide="chevron-down"></i></div>
         </div>
       </div>
-      <div class="sw-status">
-        <span class="status-pill ${s.isActive ? 'sp-active' : 'sp-inactive'}">
-          <span class="dot"></span>${s.isActive ? 'نشط' : 'منتهي'}
-        </span>
-        <div class="expand-icon"><i data-lucide="chevron-down"></i></div>
+
+      <div class="sw-progress">
+        <div class="sp-top">
+          <span class="sp-label">الحضور: <strong style="color:var(--t1)">${att}/${tot} حصة</strong></span>
+          <span class="sp-pct">${pct}%</span>
+        </div>
+        <div class="sp-track"><div class="sp-fill" style="width:${pct}%"></div></div>
+      </div>
+
+      <div class="sw-expand">
+        <div class="sw-expand-inner" id="exp-${s.subscriptionId}">
+          ${buildExpand(s)}
+        </div>
       </div>
     </div>
 
-    <div class="sw-progress">
-      <div class="sp-top">
-        <span class="sp-label">الحضور: <strong style="color:var(--t1)">${att}/${tot} حصة</strong></span>
-        <span class="sp-pct">${pct}%</span>
+    <!-- Info Strip -->
+    <div class="info-strip" onclick="toggleCard('${s.subscriptionId}')">
+      <div class="is-item">
+        <div class="is-lbl">المستوى</div>
+        ${stripLevel}
       </div>
-      <div class="sp-track">
-        <div class="sp-fill" style="width:${pct}%"></div>
+      <div class="is-item">
+        <div class="is-lbl">متبقي</div>
+        ${stripExpiry}
       </div>
-    </div>
-
-    <div class="sw-expand">
-      <div class="sw-expand-inner" id="exp-${s.subscriptionId}">
-        ${buildExpand(s)}
+      <div class="is-item">
+        <div class="is-lbl">الكابتن</div>
+        ${trainerShort}
       </div>
     </div>
   </div>`;
@@ -1279,7 +1359,9 @@ function buildRating(s) {
    TOGGLE CARD
 ══════════════════════════════════════ */
 async function toggleCard(subId) {
-  const card = g(`swc-${subId}`);
+  // دور على الـ sw-card جوا الـ wrapper
+  const card = document.querySelector(`#swc-${subId}`);
+  if (!card) return;
   const isOpen = card.classList.contains('expanded');
   card.classList.toggle('expanded');
   lucide.createIcons();
