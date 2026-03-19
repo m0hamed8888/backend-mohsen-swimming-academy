@@ -816,6 +816,7 @@ select.fc option{background:#0a0f20}
   padding:20px;
 }
 .login-card{
+  margin: auto;
   width:100%;max-width:380px;
   background:rgba(255,255,255,.034);
   backdrop-filter:blur(40px);
@@ -902,6 +903,12 @@ select.fc option{background:#0a0f20}
 .flex-center{display:flex;align-items:center;justify-content:center}
 .spin{animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+/* الشاشات الكبيرة فقط (Desktop & Laptops) */
+@media screen and (min-width: 1024px) {
+  body {
+    margin-top: 5rem;
+  }
+}
 </style>
 </head>
 <body>
