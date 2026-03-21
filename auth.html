@@ -102,7 +102,7 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 100;
+  z-index: 200;
   padding: 16px 24px;
   display: flex;
   align-items: center;
@@ -224,12 +224,12 @@ body {
     to   { transform: translateY(0);   opacity: 1; }
   }
 
-  /* inner يأخد باقي المساحة */
+  /* inner يأخد باقي المساحة — padding-top يحسب ارتفاع الناف بار (68px) + مسافة */
   .card-inner {
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 24px 20px 0;
+    padding: 72px 20px 0;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
