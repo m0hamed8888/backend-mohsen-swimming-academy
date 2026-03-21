@@ -1554,14 +1554,13 @@ function renderDetailCalendar(d){
     const isPast = date < now, isToday = ds === todayStr;
     const rec = sm[ds];
     let state = 'rest', icon = '';
-    if(isTD){
-      if(rec?.isMakeup && rec?.status === 'present'){ state = 'makeup'; icon = '↩'; makeup++; }
-      else if(rec?.status === 'absent'){ state = 'absent'; icon = '✕'; absent++; }
-      else if(rec?.status === 'present'){ state = 'present'; icon = '✓'; present++; }
-      else if(isToday){ state = 'today-c'; icon = '●'; }
-      else if(isPast){ state = 'present'; icon = '✓'; present++; }
-      else{ state = 'upcoming'; }
-    }
+   if(isTD){
+  if(rec?.isMakeup && rec?.status === 'present'){ state = 'makeup'; icon = '↩'; makeup++; }
+  else if(rec?.status === 'absent'){ state = 'absent'; icon = '✕'; absent++; }
+  else if(rec?.status === 'present'){ state = 'present'; icon = '✓'; present++; }
+  else if(isToday){ state = 'today-c'; icon = '●'; }
+  else{ state = 'upcoming'; }   // ← سواء فات أو جاي، لو مفيش سجل = بدون حالة
+}
     html += `<div class="att-cell ${state}"><span class="ac-num">${dd}</span>${icon ? `<span class="ac-ic">${icon}</span>` : ''}</div>`;
   }
   grid.innerHTML = html;
