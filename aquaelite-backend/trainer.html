@@ -922,7 +922,19 @@ function bindUI(){
   let dSearch;
   $('tableSearch').addEventListener('input', ()=>{clearTimeout(dSearch);dSearch=setTimeout(()=>{page=1;loadSwimmers();},380);});
   $('cityFilter').addEventListener('change', ()=>{page=1;loadSwimmers();});
-  $('refreshBtn').onclick = ()=>{page=1;loadSwimmers();};
+let refreshTimeout;
+$('refreshBtn').onclick = () => {
+  clearTimeout(refreshTimeout);
+  $('refreshBtn').disabled = true;
+  refreshTimeout = setTimeout(() => {
+    page = 1;
+    loadSwimmers();
+    $('refreshBtn').disabled = false;
+  }, 500);
+};
+
+
+
   $('createForm').addEventListener('submit', doCreate);
   document.querySelectorAll('input[name="c_sess"]').forEach(r=>r.addEventListener('change', onSessChange));
   document.querySelectorAll('input[name="c_days"]').forEach(c=>c.addEventListener('change', onDaysChange));
@@ -992,9 +1004,20 @@ function switchTab(tab){
 /* ══ STATS ══ */
 async function loadStats(){
   try{
-    const d=await api('/swimmers?limit=9999');
-    $('stTotal').textContent=d.total??'—';
-    $('stActive').textContent=d.data?.filter(s=>s.isActive).length??'—';
+    const d = await api('/swimmers?limit=9999');
+    const all = d.data || [];
+    $('stTotal').textContent = d.total ?? all.length;
+    $('stActive').textContent = all.filter(s => s.isActive).length;
+
+    // حضور اليوم — السباحون النشطون اللي عندهم تدريب اليوم
+    const todayDayIndex = new Date().getDay(); // 0=أحد ... 6=سبت
+    const todayCount = all.filter(s =>
+      s.isActive &&
+      Array.isArray(s.trainingDays) &&
+      s.trainingDays.includes(todayDayIndex)
+    ).length;
+    $('stToday').textContent = todayCount;
+
   }catch(e){}
 }
 
@@ -1023,6 +1046,9 @@ async function loadSwimmers(){
     </tr>`).join('');
     buildPag(d.pages);lucide.createIcons();
   }catch(e){tbody.innerHTML=`<tr><td colspan="8" class="no-data">خطأ: ${e.message}</td></tr>`;}
+ $('refreshBtn').disabled = true;
+  setTimeout(() => $('refreshBtn').disabled = false, 3000);
+
 }
 function buildPag(pages){
   const el=$('pagination');if(!pages||pages<=1){el.innerHTML='';return;}
