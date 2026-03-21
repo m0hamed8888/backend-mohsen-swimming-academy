@@ -231,7 +231,6 @@ body {
     flex-direction: column;
     padding: 72px 20px 0;
     overflow-y: auto;
-    margin: 5rem 0;
     -webkit-overflow-scrolling: touch;
   }
 
@@ -1407,20 +1406,26 @@ function showErr(msgId, errId, msg) {
 
 function shake() {
   const card = document.getElementById('authCard');
-  card.style.animation = 'shake-card 0.4s ease-out';
-  setTimeout(() => { card.style.animation = 'card-in 0s'; }, 400);
+  card.classList.remove('shaking');
+  // force reflow عشان الـ animation تتعمل من أول
+  void card.offsetWidth;
+  card.classList.add('shaking');
+  setTimeout(() => card.classList.remove('shaking'), 500);
 }
 
 // Add shake keyframe dynamically
 const style = document.createElement('style');
-style.textContent = `@keyframes shake-card {
+style.textContent = `
+@keyframes shake-card {
   0%,100% { transform: translateX(0); }
   15% { transform: translateX(-8px); }
   30% { transform: translateX(8px); }
   45% { transform: translateX(-5px); }
   60% { transform: translateX(5px); }
   75% { transform: translateX(-3px); }
-}`;
+}
+.shaking { animation: shake-card 0.45s ease-out !important; }
+`;
 document.head.appendChild(style);
 
 async function post(url, body) {
