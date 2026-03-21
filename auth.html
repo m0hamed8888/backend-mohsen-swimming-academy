@@ -1,175 +1,956 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>AquaFlow | تسجيل الدخول</title>
-  <link rel="stylesheet" href="./assets/css/style.css"/>
-  <script src="./assets/js/config.js"></script>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-  <style>
-.auth-page{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:80px 20px 40px;position:relative;z-index:1}
-.auth-card{width:100%;max-width:430px;padding:34px 26px;border-radius:var(--r-xl);background:var(--surf);backdrop-filter:blur(32px);border:1px solid var(--bdr);box-shadow:var(--shadow);position:relative;overflow:hidden}
-.auth-card::before{content:'';position:absolute;top:0;inset-inline:0;height:2px;background:var(--grad-ocean)}
-.auth-logo{text-align:center;margin-bottom:26px}
-.logo-ic{width:60px;height:60px;border-radius:16px;background:var(--grad-ocean);display:flex;align-items:center;justify-content:center;margin:0 auto 11px;box-shadow:0 0 26px rgba(0,100,255,.45)}
-.logo-ic svg{width:27px;height:27px;color:#fff}
-.auth-logo h1{font-family:var(--f-disp);font-size:1.45rem;font-weight:800;background:var(--grad-acc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.auth-logo p{font-size:.8rem;color:var(--ts);margin-top:3px}
-.auth-tabs{display:flex;gap:4px;margin-bottom:24px;background:rgba(255,255,255,.03);padding:4px;border-radius:var(--r-full);border:1px solid var(--bdr)}
-.auth-tab{flex:1;padding:8px;border-radius:var(--r-full);font-size:.8rem;font-weight:700;color:var(--tm);transition:all var(--fast) var(--ease);display:flex;align-items:center;justify-content:center;gap:5px}
-.auth-tab svg{width:13px;height:13px}
-.auth-tab.active{background:var(--grad-ocean);color:#fff;box-shadow:0 4px 14px rgba(0,100,255,.4)}
-.auth-tab:not(.active):hover{color:var(--ts);background:var(--surf2)}
-.auth-panel{display:none}.auth-panel.active{display:block}
-.login-type{display:flex;gap:6px;margin-bottom:16px}
-.lt-btn{flex:1;padding:8px;border-radius:var(--r-md);font-size:.75rem;font-weight:700;border:1.5px solid var(--bdr);color:var(--tm);background:rgba(255,255,255,.03);transition:all var(--fast);display:flex;align-items:center;justify-content:center;gap:5px}
-.lt-btn svg{width:13px;height:13px}
-.lt-btn.active{border-color:var(--cyan);background:rgba(0,200,255,.1);color:var(--tp)}
-.lt-btn:hover:not(.active){color:var(--ts);border-color:rgba(255,255,255,.15)}
-.auth-err{display:none;align-items:center;gap:7px;padding:9px 13px;border-radius:var(--r-sm);background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.2);font-size:.76rem;color:var(--err);margin-bottom:11px}
-.auth-err.show{display:flex}
-.auth-err svg{width:13px;height:13px;flex-shrink:0}
-.rate-warn{display:none;align-items:center;gap:7px;padding:9px 13px;border-radius:var(--r-sm);background:rgba(255,181,71,.08);border:1px solid rgba(255,181,71,.22);font-size:.76rem;color:var(--warn);margin-bottom:11px}
-.rate-warn.show{display:flex}
-.rate-warn svg{width:13px;height:13px}
-.btn-full{width:100%;height:50px;border-radius:var(--r-md);background:var(--grad-ocean);color:#fff;font-size:.93rem;font-weight:800;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 8px 26px rgba(0,100,255,.4);margin-top:5px;transition:transform var(--fast) var(--spring),box-shadow var(--fast)}
-.btn-full:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(0,100,255,.6)}
-.btn-full:active{transform:scale(.97)}
-.btn-full.loading{opacity:.65;pointer-events:none}
-.ps-row{display:flex;gap:4px;margin:7px 0 3px}
-.ps-bar{flex:1;height:4px;border-radius:4px;background:rgba(255,255,255,.1);transition:background var(--mid)}
-.ps-lbl{font-size:.68rem}
-.back-link{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:16px;font-size:.78rem;color:var(--ts);transition:color var(--fast)}
-.back-link:hover{color:var(--cyan)}
-.back-link svg{width:13px;height:13px}
-.note-box{padding:9px 13px;border-radius:var(--r-sm);background:rgba(0,200,255,.05);border:1px solid rgba(0,200,255,.15);font-size:.75rem;color:var(--ts);margin-bottom:13px;display:flex;align-items:flex-start;gap:6px;line-height:1.5}
-.note-box svg{width:13px;height:13px;color:var(--cyan);flex-shrink:0;margin-top:2px}
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>AquaFlow | تسجيل الدخول</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --ocean-deep: #020b18;
+  --ocean-mid: #041428;
+  --ocean-surface: #062040;
+  --water-1: #0066cc;
+  --water-2: #0099e6;
+  --water-3: #00c8ff;
+  --water-4: #40e0ff;
+  --foam: rgba(255,255,255,0.06);
+  --foam-border: rgba(0,200,255,0.15);
+  --foam-border-active: rgba(0,200,255,0.5);
+  --text-primary: #e8f4ff;
+  --text-secondary: rgba(200,230,255,0.6);
+  --text-muted: rgba(200,230,255,0.35);
+  --err-color: #ff6b6b;
+  --warn-color: #ffcc66;
+  --success-color: #00e5a0;
+  --card-bg: rgba(4,20,40,0.85);
+  --grad-water: linear-gradient(135deg, #0055aa 0%, #0099e6 50%, #00c8ff 100%);
+  --grad-deep: linear-gradient(180deg, #020b18 0%, #041428 100%);
+  --f-main: 'Tajawal', sans-serif;
+  --f-mono: 'Space Mono', monospace;
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+  --r-full: 999px;
+}
 
-/* ── city pills ── */
-.city-wrap{margin-bottom:14px}
-.city-wrap label{font-size:.78rem;font-weight:700;color:var(--ts);margin-bottom:8px;display:flex;align-items:center;gap:5px}
-.city-wrap label svg{width:12px;height:12px;color:var(--cyan)}
-.city-pills{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.city-pill{padding:9px 8px;border-radius:var(--r-md);font-size:.78rem;font-weight:700;border:1.5px solid var(--bdr);color:var(--tm);background:rgba(255,255,255,.03);cursor:pointer;transition:all var(--fast);text-align:center;display:flex;align-items:center;justify-content:center;gap:5px}
-.city-pill svg{width:12px;height:12px}
-.city-pill.active{border-color:var(--cyan);background:rgba(0,200,255,.1);color:var(--tp)}
-.city-pill:hover:not(.active){color:var(--ts);border-color:rgba(255,255,255,.15)}
-.city-err{font-size:.72rem;color:var(--err);margin-top:5px;display:none}
-.city-err.show{display:block}
-  </style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { height: 100%; }
+
+body {
+  min-height: 100dvh;
+  background: var(--ocean-deep);
+  font-family: var(--f-main);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ── ANIMATED OCEAN BACKGROUND ── */
+.ocean-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.ocean-bg canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.ocean-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(0,100,200,0.25) 0%, transparent 70%),
+              radial-gradient(ellipse 60% 40% at 20% 30%, rgba(0,50,150,0.2) 0%, transparent 60%),
+              linear-gradient(180deg, rgba(2,11,24,0.3) 0%, rgba(4,20,40,0.6) 100%);
+}
+
+/* Floating particles */
+.particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: var(--water-3);
+  border-radius: 50%;
+  opacity: 0;
+  animation: float-up var(--dur, 8s) var(--delay, 0s) infinite ease-in-out;
+}
+
+@keyframes float-up {
+  0% { transform: translateY(100vh) translateX(0) scale(0); opacity: 0; }
+  10% { opacity: 0.4; }
+  50% { transform: translateY(40vh) translateX(var(--drift, 30px)) scale(1.5); opacity: 0.3; }
+  90% { opacity: 0.1; }
+  100% { transform: translateY(-10vh) translateX(calc(var(--drift, 30px) * 2)) scale(0); opacity: 0; }
+}
+
+/* ── NAV ── */
+.top-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(180deg, rgba(2,11,24,0.95) 0%, transparent 100%);
+  backdrop-filter: blur(10px);
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  font-family: var(--f-mono);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 1px;
+}
+
+.nav-brand-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--grad-water);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(0,150,255,0.4);
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(0,150,255,0.4); }
+  50% { box-shadow: 0 0 35px rgba(0,200,255,0.7); }
+}
+
+.nav-brand-icon svg { width: 18px; height: 18px; color: #fff; }
+
+.nav-back {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  transition: color 0.2s;
+  padding: 8px 14px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--foam-border);
+  background: var(--foam);
+}
+.nav-back:hover { color: var(--water-3); border-color: var(--foam-border-active); }
+
+/* ── AUTH PAGE ── */
+.auth-page {
+  position: relative;
+  z-index: 10;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 90px 20px 40px;
+}
+
+/* ── CARD ── */
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--card-bg);
+  backdrop-filter: blur(40px);
+  border: 1px solid rgba(0,150,255,0.15);
+  border-radius: var(--r-xl);
+  box-shadow:
+    0 0 0 1px rgba(0,200,255,0.05) inset,
+    0 40px 80px rgba(0,0,0,0.6),
+    0 0 60px rgba(0,100,200,0.15);
+  overflow: hidden;
+  animation: card-in 0.7s cubic-bezier(0.2,0,0,1) forwards;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+@keyframes card-in {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Top water line */
+.card-water-line {
+  height: 3px;
+  background: var(--grad-water);
+  position: relative;
+  overflow: hidden;
+}
+.card-water-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+  animation: shimmer 2.5s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Subtle grid pattern */
+.card-inner {
+  padding: 32px 28px 28px;
+  position: relative;
+}
+.card-inner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,150,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,150,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+/* ── LOGO ── */
+.auth-logo {
+  text-align: center;
+  margin-bottom: 28px;
+  position: relative;
+}
+
+.logo-icon {
+  width: 68px;
+  height: 68px;
+  background: var(--grad-water);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+  box-shadow:
+    0 0 0 8px rgba(0,150,255,0.1),
+    0 0 40px rgba(0,150,255,0.4);
+  position: relative;
+  animation: logo-pulse 4s ease-in-out infinite;
+}
+@keyframes logo-pulse {
+  0%, 100% { box-shadow: 0 0 0 8px rgba(0,150,255,0.1), 0 0 40px rgba(0,150,255,0.4); }
+  50% { box-shadow: 0 0 0 12px rgba(0,150,255,0.15), 0 0 60px rgba(0,200,255,0.6); }
+}
+.logo-icon svg { width: 30px; height: 30px; color: #fff; }
+
+.logo-ring {
+  position: absolute;
+  inset: -12px;
+  border-radius: 28px;
+  border: 1px solid rgba(0,200,255,0.2);
+  animation: ring-pulse 3s ease-in-out infinite;
+}
+.logo-ring-2 {
+  position: absolute;
+  inset: -20px;
+  border-radius: 34px;
+  border: 1px solid rgba(0,200,255,0.1);
+  animation: ring-pulse 3s ease-in-out 0.5s infinite;
+}
+@keyframes ring-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.04); }
+}
+
+.auth-logo h1 {
+  font-family: var(--f-mono);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  background: linear-gradient(135deg, #60c8ff 0%, #ffffff 40%, #40e0ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.auth-logo p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  transition: all 0.3s;
+}
+
+/* ── TABS ── */
+.auth-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 24px;
+  background: rgba(0,10,30,0.5);
+  padding: 4px;
+  border-radius: var(--r-full);
+  border: 1px solid rgba(0,150,255,0.1);
+}
+
+.auth-tab {
+  flex: 1;
+  padding: 10px;
+  border-radius: var(--r-full);
+  font-family: var(--f-main);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.3s cubic-bezier(0.2,0,0,1);
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+.auth-tab svg { width: 14px; height: 14px; }
+.auth-tab.active {
+  background: var(--grad-water);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(0,150,255,0.4);
+}
+.auth-tab:not(.active):hover { color: var(--text-secondary); background: rgba(0,100,200,0.1); }
+
+/* ── PANELS ── */
+.auth-panel { display: none; }
+.auth-panel.active { display: block; animation: panel-in 0.35s ease-out; }
+@keyframes panel-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── LOGIN TYPE ── */
+.login-type {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.lt-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: var(--r-md);
+  font-family: var(--f-main);
+  font-size: 0.8rem;
+  font-weight: 700;
+  border: 1.5px solid rgba(0,150,255,0.15);
+  color: var(--text-muted);
+  background: rgba(0,20,50,0.4);
+  cursor: pointer;
+  transition: all 0.25s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.lt-btn svg { width: 14px; height: 14px; }
+.lt-btn.active {
+  border-color: var(--water-3);
+  background: rgba(0,200,255,0.1);
+  color: var(--water-3);
+  box-shadow: 0 0 14px rgba(0,200,255,0.15);
+}
+.lt-btn:hover:not(.active) {
+  border-color: rgba(0,150,255,0.3);
+  color: var(--text-secondary);
+}
+
+/* ── FIELDS ── */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  letter-spacing: 0.3px;
+}
+.field label svg { width: 12px; height: 12px; color: var(--water-3); }
+
+.fc {
+  width: 100%;
+  padding: 13px 16px;
+  background: rgba(0,20,50,0.5);
+  border: 1.5px solid rgba(0,150,255,0.12);
+  border-radius: var(--r-md);
+  color: var(--text-primary);
+  font-family: var(--f-main);
+  font-size: 0.9rem;
+  font-weight: 500;
+  outline: none;
+  transition: all 0.25s;
+  -webkit-appearance: none;
+}
+.fc::placeholder { color: var(--text-muted); }
+.fc:focus {
+  border-color: var(--water-3);
+  background: rgba(0,30,60,0.6);
+  box-shadow: 0 0 0 3px rgba(0,200,255,0.1), 0 0 20px rgba(0,150,255,0.1);
+}
+.fc:focus + .field-glow { opacity: 1; }
+
+.field-wrap {
+  position: relative;
+}
+.eye-btn {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+  border-radius: 6px;
+}
+.eye-btn:hover { color: var(--water-3); }
+.eye-btn svg { width: 15px; height: 15px; }
+
+/* ── INPUT STATUS ── */
+.input-valid .fc { border-color: var(--success-color) !important; }
+.input-error .fc { border-color: var(--err-color) !important; }
+
+.input-hint {
+  font-size: 0.71rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  transition: all 0.2s;
+  min-height: 16px;
+}
+.input-hint.err { color: var(--err-color); }
+.input-hint.ok { color: var(--success-color); }
+.input-hint svg { width: 11px; height: 11px; flex-shrink: 0; }
+
+/* ── PASSWORD STRENGTH ── */
+.ps-wrap { margin-top: 6px; }
+.ps-bars {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 5px;
+}
+.ps-bar {
+  flex: 1;
+  height: 3px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.07);
+  transition: background 0.3s, transform 0.3s;
+}
+.ps-bar.active { transform: scaleY(1.5); }
+.ps-label {
+  font-size: 0.69rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  transition: color 0.3s;
+}
+
+/* ── ALERTS ── */
+.auth-err {
+  display: none;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 11px 14px;
+  border-radius: var(--r-md);
+  background: rgba(255,80,80,0.07);
+  border: 1px solid rgba(255,80,80,0.2);
+  font-size: 0.78rem;
+  color: var(--err-color);
+  margin-bottom: 14px;
+  animation: shake-in 0.35s ease-out;
+  line-height: 1.5;
+}
+.auth-err.show { display: flex; }
+.auth-err svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 1px; }
+
+@keyframes shake-in {
+  0%,100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+.rate-warn {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 14px;
+  border-radius: var(--r-md);
+  background: rgba(255,200,80,0.07);
+  border: 1px solid rgba(255,200,80,0.2);
+  font-size: 0.78rem;
+  color: var(--warn-color);
+  margin-bottom: 14px;
+}
+.rate-warn.show { display: flex; }
+.rate-warn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+.note-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 11px 14px;
+  border-radius: var(--r-md);
+  background: rgba(0,200,255,0.05);
+  border: 1px solid rgba(0,200,255,0.12);
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+.note-box svg { width: 13px; height: 13px; color: var(--water-3); flex-shrink: 0; margin-top: 2px; }
+
+/* ── CITY PILLS ── */
+.city-section { margin-top: 8px; }
+.section-label {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.section-label svg { width: 12px; height: 12px; color: var(--water-3); }
+
+.city-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.city-pill {
+  padding: 11px 10px;
+  border-radius: var(--r-md);
+  font-family: var(--f-main);
+  font-size: 0.8rem;
+  font-weight: 700;
+  border: 1.5px solid rgba(0,150,255,0.12);
+  color: var(--text-muted);
+  background: rgba(0,20,50,0.4);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.2,0,0,1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+}
+.city-pill svg { width: 13px; height: 13px; }
+.city-pill:hover {
+  border-color: rgba(0,200,255,0.3);
+  color: var(--text-secondary);
+  background: rgba(0,50,100,0.4);
+  transform: translateY(-1px);
+}
+.city-pill.active {
+  border-color: var(--water-3);
+  background: rgba(0,200,255,0.12);
+  color: var(--water-3);
+  box-shadow: 0 0 16px rgba(0,200,255,0.2);
+  transform: translateY(-2px);
+}
+.city-pill.active svg { color: var(--water-3); }
+
+.city-err-msg {
+  font-size: 0.72rem;
+  color: var(--err-color);
+  margin-top: 6px;
+  display: none;
+  align-items: center;
+  gap: 4px;
+}
+.city-err-msg.show { display: flex; }
+.city-err-msg svg { width: 11px; height: 11px; }
+
+/* ── SUBMIT BUTTON ── */
+.btn-submit {
+  width: 100%;
+  height: 52px;
+  border-radius: var(--r-md);
+  background: var(--grad-water);
+  color: #fff;
+  font-family: var(--f-main);
+  font-size: 0.95rem;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  margin-top: 20px;
+  box-shadow: 0 8px 30px rgba(0,100,255,0.35), 0 0 0 1px rgba(255,255,255,0.05) inset;
+  transition: all 0.3s cubic-bezier(0.2,0,0,1);
+  position: relative;
+  overflow: hidden;
+}
+.btn-submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 40px rgba(0,130,255,0.5), 0 0 0 1px rgba(255,255,255,0.08) inset;
+}
+.btn-submit:hover::before { opacity: 1; }
+.btn-submit:active { transform: scale(0.98); }
+.btn-submit.loading { opacity: 0.7; pointer-events: none; }
+.btn-submit svg { width: 17px; height: 17px; }
+
+/* Ripple effect on button */
+.btn-submit .ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  transform: scale(0);
+  animation: ripple-effect 0.6s linear;
+  pointer-events: none;
+}
+@keyframes ripple-effect {
+  to { transform: scale(4); opacity: 0; }
+}
+
+/* ── DIVIDER ── */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0;
+}
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(0,150,255,0.1);
+}
+.divider span {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* ── BACK LINK ── */
+.back-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 16px;
+  font-size: 0.79rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.back-link:hover { color: var(--water-3); }
+.back-link svg { width: 13px; height: 13px; }
+
+/* ── FORM GRID ── */
+.form-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.col-full { grid-column: 1 / -1; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(4,20,40,0.95);
+  border: 1px solid rgba(0,200,255,0.2);
+  backdrop-filter: blur(20px);
+  color: var(--text-primary);
+  padding: 12px 22px;
+  border-radius: var(--r-full);
+  font-size: 0.85rem;
+  font-weight: 700;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  opacity: 0;
+  transition: all 0.35s cubic-bezier(0.2,0,0,1);
+  z-index: 999;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.ok { border-color: rgba(0,230,160,0.3); }
+.toast.err { border-color: rgba(255,80,80,0.3); }
+
+/* ── SPINNER ── */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,0.2);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--ocean-deep); }
+::-webkit-scrollbar-thumb { background: rgba(0,150,255,0.3); border-radius: 4px; }
+
+/* Icon style for inline SVG usage */
+i[data-lucide] { display: inline-flex; align-items: center; justify-content: center; }
+button { font-family: var(--f-main); }
+a { font-family: var(--f-main); }
+</style>
 </head>
 <body>
-<div class="bg-orb orb-1"></div>
-<div class="bg-orb orb-2"></div>
+
+<!-- OCEAN BACKGROUND -->
+<div class="ocean-bg">
+  <canvas id="oceanCanvas"></canvas>
+  <div class="ocean-overlay"></div>
+  <div class="particles" id="particles"></div>
+</div>
+
+<!-- NAV -->
 <nav class="top-nav">
-  <a href="index.html" class="nav-brand ripple-btn"><i data-lucide="waves"></i><span>AquaFlow</span></a>
-  <div class="nav-actions">
-    <a href="index.html" class="nav-link ripple-btn"><i data-lucide="arrow-right" style="width:13px;height:13px;vertical-align:middle;margin-left:3px"></i>الرئيسية</a>
-  </div>
+  <a href="index.html" class="nav-brand">
+    <div class="nav-brand-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>
+    </div>
+    AquaFlow
+  </a>
+  <a href="index.html" class="nav-back">
+    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+    الرئيسية
+  </a>
 </nav>
 
+<!-- AUTH PAGE -->
 <div class="auth-page">
   <div class="auth-card" id="authCard">
-    <div class="auth-logo">
-      <div class="logo-ic"><i data-lucide="waves"></i></div>
-      <h1>AquaFlow</h1>
-      <p id="authSub">مرحباً بك في أكاديمية السباحة</p>
-    </div>
+    <div class="card-water-line"></div>
+    <div class="card-inner">
 
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">
-        <i data-lucide="log-in"></i> تسجيل الدخول
-      </button>
-      <button class="auth-tab" id="tabRegister" onclick="switchTab('register')">
-        <i data-lucide="user-plus"></i> حساب جديد
-      </button>
-    </div>
+      <!-- LOGO -->
+      <div class="auth-logo">
+        <div style="position:relative;width:68px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;">
+          <div class="logo-ring"></div>
+          <div class="logo-ring-2"></div>
+          <div class="logo-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:30px;height:30px;color:#fff"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>
+          </div>
+        </div>
+        <h1>AquaFlow</h1>
+        <p id="authSub">أكاديمية السباحة الاحترافية</p>
+      </div>
 
-    <!-- ══ LOGIN ══ -->
-    <div class="auth-panel active" id="panelLogin">
-      <div class="login-type">
-        <button class="lt-btn active" id="ltSw" onclick="setType('swimmer')">
-          <i data-lucide="person-standing"></i> سباح
+      <!-- TABS -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          تسجيل الدخول
         </button>
-        <button class="lt-btn" id="ltTr" onclick="setType('trainer')">
-          <i data-lucide="shield-check"></i> كابتن / مدرب
+        <button class="auth-tab" id="tabRegister" onclick="switchTab('register')">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+          حساب جديد
         </button>
       </div>
-      <div class="auth-err" id="lErr"><i data-lucide="alert-circle"></i><span id="lErrMsg"></span></div>
-      <div class="rate-warn" id="lRW"><i data-lucide="clock"></i><span>انتظر <strong id="lCD">—</strong> ث</span></div>
-      <div style="display:flex;flex-direction:column;gap:12px">
-        <div class="field">
-          <label id="lIdentLbl">اسم المستخدم</label>
-          <input type="text" class="fc" id="lIdent" placeholder="username" autocomplete="username"/>
+
+      <!-- ══ LOGIN PANEL ══ -->
+      <div class="auth-panel active" id="panelLogin">
+        <div class="login-type">
+          <button class="lt-btn active" id="ltSw" onclick="setType('swimmer')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><circle cx="12" cy="5" r="2"/><path d="M12 7v5l3 3"/><path d="M8 16c1 1 2 2 4 2s3-1 4-2"/><path d="M5 19c1 1 4 2 7 2s6-1 7-2"/></svg>
+            سباح
+          </button>
+          <button class="lt-btn" id="ltTr" onclick="setType('trainer')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            كابتن / مدرب
+          </button>
         </div>
-        <div class="field">
-          <label>كلمة المرور</label>
-          <div style="position:relative">
-            <input type="password" class="fc" id="lPass" placeholder="••••••" style="padding-left:44px"/>
-            <button onclick="tp('lPass',this)" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--tm)">
-              <i data-lucide="eye" style="width:15px;height:15px"></i>
+
+        <div class="auth-err" id="lErr">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="lErrMsg"></span>
+        </div>
+        <div class="rate-warn" id="lRW">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>انتظر <strong id="lCD">—</strong> ثانية قبل المحاولة مجدداً</span>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="field">
+            <label>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              اسم المستخدم
+            </label>
+            <input type="text" class="fc" id="lIdent" placeholder="أدخل اسم المستخدم" autocomplete="username"/>
+          </div>
+          <div class="field">
+            <label>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              كلمة المرور
+            </label>
+            <div class="field-wrap">
+              <input type="password" class="fc" id="lPass" placeholder="••••••••" style="padding-left:44px" autocomplete="current-password"/>
+              <button class="eye-btn" onclick="togglePass('lPass',this)" type="button">
+                <svg id="eyeL" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-submit" id="lBtn" onclick="doLogin()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          <span id="lBtnTxt">دخول</span>
+        </button>
+
+        <a href="index.html" class="back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          العودة للرئيسية
+        </a>
+      </div>
+
+      <!-- ══ REGISTER PANEL ══ -->
+      <div class="auth-panel" id="panelRegister">
+        <div class="note-box">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <span>إنشاء الحساب مخصص للسباحين فقط. المدربون يتواصلون مع الإدارة لإنشاء حساباتهم.</span>
+        </div>
+
+        <div class="auth-err" id="rErr">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="rErrMsg"></span>
+        </div>
+        <div class="rate-warn" id="rRW">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>انتظر <strong id="rCD">—</strong> ثانية قبل المحاولة مجدداً</span>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="form-cols">
+            <div class="field">
+              <label>الاسم <span style="color:var(--text-muted);font-weight:400">(اختياري)</span></label>
+              <input type="text" class="fc" id="rName" placeholder="أحمد محمد"/>
+            </div>
+            <div class="field">
+              <label>رقم الهاتف <span style="color:var(--text-muted);font-weight:400">(اختياري)</span></label>
+              <input type="tel" class="fc" id="rPhone" placeholder="01XXXXXXXXX"/>
+            </div>
+          </div>
+
+          <div class="field col-full" id="userField">
+            <label>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              اسم المستخدم *
+            </label>
+            <div class="field-wrap">
+              <input type="text" class="fc" id="rUser" placeholder="ahmed_swimmer" autocomplete="username" oninput="validateUsername()"/>
+              <div id="userCheck" style="position:absolute;left:13px;top:50%;transform:translateY(-50%);display:none"></div>
+            </div>
+            <div class="input-hint" id="userHint"></div>
+          </div>
+
+          <div class="field col-full">
+            <label>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              كلمة المرور *
+            </label>
+            <div class="field-wrap">
+              <input type="password" class="fc" id="rPass" placeholder="6 أحرف على الأقل" style="padding-left:44px" oninput="checkStr()" autocomplete="new-password"/>
+              <button class="eye-btn" onclick="togglePass('rPass',this)" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <div id="psW" style="display:none" class="ps-wrap">
+              <div class="ps-bars">
+                <div class="ps-bar" id="b1"></div>
+                <div class="ps-bar" id="b2"></div>
+                <div class="ps-bar" id="b3"></div>
+                <div class="ps-bar" id="b4"></div>
+              </div>
+              <div class="ps-label" id="psL"></div>
+            </div>
+          </div>
+
+          <div class="field col-full" id="pass2Field">
+            <label>تأكيد كلمة المرور *</label>
+            <div class="field-wrap">
+              <input type="password" class="fc" id="rPass2" placeholder="أعد كتابة كلمة المرور" oninput="checkMatch()" autocomplete="new-password"/>
+            </div>
+            <div class="input-hint" id="matchHint"></div>
+          </div>
+        </div>
+
+        <!-- CITY -->
+        <div class="city-section" style="margin-top:6px">
+          <div class="section-label">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            اختر مدينتك *
+          </div>
+          <div class="city-grid">
+            <button type="button" class="city-pill" data-city="الشروق" onclick="selectCity(this)">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              الشروق
+            </button>
+            <button type="button" class="city-pill" data-city="العاشر من رمضان" onclick="selectCity(this)">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              العاشر من رمضان
+            </button>
+            <button type="button" class="city-pill" data-city="المستقبل" onclick="selectCity(this)">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              المستقبل
+            </button>
+            <button type="button" class="city-pill" data-city="بدر" onclick="selectCity(this)">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              بدر
             </button>
           </div>
-        </div>
-      </div>
-      <button class="btn-full" id="lBtn"><i data-lucide="log-in"></i><span id="lBtnTxt">دخول</span></button>
-      <a href="index.html" class="back-link"><i data-lucide="arrow-right"></i> العودة للرئيسية</a>
-    </div>
-
-    <!-- ══ REGISTER ══ -->
-    <div class="auth-panel" id="panelRegister">
-      <div class="note-box">
-        <i data-lucide="info"></i>
-        <span>إنشاء الحساب مخصص للسباحين. المدربون يتواصلون مع الإدارة لإنشاء حساباتهم.</span>
-      </div>
-      <div class="auth-err" id="rErr"><i data-lucide="alert-circle"></i><span id="rErrMsg"></span></div>
-      <div class="rate-warn" id="rRW"><i data-lucide="clock"></i><span>انتظر <strong id="rCD">—</strong> ث</span></div>
-      <div class="form-grid form-grid-2" style="gap:12px">
-        <div class="field"><label>الاسم (اختياري)</label>
-          <input type="text" class="fc" id="rName" placeholder="أحمد محمد"/></div>
-        <div class="field"><label>رقم الهاتف (اختياري)</label>
-          <input type="tel" class="fc" id="rPhone" placeholder="01XXXXXXXXX"/></div>
-        <div class="field" style="grid-column:1/-1"><label>اسم المستخدم *</label>
-          <input type="text" class="fc" id="rUser" placeholder="ahmed_swimmer" autocomplete="username"/></div>
-        <div class="field" style="grid-column:1/-1"><label>كلمة المرور *</label>
-          <div style="position:relative">
-            <input type="password" class="fc" id="rPass" placeholder="6 أحرف على الأقل" style="padding-left:44px"/>
-            <button onclick="tp('rPass',this)" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--tm)">
-              <i data-lucide="eye" style="width:15px;height:15px"></i>
-            </button>
-          </div>
-          <div id="psW" style="display:none;margin-top:5px">
-            <div class="ps-row"><div class="ps-bar" id="b1"></div><div class="ps-bar" id="b2"></div><div class="ps-bar" id="b3"></div><div class="ps-bar" id="b4"></div></div>
-            <div class="ps-lbl" id="psL" style="color:var(--tm)"></div>
+          <div class="city-err-msg" id="cityErr">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            من فضلك اختر مدينتك أولاً
           </div>
         </div>
-        <div class="field" style="grid-column:1/-1"><label>تأكيد كلمة المرور *</label>
-          <input type="password" class="fc" id="rPass2" placeholder="أعد كتابة الباسورد"/></div>
+
+        <button class="btn-submit" id="rBtn" onclick="doRegister()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+          <span id="rBtnTxt">إنشاء الحساب</span>
+        </button>
+
+        <a href="index.html" class="back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          العودة للرئيسية
+        </a>
       </div>
 
-      <!-- city pills -->
-      <div class="city-wrap" style="margin-top:4px">
-        <label><i data-lucide="map-pin"></i> مدينتك *</label>
-        <div class="city-pills">
-          <button type="button" class="city-pill" data-city="الشروق" onclick="selectCity(this)">
-            <i data-lucide="building-2"></i> الشروق
-          </button>
-          <button type="button" class="city-pill" data-city="العاشر من رمضان" onclick="selectCity(this)">
-            <i data-lucide="building-2"></i> العاشر من رمضان
-          </button>
-          <button type="button" class="city-pill" data-city="المستقبل" onclick="selectCity(this)">
-            <i data-lucide="building-2"></i> المستقبل
-          </button>
-          <button type="button" class="city-pill" data-city="بدر" onclick="selectCity(this)">
-            <i data-lucide="building-2"></i> بدر
-          </button>
-        </div>
-        <div class="city-err" id="cityErr">من فضلك اختر مدينتك</div>
-      </div>
-
-      <button class="btn-full" id="rBtn"><i data-lucide="user-plus"></i><span id="rBtnTxt">إنشاء الحساب</span></button>
-      <a href="index.html" class="back-link"><i data-lucide="arrow-right"></i> العودة للرئيسية</a>
     </div>
   </div>
 </div>
@@ -177,133 +958,444 @@
 <div class="toast" id="toast"><span id="toastMsg"></span></div>
 
 <script>
-const API = 'https://backend-mohsen-swimming-academy.vercel.app/api';
-const RL  = {
-  s:{},
-  check(k,max,ms){const now=Date.now();if(!this.s[k]||now>this.s[k].r)this.s[k]={c:0,r:now+ms};this.s[k].c++;if(this.s[k].c>max)return{blocked:true,wait:Math.ceil((this.s[k].r-now)/1000)};return{blocked:false}},
-  reset(k){delete this.s[k]}
-};
-let lType='swimmer';
-let selectedCity=null;
+/* ═══════════════════════════════════════
+   OCEAN CANVAS ANIMATION
+═══════════════════════════════════════ */
+(function() {
+  const canvas = document.getElementById('oceanCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, t = 0;
 
-document.addEventListener('DOMContentLoaded',()=>{
-  lucide.createIcons();
-  if(localStorage.getItem('sw_token')){window.location.href='profile.html';return;}
-  if(localStorage.getItem('aq_token')){window.location.href='./aquaelite-backend/trainer.html';return;}
-  const p=new URLSearchParams(location.search);
-  if(p.get('tab')==='register') switchTab('register');
-  document.getElementById('lBtn').onclick=doLogin;
-  document.getElementById('rBtn').onclick=doRegister;
-  document.getElementById('lPass').addEventListener('keydown',e=>e.key==='Enter'&&doLogin());
-  document.getElementById('rPass').addEventListener('input',checkStr);
-  document.getElementById('rPass2').addEventListener('keydown',e=>e.key==='Enter'&&doRegister());
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const waves = [
+    { amp: 0.025, freq: 0.8, speed: 0.4, phase: 0, color: 'rgba(0,80,160,0.25)', yOff: 0.75 },
+    { amp: 0.018, freq: 1.2, speed: 0.6, phase: 1.5, color: 'rgba(0,100,200,0.2)', yOff: 0.8 },
+    { amp: 0.015, freq: 0.6, speed: 0.3, phase: 3, color: 'rgba(0,150,230,0.12)', yOff: 0.85 },
+    { amp: 0.01, freq: 1.8, speed: 0.8, phase: 4.5, color: 'rgba(0,200,255,0.08)', yOff: 0.9 },
+  ];
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    t += 0.008;
+
+    // Deep gradient
+    const grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, '#020b18');
+    grad.addColorStop(0.4, '#031020');
+    grad.addColorStop(1, '#041628');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    // Subtle light rays
+    for (let i = 0; i < 4; i++) {
+      const x = W * (0.15 + i * 0.25);
+      const rayGrad = ctx.createRadialGradient(x, -50, 0, x, H * 0.7, H * 0.8);
+      rayGrad.addColorStop(0, 'rgba(0,100,200,0.06)');
+      rayGrad.addColorStop(1, 'transparent');
+      ctx.fillStyle = rayGrad;
+      ctx.beginPath();
+      ctx.moveTo(x - 120 + Math.sin(t * 0.3 + i) * 40, 0);
+      ctx.lineTo(x + 120 + Math.sin(t * 0.3 + i) * 40, 0);
+      ctx.lineTo(x + 200 + Math.sin(t * 0.3 + i) * 60, H);
+      ctx.lineTo(x - 200 + Math.sin(t * 0.3 + i) * 60, H);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // Draw wave layers
+    waves.forEach(w => {
+      const baseY = H * w.yOff;
+      ctx.beginPath();
+      ctx.moveTo(0, H);
+      for (let x = 0; x <= W; x += 4) {
+        const y = baseY + Math.sin((x / W) * Math.PI * 2 * w.freq + t * w.speed + w.phase) * H * w.amp
+                        + Math.sin((x / W) * Math.PI * 4 * w.freq + t * w.speed * 0.7 + w.phase) * H * w.amp * 0.5;
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(W, H);
+      ctx.closePath();
+
+      const wGrad = ctx.createLinearGradient(0, baseY - H * w.amp * 2, 0, H);
+      wGrad.addColorStop(0, w.color);
+      wGrad.addColorStop(1, 'rgba(0,50,120,0.05)');
+      ctx.fillStyle = wGrad;
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* FLOATING PARTICLES */
+(function() {
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 25; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.cssText = `
+      left: ${Math.random() * 100}%;
+      --dur: ${6 + Math.random() * 10}s;
+      --delay: ${-Math.random() * 12}s;
+      --drift: ${(Math.random() - 0.5) * 80}px;
+      width: ${1 + Math.random() * 3}px;
+      height: ${1 + Math.random() * 3}px;
+      opacity: 0;
+    `;
+    container.appendChild(p);
+  }
+})();
+
+/* ═══════════════════════════════════════
+   CORE LOGIC
+═══════════════════════════════════════ */
+const API = 'https://backend-mohsen-swimming-academy.vercel.app/api';
+const RL = {
+  s: {},
+  check(k, max, ms) {
+    const now = Date.now();
+    if (!this.s[k] || now > this.s[k].r) this.s[k] = { c: 0, r: now + ms };
+    this.s[k].c++;
+    if (this.s[k].c > max) return { blocked: true, wait: Math.ceil((this.s[k].r - now) / 1000) };
+    return { blocked: false };
+  },
+  reset(k) { delete this.s[k]; }
+};
+
+let lType = 'swimmer';
+let selectedCity = null;
+let userTimer = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (localStorage.getItem('sw_token')) { window.location.href = 'profile.html'; return; }
+  if (localStorage.getItem('aq_token')) { window.location.href = './aquaelite-backend/trainer.html'; return; }
+  const p = new URLSearchParams(location.search);
+  if (p.get('tab') === 'register') switchTab('register');
+  document.getElementById('lPass').addEventListener('keydown', e => e.key === 'Enter' && doLogin());
+  document.getElementById('rPass2').addEventListener('keydown', e => e.key === 'Enter' && doRegister());
+
+  // Ripple effect on buttons
+  document.querySelectorAll('.btn-submit').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      const rect = this.getBoundingClientRect();
+      const r = document.createElement('span');
+      r.className = 'ripple';
+      r.style.width = r.style.height = Math.max(rect.width, rect.height) + 'px';
+      r.style.left = (e.clientX - rect.left - Math.max(rect.width, rect.height) / 2) + 'px';
+      r.style.top = (e.clientY - rect.top - Math.max(rect.width, rect.height) / 2) + 'px';
+      this.appendChild(r);
+      setTimeout(() => r.remove(), 600);
+    });
+  });
 });
 
-function switchTab(t){
-  ['login','register'].forEach(x=>{
-    document.getElementById('tab'+x.charAt(0).toUpperCase()+x.slice(1)).classList.toggle('active',x===t);
-    document.getElementById('panel'+x.charAt(0).toUpperCase()+x.slice(1)).classList.toggle('active',x===t);
+function switchTab(t) {
+  ['login', 'register'].forEach(x => {
+    const cap = x.charAt(0).toUpperCase() + x.slice(1);
+    document.getElementById('tab' + cap).classList.toggle('active', x === t);
+    document.getElementById('panel' + cap).classList.toggle('active', x === t);
   });
-  document.getElementById('authSub').textContent=t==='register'?'أنشئ حسابك كسباح':'مرحباً بك في أكاديمية السباحة';
-  lucide.createIcons();
+  document.getElementById('authSub').textContent = t === 'register' ? 'أنشئ حسابك وانضم إلينا' : 'أكاديمية السباحة الاحترافية';
 }
 
-function setType(type){
-  lType=type;
-  document.getElementById('ltSw').classList.toggle('active',type==='swimmer');
-  document.getElementById('ltTr').classList.toggle('active',type==='trainer');
-  lucide.createIcons();
+function setType(type) {
+  lType = type;
+  document.getElementById('ltSw').classList.toggle('active', type === 'swimmer');
+  document.getElementById('ltTr').classList.toggle('active', type === 'trainer');
 }
 
-function selectCity(btn){
-  document.querySelectorAll('.city-pill').forEach(p=>p.classList.remove('active'));
+function selectCity(btn) {
+  document.querySelectorAll('.city-pill').forEach(p => p.classList.remove('active'));
   btn.classList.add('active');
-  selectedCity=btn.dataset.city;
+  selectedCity = btn.dataset.city;
   document.getElementById('cityErr').classList.remove('show');
 }
 
-async function doLogin(){
-  const ident=document.getElementById('lIdent').value.trim();
-  const pass=document.getElementById('lPass').value;
-  const rl=RL.check('login_'+lType,5,2*60*1000);
-  if(rl.blocked){countdown('lRW','lCD',rl.wait);return;}
-  document.getElementById('lErr').classList.remove('show');
-  setBusy('lBtn','lBtnTxt',true,'جاري الدخول...');
-  try{
-    let res;
-    if(lType==='swimmer'){
-      res=await post(`${API}/swimmer-auth/login`,{username:ident,password:pass});
-      localStorage.setItem('sw_token',res.token);
-      localStorage.setItem('sw_user',JSON.stringify(res.user));
-      toast('✅ أهلاً '+(res.user.displayName||res.user.username),'ok');
-      setTimeout(()=>window.location.href='profile.html',800);
-    }else{
-      res=await post(`${API}/auth/login`,{username:ident,password:pass});
-      localStorage.setItem('aq_token',res.token);
-      localStorage.setItem('aq_trainer',JSON.stringify(res.trainer));
-      toast('✅ أهلاً '+(res.trainer?.name||''),'ok');
-      setTimeout(()=>{
-        if(res.trainer?.role==='boss') window.location.href='./aquaelite-backend/boss.html';
-        else window.location.href='./aquaelite-backend/trainer.html';
-      },800);
+function togglePass(id, btn) {
+  const input = document.getElementById(id);
+  const isText = input.type === 'password';
+  input.type = isText ? 'text' : 'password';
+  btn.innerHTML = isText
+    ? `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`
+    : `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+}
+
+/* ── USERNAME VALIDATION WITH DEBOUNCE ── */
+let usernameValid = false;
+
+function validateUsername() {
+  const val = document.getElementById('rUser').value.trim();
+  const hint = document.getElementById('userHint');
+  const field = document.getElementById('userField');
+
+  clearTimeout(userTimer);
+  usernameValid = false;
+
+  if (!val) {
+    hint.textContent = '';
+    hint.className = 'input-hint';
+    field.className = 'field col-full';
+    return;
+  }
+
+  if (val.length < 3) {
+    hint.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> اسم المستخدم قصير جداً (3 أحرف على الأقل)`;
+    hint.className = 'input-hint err';
+    field.className = 'field col-full input-error';
+    return;
+  }
+
+  if (!/^[a-zA-Z0-9_]+$/.test(val)) {
+    hint.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> يُسمح بالأحرف الإنجليزية والأرقام و_`;
+    hint.className = 'input-hint err';
+    field.className = 'field col-full input-error';
+    return;
+  }
+
+  // Show checking state
+  hint.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin .7s linear infinite"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> جاري التحقق...`;
+  hint.className = 'input-hint';
+  field.className = 'field col-full';
+
+  userTimer = setTimeout(async () => {
+    try {
+      const res = await fetch(`${API}/swimmer-auth/check-username?username=${encodeURIComponent(val)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.available === false) {
+          hint.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> هذا الاسم مستخدم بالفعل — جرب اسماً آخر`;
+          hint.className = 'input-hint err';
+          field.className = 'field col-full input-error';
+          usernameValid = false;
+        } else {
+          hint.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> الاسم متاح ✓`;
+          hint.className = 'input-hint ok';
+          field.className = 'field col-full input-valid';
+          usernameValid = true;
+        }
+      } else {
+        // API doesn't support check, just validate format
+        hint.textContent = '';
+        hint.className = 'input-hint';
+        usernameValid = true;
+      }
+    } catch {
+      hint.textContent = '';
+      hint.className = 'input-hint';
+      usernameValid = true;
     }
-    RL.reset('login_'+lType);
-  }catch(e){
-    document.getElementById('lErrMsg').textContent=e.message;
-    document.getElementById('lErr').classList.add('show');
+  }, 600);
+}
+
+function checkStr() {
+  const p = document.getElementById('rPass').value;
+  const w = document.getElementById('psW');
+  if (!p) { w.style.display = 'none'; return; }
+  w.style.display = 'block';
+  let s = 0;
+  if (p.length >= 6) s++;
+  if (p.length >= 10) s++;
+  if (/[A-Z]|[a-z]/.test(p)) s++;
+  if (/[0-9]|[^A-Za-z0-9]/.test(p)) s++;
+  const C = ['#ff6b6b', '#ffcc66', '#00c8ff', '#00e5a0'];
+  const L = ['ضعيفة جداً', 'مقبولة', 'جيدة', 'قوية 💪'];
+  for (let i = 1; i <= 4; i++) {
+    const bar = document.getElementById('b' + i);
+    bar.style.background = i <= s ? C[s - 1] : 'rgba(255,255,255,0.07)';
+    bar.classList.toggle('active', i <= s);
+  }
+  const lbl = document.getElementById('psL');
+  lbl.textContent = 'قوة كلمة المرور: ' + (L[s - 1] || '');
+  lbl.style.color = C[s - 1] || 'var(--text-muted)';
+
+  if (document.getElementById('rPass2').value) checkMatch();
+}
+
+function checkMatch() {
+  const p = document.getElementById('rPass').value;
+  const p2 = document.getElementById('rPass2').value;
+  const hint = document.getElementById('matchHint');
+  const field = document.getElementById('pass2Field');
+  if (!p2) { hint.textContent = ''; hint.className = 'input-hint'; field.className = 'field col-full'; return; }
+  if (p === p2) {
+    hint.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> كلمتا المرور متطابقتان ✓`;
+    hint.className = 'input-hint ok';
+    field.className = 'field col-full input-valid';
+  } else {
+    hint.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> كلمتا المرور غير متطابقتين`;
+    hint.className = 'input-hint err';
+    field.className = 'field col-full input-error';
+  }
+}
+
+function countdown(wId, cId, secs) {
+  const w = document.getElementById(wId), c = document.getElementById(cId);
+  w.classList.add('show');
+  let r = secs;
+  c.textContent = r;
+  const t = setInterval(() => {
+    r--;
+    c.textContent = r;
+    if (r <= 0) { clearInterval(t); w.classList.remove('show'); }
+  }, 1000);
+}
+
+function setBusy(btnId, txtId, on, txt) {
+  const btn = document.getElementById(btnId);
+  btn.classList.toggle('loading', on);
+  if (on) {
+    document.getElementById(txtId).textContent = txt;
+    btn.querySelector('svg') && (btn.querySelector('svg').style.display = 'none');
+    if (!btn.querySelector('.spinner')) {
+      const sp = document.createElement('div');
+      sp.className = 'spinner';
+      btn.insertBefore(sp, btn.firstChild);
+    }
+  } else {
+    document.getElementById(txtId).textContent = txt;
+    const sp = btn.querySelector('.spinner');
+    if (sp) sp.remove();
+    btn.querySelector('svg') && (btn.querySelector('svg').style.display = '');
+  }
+}
+
+function showErr(msgId, errId, msg) {
+  document.getElementById(msgId).textContent = msg;
+  document.getElementById(errId).classList.add('show');
+}
+
+function shake() {
+  const card = document.getElementById('authCard');
+  card.style.animation = 'shake-card 0.4s ease-out';
+  setTimeout(() => { card.style.animation = 'card-in 0s'; }, 400);
+}
+
+// Add shake keyframe dynamically
+const style = document.createElement('style');
+style.textContent = `@keyframes shake-card {
+  0%,100% { transform: translateX(0); }
+  15% { transform: translateX(-8px); }
+  30% { transform: translateX(8px); }
+  45% { transform: translateX(-5px); }
+  60% { transform: translateX(5px); }
+  75% { transform: translateX(-3px); }
+}`;
+document.head.appendChild(style);
+
+async function post(url, body) {
+  const r = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  const d = await r.json().catch(() => ({ message: `HTTP ${r.status}` }));
+  if (!r.ok) throw new Error(d.message || `HTTP ${r.status}`);
+  return d;
+}
+
+let toastTimer;
+function toast(msg, type = 'inf') {
+  const el = document.getElementById('toast');
+  el.className = `toast ${type} show`;
+  document.getElementById('toastMsg').textContent = msg;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+async function doLogin() {
+  const ident = document.getElementById('lIdent').value.trim();
+  const pass = document.getElementById('lPass').value;
+  if (!ident || !pass) { showErr('lErrMsg', 'lErr', 'من فضلك أدخل اسم المستخدم وكلمة المرور'); shake(); return; }
+  const rl = RL.check('login_' + lType, 5, 2 * 60 * 1000);
+  if (rl.blocked) { countdown('lRW', 'lCD', rl.wait); return; }
+  document.getElementById('lErr').classList.remove('show');
+  setBusy('lBtn', 'lBtnTxt', true, 'جاري الدخول...');
+  try {
+    let res;
+    if (lType === 'swimmer') {
+      res = await post(`${API}/swimmer-auth/login`, { username: ident, password: pass });
+      localStorage.setItem('sw_token', res.token);
+      localStorage.setItem('sw_user', JSON.stringify(res.user));
+      toast('✅ أهلاً ' + (res.user.displayName || res.user.username), 'ok');
+      setTimeout(() => window.location.href = 'profile.html', 800);
+    } else {
+      res = await post(`${API}/auth/login`, { username: ident, password: pass });
+      localStorage.setItem('aq_token', res.token);
+      localStorage.setItem('aq_trainer', JSON.stringify(res.trainer));
+      toast('✅ أهلاً ' + (res.trainer?.name || ''), 'ok');
+      setTimeout(() => {
+        if (res.trainer?.role === 'boss') window.location.href = './aquaelite-backend/boss.html';
+        else window.location.href = './aquaelite-backend/trainer.html';
+      }, 800);
+    }
+    RL.reset('login_' + lType);
+  } catch (e) {
+    // User-friendly error mapping
+    let msg = e.message;
+    if (msg.toLowerCase().includes('password') || msg.toLowerCase().includes('incorrect') || msg.toLowerCase().includes('invalid')) {
+      msg = 'كلمة المرور غير صحيحة — تحقق وحاول مجدداً';
+    } else if (msg.toLowerCase().includes('not found') || msg.toLowerCase().includes('user')) {
+      msg = 'اسم المستخدم غير موجود — تحقق من الاسم أو أنشئ حساباً جديداً';
+    } else if (msg.toLowerCase().includes('network') || msg.toLowerCase().includes('fetch')) {
+      msg = 'تعذّر الاتصال — تحقق من الإنترنت وأعد المحاولة';
+    }
+    showErr('lErrMsg', 'lErr', msg);
     shake();
-  }finally{setBusy('lBtn','lBtnTxt',false,'دخول');}
+  } finally {
+    setBusy('lBtn', 'lBtnTxt', false, 'دخول');
+  }
 }
 
-async function doRegister(){
-  const name=document.getElementById('rName').value.trim();
-  const phone=document.getElementById('rPhone').value.trim();
-  const user=document.getElementById('rUser').value.trim();
-  const pass=document.getElementById('rPass').value;
-  const pass2=document.getElementById('rPass2').value;
-  const rl=RL.check('register',3,10*60*1000);
-  if(rl.blocked){countdown('rRW','rCD',rl.wait);return;}
-  if(!user||!pass){showE('rErrMsg','rErr','اسم المستخدم وكلمة المرور مطلوبان');return;}
-  if(pass!==pass2){showE('rErrMsg','rErr','كلمتا المرور غير متطابقتين');return;}
-  if(pass.length<6){showE('rErrMsg','rErr','كلمة المرور 6 أحرف على الأقل');return;}
-  if(!selectedCity){document.getElementById('cityErr').classList.add('show');return;}
+async function doRegister() {
+  const name = document.getElementById('rName').value.trim();
+  const phone = document.getElementById('rPhone').value.trim();
+  const user = document.getElementById('rUser').value.trim();
+  const pass = document.getElementById('rPass').value;
+  const pass2 = document.getElementById('rPass2').value;
+
+  const rl = RL.check('register', 3, 10 * 60 * 1000);
+  if (rl.blocked) { countdown('rRW', 'rCD', rl.wait); return; }
+
+  if (!user) { showErr('rErrMsg', 'rErr', 'اسم المستخدم مطلوب'); shake(); return; }
+  if (!pass) { showErr('rErrMsg', 'rErr', 'كلمة المرور مطلوبة'); shake(); return; }
+  if (pass.length < 6) { showErr('rErrMsg', 'rErr', 'كلمة المرور يجب أن تكون 6 أحرف على الأقل'); shake(); return; }
+  if (pass !== pass2) { showErr('rErrMsg', 'rErr', 'كلمتا المرور غير متطابقتين — راجع التأكيد'); shake(); return; }
+  if (!selectedCity) { document.getElementById('cityErr').classList.add('show'); return; }
+
   document.getElementById('rErr').classList.remove('show');
-  setBusy('rBtn','rBtnTxt',true,'جاري الإنشاء...');
-  try{
-    const res=await post(`${API}/swimmer-auth/register`,{username:user,password:pass,displayName:name,phone,city:selectedCity});
-    localStorage.setItem('sw_token',res.token);
-    localStorage.setItem('sw_user',JSON.stringify(res.user));
+  setBusy('rBtn', 'rBtnTxt', true, 'جاري الإنشاء...');
+  try {
+    const res = await post(`${API}/swimmer-auth/register`, { username: user, password: pass, displayName: name, phone, city: selectedCity });
+    localStorage.setItem('sw_token', res.token);
+    localStorage.setItem('sw_user', JSON.stringify(res.user));
     RL.reset('register');
-    toast('✅ تم إنشاء حسابك!','ok');
-    setTimeout(()=>window.location.href='register-swimmer.html',900);
-  }catch(e){showE('rErrMsg','rErr',e.message);shake();}
-  finally{setBusy('rBtn','rBtnTxt',false,'إنشاء الحساب');}
+    toast('🎉 تم إنشاء حسابك بنجاح!', 'ok');
+    setTimeout(() => window.location.href = 'register-swimmer.html', 900);
+  } catch (e) {
+    let msg = e.message;
+    if (msg.toLowerCase().includes('exist') || msg.toLowerCase().includes('taken') || msg.toLowerCase().includes('duplicate') || msg.toLowerCase().includes('already')) {
+      msg = 'اسم المستخدم "' + user + '" مأخوذ بالفعل — جرّب اسماً مختلفاً';
+      // Also mark the field
+      const hint = document.getElementById('userHint');
+      hint.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> هذا الاسم مستخدم — اختر اسماً آخر`;
+      hint.className = 'input-hint err';
+      document.getElementById('userField').className = 'field col-full input-error';
+      document.getElementById('rUser').focus();
+    } else if (msg.toLowerCase().includes('network') || msg.toLowerCase().includes('fetch')) {
+      msg = 'تعذّر الاتصال — تحقق من الإنترنت وأعد المحاولة';
+    }
+    showErr('rErrMsg', 'rErr', msg);
+    shake();
+  } finally {
+    setBusy('rBtn', 'rBtnTxt', false, 'إنشاء الحساب');
+  }
 }
-
-function checkStr(){
-  const p=document.getElementById('rPass').value,w=document.getElementById('psW');
-  if(!p){w.style.display='none';return;}w.style.display='block';
-  let s=0;if(p.length>=6)s++;if(p.length>=10)s++;if(/[A-Z]|[a-z]/.test(p))s++;if(/[0-9]|[^A-Za-z0-9]/.test(p))s++;
-  const C=['#ff4d6d','#ffb547','#00c8ff','#00e5a0'],L=['ضعيفة','مقبولة','جيدة','قوية'];
-  for(let i=1;i<=4;i++)document.getElementById('b'+i).style.background=i<=s?C[s-1]:'rgba(255,255,255,.1)';
-  const l=document.getElementById('psL');l.textContent='القوة: '+(L[s-1]||'');l.style.color=C[s-1]||'var(--tm)';
-}
-function countdown(wId,cId,secs){
-  const w=document.getElementById(wId),c=document.getElementById(cId);
-  w.classList.add('show');let r=secs;c.textContent=r;
-  const t=setInterval(()=>{r--;c.textContent=r;if(r<=0){clearInterval(t);w.classList.remove('show');}},1000);
-}
-function tp(id,btn){
-  const i=document.getElementById(id);i.type=i.type==='password'?'text':'password';
-  btn.innerHTML=i.type==='text'?'<i data-lucide="eye-off" style="width:15px;height:15px"></i>':'<i data-lucide="eye" style="width:15px;height:15px"></i>';
-  lucide.createIcons();
-}
-function setBusy(b,t,on,txt){document.getElementById(b).classList.toggle('loading',on);document.getElementById(t).textContent=txt;lucide.createIcons();}
-function showE(mId,eId,msg){document.getElementById(mId).textContent=msg;document.getElementById(eId).classList.add('show');}
-function shake(){const c=document.getElementById('authCard');c.style.transition='transform .08s';c.style.transform='translateX(-7px)';setTimeout(()=>{c.style.transform='translateX(7px)';},90);setTimeout(()=>{c.style.transform='translateX(0)';c.style.transition='transform .3s var(--spring)';},180);}
-async function post(url,body){const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const d=await r.json().catch(()=>({message:`HTTP ${r.status}`}));if(!r.ok)throw new Error(d.message||`HTTP ${r.status}`);return d;}
-let toastT;
-function toast(msg,type='inf'){const el=document.getElementById('toast');el.className=`toast ${type} show`;document.getElementById('toastMsg').textContent=msg;clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),3000);}
 </script>
 </body>
 </html>
