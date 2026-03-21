@@ -3,6 +3,7 @@ const express   = require('express');
 const mongoose  = require('mongoose');
 const cors      = require('cors');
 const { router: swimmerAuthRouter } = require('../routes/swimmer-auth');
+const connectDB = require('../lib/db');
 
 const app = express();
 
@@ -22,32 +23,14 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-/* ── MongoDB Connection Caching (مهم لـ Vercel Serverless) ──── */
-let isConnected = false;
-
-async function connectDB() {
-  if (isConnected) return;
-  try {
-    await mongoose.connect(process.env.MONGO_URI, {
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 10000,
-    });
-    isConnected = true;
-    console.log('✅ MongoDB connected');
-  } catch (err) {
-    console.error('❌ MongoDB connection failed:', err.message);
-    isConnected = false;
-    throw err;
-  }
-}
-
-/* ── Middleware: connect DB before every request ─────────────── */
+/* ── DB Connection Middleware ────────────────────────────────── */
 app.use(async (req, res, next) => {
   try {
     await connectDB();
     next();
   } catch (err) {
-    res.status(500).json({ success: false, message: 'Database connection failed' });
+    console.error('DB connection error:', err.message);
+    res.status(503).json({ success: false, message: 'قاعدة البيانات غير متاحة حالياً' });
   }
 });
 
@@ -57,7 +40,7 @@ app.get('/health', (req, res) => {
     status:    'ok',
     service:   'AquaElite API',
     timestamp: new Date().toISOString(),
-    db:        mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    db:        mongoose.connection.readyState === 1 ? ' mongoose connected' : ' mongoose disconnected',
   });
 });
 
