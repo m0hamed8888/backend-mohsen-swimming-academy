@@ -1064,37 +1064,63 @@ select.fc option{background:#0a0f20}
   </div>
 
   <!-- ══ REPORT PANEL ══ -->
-  <div class="panel" id="panel-report">
-    <div class="gc">
-      <div class="gc-hd">
-        <div class="gc-title"><i data-lucide="bar-chart-2"></i> التقرير الشهري</div>
-      </div>
-      <div class="report-month-nav">
-        <button class="rmnb" id="rPrevMon">›</button>
-        <span class="rml" id="rMonLbl">—</span>
-        <button class="rmnb" id="rNextMon">‹</button>
-      </div>
-      <div class="sfp-pills">
+<div class="panel" id="panel-report">
+  <div class="gc">
+    <div class="gc-hd">
+      <div class="gc-title"><i data-lucide="bar-chart-2"></i> التقرير الشهري</div>
+      <button class="btn-sec" id="exportCsvBtn" onclick="exportCSV()">
+        <i data-lucide="download"></i> تصدير CSV
+      </button>
+    </div>
+    <div class="report-month-nav">
+      <button class="rmnb" id="rPrevMon">›</button>
+      <span class="rml" id="rMonLbl">—</span>
+      <button class="rmnb" id="rNextMon">‹</button>
+    </div>
+    <!-- فلاتر التقرير -->
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+      <div class="sfp-pills" style="margin:0;flex:1">
         <button class="sfp a-all" data-sess="all">الكل</button>
         <button class="sfp" data-sess="8">8 حصص</button>
         <button class="sfp" data-sess="12">12 حصة</button>
         <button class="sfp" data-sess="24">24 حصة</button>
       </div>
-      <div class="report-summary">
-        <div class="rs rs-all"><div class="rs-v" id="rAll">—</div><div style="font-size:.62rem;color:var(--tm)">إجمالي</div></div>
-        <div class="rs rs-active"><div class="rs-v" id="rActive">—</div><div style="font-size:.62rem;color:var(--tm)">نشط</div></div>
-        <div class="rs rs-inactive"><div class="rs-v" id="rInactive">—</div><div style="font-size:.62rem;color:var(--tm)">منتهي</div></div>
-        <div class="rs" style="border-color:rgba(255,181,71,.18)"><div class="rs-v" id="rExpiring" style="color:var(--warn)">—</div><div style="font-size:.62rem;color:var(--tm)">ينتهي قريباً</div></div>
-      </div>
-      <div class="tbl-wrap">
-        <table class="tbl">
-          <thead><tr><th>رقم الاشتراك</th><th>الاسم</th><th>الكابتن</th><th>المدينة</th><th>الحصص</th><th>الحضور</th><th>انتهاء</th><th>الحالة</th></tr></thead>
-          <tbody id="reportBody"></tbody>
-        </table>
-      </div>
-      <div class="pag" id="reportPag"></div>
+      <select class="fc-sm" id="rTrainerFilter" style="max-width:160px">
+        <option value="">كل الكابتنات</option>
+      </select>
     </div>
+    <!-- ملاحظة الفلترة -->
+    <div id="rFilterNote" style="font-size:.73rem;color:var(--gold);margin-bottom:12px;padding:8px 12px;background:rgba(245,200,66,.05);border:1px solid rgba(245,200,66,.12);border-radius:var(--r-sm);display:none"></div>
+    <!-- الإحصائيات -->
+    <div class="report-summary" style="grid-template-columns:repeat(2,1fr)">
+      <div class="rs rs-all"><div class="rs-v" id="rAll">—</div><div style="font-size:.62rem;color:var(--tm)">في الشهر</div></div>
+      <div class="rs rs-active"><div class="rs-v" id="rActive">—</div><div style="font-size:.62rem;color:var(--tm)">نشط</div></div>
+      <div class="rs rs-inactive"><div class="rs-v" id="rInactive">—</div><div style="font-size:.62rem;color:var(--tm)">منتهي</div></div>
+      <div class="rs" style="border-color:rgba(255,181,71,.18)"><div class="rs-v" id="rExpiring" style="color:var(--warn)">—</div><div style="font-size:.62rem;color:var(--tm)">ينتهي هذا الشهر</div></div>
+    </div>
+    <!-- إحصائيات إضافية -->
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:20px">
+      <div class="rs" style="border-color:rgba(0,200,255,.18)">
+        <div class="rs-v" id="rNewThisMonth" style="color:var(--cyan)">—</div>
+        <div style="font-size:.62rem;color:var(--tm)">اشتركوا هذا الشهر</div>
+      </div>
+      <div class="rs" style="border-color:rgba(255,77,109,.18)">
+        <div class="rs-v" id="rEndedThisMonth" style="color:var(--err)">—</div>
+        <div style="font-size:.62rem;color:var(--tm)">انتهوا هذا الشهر</div>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr>
+          <th>رقم الاشتراك</th><th>الاسم</th><th>الكابتن</th><th>المدينة</th>
+          <th>الحصص</th><th>الحضور</th><th>بداية</th><th>انتهاء</th><th>الحالة</th>
+        </tr></thead>
+        <tbody id="reportBody"></tbody>
+      </table>
+    </div>
+    <div class="pag" id="reportPag"></div>
   </div>
+</div>
 
   <!-- ══ ADD TRAINER PANEL ══ -->
   <div class="panel" id="panel-add-trainer">
@@ -1721,36 +1747,173 @@ async function doSaveUser(){
 }
 
 /* ════ REPORT ════ */
-async function loadReportData(){ try{ const d = await api('/swimmers?limit=9999'); allSwimmersCache = d.data||[]; renderReport(); } catch(e){ toast(e.message||'خطأ','er'); } }
-function renderReport(){
-  const now = new Date(), soon = new Date(); soon.setDate(soon.getDate()+30);
-  const nowD = new Date();
-  $('rMonLbl').textContent = MONTHS[reportMonth-1] + ' ' + reportYear;
-  $('rNextMon').disabled = (reportYear === nowD.getFullYear() && reportMonth === nowD.getMonth()+1);
-  let data = [...allSwimmersCache];
-  if(reportSessFilter !== 'all') data = data.filter(s => String(s.sessionsCount) === reportSessFilter);
-  const total = data.length, active = data.filter(s => s.isActive).length;
-  const expiring = data.filter(s => { if(!s.subscriptionExpiry) return false; const e = new Date(s.subscriptionExpiry); return e >= now && e <= soon; }).length;
-  $('rAll').textContent = total; $('rActive').textContent = active; $('rInactive').textContent = total-active; $('rExpiring').textContent = expiring;
-  const ITEMS = 20, start = (reportPage-1)*ITEMS, slice = data.slice(start, start+ITEMS);
-  const tbody = $('reportBody');
-  if(!slice.length){ tbody.innerHTML = '<tr><td colspan="8" class="no-data">لا توجد بيانات</td></tr>'; $('reportPag').innerHTML=''; return; }
-  tbody.innerHTML = slice.map(s => `<tr>
-    <td class="sid">${s.subscriptionId||'—'}</td>
-    <td class="nm">${s.fullName}</td>
-    <td style="color:var(--ts)">${s.trainer?.name||s.trainerName||'—'}</td>
-    <td>${s.city?`<span class="city-bdg">${s.city}</span>`:'—'}</td>
-    <td><span class="sess-bdg s${s.sessionsCount}">${s.sessionsCount} حصة</span></td>
-    <td style="color:var(--ts)">${s.sessionsAttended??0}/${s.sessionsCount}</td>
-    <td>${s.subscriptionExpiry ? expiryBadge(s.subscriptionExpiry) : '—'}</td>
-    <td><span class="bdg ${s.isActive?'bdg-on':'bdg-off'}">${s.isActive?'● نشط':'● منتهي'}</span></td>
-  </tr>`).join('');
-  const pages = Math.ceil(data.length/ITEMS);
-  const pelEl = $('reportPag');
-  if(!pages || pages <= 1){ pelEl.innerHTML=''; return; }
-  pelEl.innerHTML = Array.from({length:pages},(_,i)=>`<button class="pg-btn${i+1===reportPage?' active':''}" onclick="reportPage=${i+1};renderReport()">${i+1}</button>`).join('');
+async function loadReportData(){
+  try{
+    const d = await api('/swimmers?limit=9999');
+    allSwimmersCache = d.data || [];
+    // populate trainer filter in report
+    const sel = $('rTrainerFilter');
+    if(sel){
+      const trainers = [...new Set(allSwimmersCache.map(s => s.trainerName || s.trainer?.name).filter(Boolean))];
+      sel.innerHTML = '<option value="">كل الكابتنات</option>' + trainers.map(t => `<option value="${t}">${t}</option>`).join('');
+      sel.onchange = () => { reportPage = 1; renderReport(); };
+    }
+    renderReport();
+  } catch(e){ toast(e.message || 'خطأ', 'er'); }
 }
-function navRptMonth(dir){ reportMonth+=dir; if(reportMonth<1){reportMonth=12;reportYear--;} if(reportMonth>12){reportMonth=1;reportYear++;} reportPage=1; renderReport(); }
+
+function getMonthRange(year, month){
+  const start = new Date(year, month - 1, 1);
+  const end   = new Date(year, month, 0); // آخر يوم في الشهر
+  end.setHours(23, 59, 59, 999);
+  return { start, end };
+}
+
+function wasActiveInMonth(swimmer, year, month){
+  const { start: mStart, end: mEnd } = getMonthRange(year, month);
+
+  const subStart = swimmer.subscriptionStart ? new Date(swimmer.subscriptionStart) : null;
+  const subEnd   = swimmer.subscriptionExpiry ? new Date(swimmer.subscriptionExpiry) : null;
+
+  // لو مفيش تاريخ بداية — نعتبره موجود (بيانات قديمة)
+  if(!subStart && !subEnd) return true;
+
+  // المشترك كان نشطاً في الشهر لو:
+  // بدأ قبل أو في نهاية الشهر AND (لم ينتهِ بعد OR انتهى بعد بداية الشهر)
+  const startedBeforeMonthEnd = !subStart || subStart <= mEnd;
+  const endedAfterMonthStart  = !subEnd   || subEnd   >= mStart;
+
+  return startedBeforeMonthEnd && endedAfterMonthStart;
+}
+
+function renderReport(){
+  const { start: mStart, end: mEnd } = getMonthRange(reportYear, reportMonth);
+  const nowD = new Date();
+  const isCurrentMonth = (reportYear === nowD.getFullYear() && reportMonth === nowD.getMonth() + 1);
+
+  $('rMonLbl').textContent = MONTHS[reportMonth - 1] + ' ' + reportYear;
+  $('rNextMon').disabled = isCurrentMonth;
+
+  const rTrainer = $('rTrainerFilter')?.value || '';
+
+  // فلترة المشتركين الموجودين فعلاً في الشهر المختار
+  let data = allSwimmersCache.filter(s => wasActiveInMonth(s, reportYear, reportMonth));
+
+  // فلتر الحصص
+  if(reportSessFilter !== 'all') data = data.filter(s => String(s.sessionsCount) === reportSessFilter);
+
+  // فلتر الكابتن
+  if(rTrainer) data = data.filter(s => (s.trainerName || s.trainer?.name) === rTrainer);
+
+  // ملاحظة الفلترة
+  const filterNote = $('rFilterNote');
+  if(!isCurrentMonth && filterNote){
+    filterNote.style.display = 'block';
+    filterNote.textContent = `📅 يعرض المشتركين الذين كانوا نشطين خلال ${MONTHS[reportMonth-1]} ${reportYear} (${data.length} مشترك)`;
+  } else if(filterNote){
+    filterNote.style.display = 'none';
+  }
+
+  const total   = data.length;
+  const active  = data.filter(s => s.isActive).length;
+
+  // ينتهي في هذا الشهر
+  const expiringThisMonth = data.filter(s => {
+    if(!s.subscriptionExpiry) return false;
+    const exp = new Date(s.subscriptionExpiry);
+    return exp >= mStart && exp <= mEnd;
+  }).length;
+
+  // اشتركوا في هذا الشهر (جدد)
+  const newThisMonth = data.filter(s => {
+    if(!s.subscriptionStart) return false;
+    const st = new Date(s.subscriptionStart);
+    return st >= mStart && st <= mEnd;
+  }).length;
+
+  // انتهوا في هذا الشهر
+  const endedThisMonth = data.filter(s => {
+    if(!s.subscriptionExpiry) return false;
+    const exp = new Date(s.subscriptionExpiry);
+    return exp >= mStart && exp <= mEnd && !s.isActive;
+  }).length;
+
+  $('rAll').textContent       = total;
+  $('rActive').textContent    = active;
+  $('rInactive').textContent  = total - active;
+  $('rExpiring').textContent  = expiringThisMonth;
+  if($('rNewThisMonth'))   $('rNewThisMonth').textContent   = newThisMonth;
+  if($('rEndedThisMonth')) $('rEndedThisMonth').textContent = endedThisMonth;
+
+  // Pagination
+  const ITEMS = 20, start = (reportPage - 1) * ITEMS, slice = data.slice(start, start + ITEMS);
+  const tbody = $('reportBody');
+  if(!slice.length){
+    tbody.innerHTML = '<tr><td colspan="9" class="no-data">لا توجد بيانات لهذا الشهر</td></tr>';
+    $('reportPag').innerHTML = '';
+    return;
+  }
+
+  tbody.innerHTML = slice.map(s => {
+    const trainerName = s.trainer?.name || s.trainerName || '—';
+    return `<tr>
+      <td class="sid">${s.subscriptionId || '—'}</td>
+      <td class="nm">${s.fullName}</td>
+      <td style="color:var(--ts)">${trainerName}</td>
+      <td>${s.city ? `<span class="city-bdg">${s.city}</span>` : '—'}</td>
+      <td><span class="sess-bdg s${s.sessionsCount}">${s.sessionsCount} حصة</span></td>
+      <td style="color:var(--ts)">${s.sessionsAttended ?? 0} / ${s.sessionsCount}</td>
+      <td style="color:var(--tm);font-size:.72rem">${s.subscriptionStart ? fmtDate(s.subscriptionStart) : '—'}</td>
+      <td>${s.subscriptionExpiry ? expiryBadge(s.subscriptionExpiry) : '—'}</td>
+      <td><span class="bdg ${s.isActive ? 'bdg-on' : 'bdg-off'}">${s.isActive ? '● نشط' : '● منتهي'}</span></td>
+    </tr>`;
+  }).join('');
+
+  const pages = Math.ceil(data.length / ITEMS);
+  const pelEl = $('reportPag');
+  if(!pages || pages <= 1){ pelEl.innerHTML = ''; return; }
+  pelEl.innerHTML = Array.from({length: pages}, (_, i) =>
+    `<button class="pg-btn${i+1 === reportPage ? ' active' : ''}" onclick="reportPage=${i+1};renderReport()">${i+1}</button>`
+  ).join('');
+}
+
+function navRptMonth(dir){
+  reportMonth += dir;
+  if(reportMonth < 1){ reportMonth = 12; reportYear--; }
+  if(reportMonth > 12){ reportMonth = 1;  reportYear++; }
+  reportPage = 1;
+  renderReport();
+}
+
+function exportCSV(){
+  const { start: mStart, end: mEnd } = getMonthRange(reportYear, reportMonth);
+  let data = allSwimmersCache.filter(s => wasActiveInMonth(s, reportYear, reportMonth));
+  if(reportSessFilter !== 'all') data = data.filter(s => String(s.sessionsCount) === reportSessFilter);
+  const rTrainer = $('rTrainerFilter')?.value || '';
+  if(rTrainer) data = data.filter(s => (s.trainerName || s.trainer?.name) === rTrainer);
+
+  const headers = ['رقم الاشتراك','الاسم','الكابتن','المدينة','الحصص','الحضور','بداية الاشتراك','انتهاء الاشتراك','الحالة'];
+  const rows = data.map(s => [
+    s.subscriptionId || '',
+    s.fullName || '',
+    s.trainerName || s.trainer?.name || '',
+    s.city || '',
+    s.sessionsCount || '',
+    `${s.sessionsAttended ?? 0}/${s.sessionsCount}`,
+    s.subscriptionStart ? fmtDate(s.subscriptionStart) : '',
+    s.subscriptionExpiry ? fmtDate(s.subscriptionExpiry) : '',
+    s.isActive ? 'نشط' : 'منتهي',
+  ]);
+
+  const csv = '\uFEFF' + [headers, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type: 'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url;
+  a.download = `تقرير_${MONTHS[reportMonth-1]}_${reportYear}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+  toast('✅ تم تصدير التقرير');
+}
+
 function expiryBadge(dateStr){
   const exp = new Date(dateStr), now = new Date(), diff = (exp-now)/(1000*60*60*24);
   if(diff < 0) return `<span class="expiry-bdg exp-over">${fmtDate(dateStr)}</span>`;
