@@ -157,6 +157,14 @@ body {
 }
 .nav-back:hover { color: var(--water-3); border-color: var(--foam-border-active); }
 
+/* Desktop — panel-scroll-area and btn-sticky-wrap behave normally */
+@media (min-width: 601px) {
+  .panel-scroll-area { display: contents; }
+  .btn-sticky-wrap { display: contents; }
+  .btn-submit { margin-top: 20px; }
+  .back-link  { margin-top: 16px; }
+}
+
 /* ── AUTH PAGE ── */
 .auth-page {
   position: relative;
@@ -184,6 +192,124 @@ body {
   animation: card-in 0.7s cubic-bezier(0.2,0,0,1) forwards;
   opacity: 0;
   transform: translateY(30px);
+}
+
+/* ═══════════════════════════════════════
+   MOBILE — أولوية قصوى
+   الهدف: الكارت يملأ الشاشة، الزر مثبّت في الأسفل دايماً
+═══════════════════════════════════════ */
+@media (max-width: 600px) {
+
+  /* الصفحة كاملة */
+  .auth-page {
+    padding: 0;
+    align-items: flex-end;    /* الكارد يبدأ من الأسفل */
+    min-height: 100dvh;
+  }
+
+  /* الكارت يغطي الشاشة بالكامل من الأسفل */
+  .auth-card {
+    max-width: 100%;
+    width: 100%;
+    border-radius: 28px 28px 0 0;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 -20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(0,100,200,0.15);
+    animation: card-in-mobile 0.6s cubic-bezier(0.2,0,0,1) forwards;
+  }
+
+  @keyframes card-in-mobile {
+    from { transform: translateY(40px); opacity: 0; }
+    to   { transform: translateY(0);   opacity: 1; }
+  }
+
+  /* inner يأخد باقي المساحة */
+  .card-inner {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 20px 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* اللوقو أصغر على الموبايل */
+  .auth-logo {
+    margin-bottom: 18px;
+  }
+  .logo-icon {
+    width: 52px !important;
+    height: 52px !important;
+    border-radius: 15px;
+  }
+  .logo-icon svg { width: 23px !important; height: 23px !important; }
+  .logo-ring { inset: -9px !important; border-radius: 22px !important; }
+  .logo-ring-2 { inset: -15px !important; border-radius: 26px !important; }
+  .auth-logo h1 { font-size: 1.2rem; }
+  .auth-logo p  { font-size: 0.75rem; }
+
+  /* التابز */
+  .auth-tabs { margin-bottom: 18px; }
+  .auth-tab  { font-size: 0.78rem; padding: 9px 6px; }
+
+  /* الباقنل يملأ المساحة ويدفع الزر للأسفل */
+  .auth-panel { flex: 1; display: none; flex-direction: column; }
+  .auth-panel.active { display: flex; }
+
+  /* المحتوى يأخد المساحة المتاحة */
+  .panel-scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ── الزر مثبّت في الأسفل ── */
+  .btn-sticky-wrap {
+    position: sticky;
+    bottom: 0;
+    background: linear-gradient(180deg, transparent 0%, var(--card-bg) 30%);
+    backdrop-filter: blur(20px);
+    padding: 12px 0 max(20px, env(safe-area-inset-bottom));
+    margin-top: auto;
+  }
+
+  .btn-submit {
+    margin-top: 0;
+    height: 54px;
+    font-size: 1rem;
+    border-radius: 16px;
+  }
+
+  .back-link {
+    margin-top: 10px;
+    margin-bottom: 0;
+    font-size: 0.75rem;
+  }
+
+  /* الفورم */
+  .form-cols { grid-template-columns: 1fr; gap: 12px; }
+  .col-full  { grid-column: 1; }
+
+  /* الإيرور والتحذير */
+  .auth-err, .rate-warn { font-size: 0.76rem; }
+
+  /* city pills */
+  .city-grid { grid-template-columns: 1fr 1fr; gap: 7px; }
+  .city-pill { padding: 10px 6px; font-size: 0.77rem; }
+
+  /* الـ note box */
+  .note-box { font-size: 0.73rem; padding: 9px 12px; }
+
+  /* inputs أكبر للـ touch */
+  .fc { padding: 15px 16px; font-size: 0.92rem; }
+  .fc[style*="padding-left"] { padding-left: 44px !important; }
+
+  /* login type */
+  .lt-btn { padding: 11px 8px; font-size: 0.78rem; }
+
+  /* fields gap */
+  #panelLogin  > div[style*="flex-direction:column"] { gap: 13px; }
 }
 
 @keyframes card-in {
@@ -786,6 +912,7 @@ a { font-family: var(--f-main); }
 
       <!-- ══ LOGIN PANEL ══ -->
       <div class="auth-panel active" id="panelLogin">
+        <div class="panel-scroll-area">
         <div class="login-type">
           <button class="lt-btn active" id="ltSw" onclick="setType('swimmer')">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><circle cx="12" cy="5" r="2"/><path d="M12 7v5l3 3"/><path d="M8 16c1 1 2 2 4 2s3-1 4-2"/><path d="M5 19c1 1 4 2 7 2s6-1 7-2"/></svg>
@@ -828,6 +955,8 @@ a { font-family: var(--f-main); }
           </div>
         </div>
 
+        </div><!-- end scroll area -->
+        <div class="btn-sticky-wrap">
         <button class="btn-submit" id="lBtn" onclick="doLogin()">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
           <span id="lBtnTxt">دخول</span>
@@ -837,10 +966,12 @@ a { font-family: var(--f-main); }
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
           العودة للرئيسية
         </a>
+        </div><!-- end sticky wrap -->
       </div>
 
       <!-- ══ REGISTER PANEL ══ -->
       <div class="auth-panel" id="panelRegister">
+        <div class="panel-scroll-area">
         <div class="note-box">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
           <span>إنشاء الحساب مخصص للسباحين فقط. المدربون يتواصلون مع الإدارة لإنشاء حساباتهم.</span>
@@ -940,6 +1071,8 @@ a { font-family: var(--f-main); }
           </div>
         </div>
 
+        </div><!-- end scroll area -->
+        <div class="btn-sticky-wrap">
         <button class="btn-submit" id="rBtn" onclick="doRegister()">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
           <span id="rBtnTxt">إنشاء الحساب</span>
@@ -949,6 +1082,7 @@ a { font-family: var(--f-main); }
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
           العودة للرئيسية
         </a>
+        </div><!-- end sticky wrap -->
       </div>
 
     </div>
